@@ -10,9 +10,9 @@ export ROS_MASTER_URI="http://ROSCORE_MACHINE_IP_ADDR:11311"
 
 3. Once the lasers are plugged into their respective machines, run the following line on both machines: "sh scripts/laser_initialize.sh".
 
-4. On the host machine, start the roslaunch file with "roslaunch roslaunch_files/multiple_lasers.launch"
+4. On the host machine, do "rosrun urg_node urg_node" and then in another terminal run "rosrun laser_package detect_node"
 
-5. On the client, run "rosrun urg_node urg_node"
+5. On the client, run "roslaunch launch_files/multiple_detectors.launch" and then in another terminal run "roslaunch launch_files/multiple_lasers.launch"
 
 6. Start up Rviz under another terminal on the host. Under Global Options, change the Fixed Frame variable from "map" to "/laser".
 
