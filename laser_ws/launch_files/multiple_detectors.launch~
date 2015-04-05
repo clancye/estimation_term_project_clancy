@@ -1,0 +1,5 @@
+<launch>
+    <node name="detect_node0" pkg="detect_node" type="detect_node">
+        <remap from="targets" to="targets0" />
+    </node>
+</launch>
