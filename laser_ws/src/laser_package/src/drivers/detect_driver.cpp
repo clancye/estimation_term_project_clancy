@@ -4,7 +4,9 @@ int place_keeper,new_series, num_points_min, num_points_max,num_points;
 
 std::vector<float> detectTargets(std::vector<float> ranges)
 {
-	std::vector<float> filtered_values (682);
+	std::vector<float> filtered_values (682), point_targets (682);
+	float mean_range = 0.0;
+	int mean_index;
 	new_series = 1;
 	for (int i = 0;i<682;i++) //iterate through the data
 	{
@@ -27,11 +29,15 @@ std::vector<float> detectTargets(std::vector<float> ranges)
 				for(int j = place_keeper;j<place_keeper+num_points;j++)//if it does, enter the target in a new array
 				{
 					filtered_values[j] = ranges[j];
+					mean_range += ranges[j];
 				}
+				mean_range /= num_points;
+				mean_index = place_keeper + floor(num_points/2);
+				point_targets[mean_index] = mean_range;
 			}
 			num_points = 0;
 			new_series = 1;//start looking for more targets
 		}
 	}
-	return filtered_values;
+	return point_targets; //change to filtered_ranges to show extended targets
 }

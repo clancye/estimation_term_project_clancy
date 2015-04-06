@@ -9,13 +9,14 @@
 #include <vector>
 
 
-#define MIN_TARGET_WIDTH 0.05	//10cm
+#define MIN_TARGET_WIDTH 0.1	//10cm
 #define MAX_TARGET_WIDTH 0.7  //60cm
 #define MAX_TARGET_DEPTH 0.7  //40cm
 #define THETA_DELTA 0.006283185 //angular resolution of lidar in radians
 
-extern std::vector<float>  filtered_ranges;
-extern int place_keeper,new_series,num_points_min, num_points_max,num_points;
+extern std::vector<float>  filtered_ranges, point_targets;
+extern int place_keeper,new_series,num_points_min, num_points_max,num_points, mean_index;
 extern sensor_msgs::LaserScan scan_msg;
+extern float mean_range;
 
 #endif

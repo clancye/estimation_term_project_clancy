@@ -7,7 +7,7 @@ class SubscribeAndPublish
 public:
     SubscribeAndPublish()
  	{
-		laser_sub = n.subscribe<sensor_msgs::LaserScan>("/scan0",1000,&SubscribeAndPublish::laserCallBack,this);
+		laser_sub = n.subscribe<sensor_msgs::LaserScan>("/scan",1000,&SubscribeAndPublish::laserCallBack,this);
 		target_pub = n.advertise<sensor_msgs::LaserScan>("/targets",1000); //publish targets to new topic
         ROS_INFO("Constructing SAP");
 	}

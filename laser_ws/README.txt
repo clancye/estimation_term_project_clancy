@@ -8,7 +8,7 @@ How to start it up:
 
 export ROS_MASTER_URI="http://ROSCORE_MACHINE_IP_ADDR:11311"
 
-3. Once the lasers are plugged into their respective machines, run the following line on both machines: "sh scripts/laser_initialize.sh".
+3. Plug in the laser USB cables to the computer. Once each laser is hooked up to its computer, run the following line on both machines: "sh scripts/laser_initialize.sh".
 
 4. On the host machine, do "rosrun urg_node urg_node" and then in another terminal run "rosrun laser_package detect_node"
 
