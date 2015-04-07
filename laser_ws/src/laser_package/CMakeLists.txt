@@ -113,6 +113,10 @@ add_executable(detect_node src/nodes/detect_node.cpp src/drivers/detect_driver.c
 target_link_libraries(detect_node ${catkin_LIBRARIES})
 add_dependencies(detect_node laser_package_generate_messages_cpp)
 
+add_executable(client_detect_node src/nodes/client_detect_node.cpp src/drivers/detect_driver.cpp)
+target_link_libraries(client_detect_node ${catkin_LIBRARIES})
+add_dependencies(client_detect_node laser_package_generate_messages_cpp)
+
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(laser_package_node laser_package_generate_messages_cpp)

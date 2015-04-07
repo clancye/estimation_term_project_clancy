@@ -1,0 +1,8 @@
+<launch>
+    <node name="client_urg" pkg="urg_node" type="urg_node">
+        <param name="serial_port" type="string" value="/dev/ttyACM0" />
+        <remap from="scan" to="client_scan" />
+    </node>
+    <node name="client_detect_node" pkg="laser_package" type="client_detect_node">
+    </node>
+</launch>
