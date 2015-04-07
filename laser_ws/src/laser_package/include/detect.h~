@@ -9,10 +9,11 @@
 #include <vector>
 
 
-#define MIN_TARGET_WIDTH 0.05	//10cm
+#define MIN_TARGET_WIDTH 0.1	//10cm
 #define MAX_TARGET_WIDTH 0.7  //60cm
 #define MAX_TARGET_DEPTH 0.7  //40cm
 #define THETA_DELTA 0.006283185 //angular resolution of lidar in radians
+#define MIN_VAR 0.05  //how far the mean of the points should be away from the median. rough approximation. 
 
 extern std::vector<float>  filtered_ranges, point_targets;
 extern int place_keeper,new_series,num_points_min, num_points_max,num_points, mean_index;
