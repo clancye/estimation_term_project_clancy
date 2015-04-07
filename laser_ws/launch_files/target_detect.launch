@@ -1,0 +1,6 @@
+<launch>
+    <node name="urg" pkg="urg_node" type="urg_node">
+        <param name="serial_port" type="string" value="/dev/ttyACM0" />
+    </node>
+    <node name="detect_node" pkg="laser_package" type="detect_node"></node>
+</launch>
