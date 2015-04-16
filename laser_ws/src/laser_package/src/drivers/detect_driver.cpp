@@ -8,7 +8,7 @@ std::vector<float> detectTargets(std::vector<float> ranges)
 	float mean_range = 0.0;
 	int mean_index;
 	new_series = 1;
-	for (int i = 100;i<570;i++) //iterate through the data
+	for (int i = 0;i<682;i++) //iterate through the data
 	{
 		if(ranges[i]<4.8)
 		{
@@ -28,11 +28,7 @@ std::vector<float> detectTargets(std::vector<float> ranges)
 			{
 				if(num_points>num_points_min&&num_points<num_points_max) //check if num_points makes sense
 				{
-					/*for(int j = place_keeper;j<place_keeper+num_points;j++)//if it does, enter the target in a new array
-					{
-						filtered_values[j] = ranges[j];
-						mean_range += ranges[j];
-					}*/
+					
 					mean_range /= num_points;
 					mean_index = place_keeper + floor(num_points/2);
 					point_targets[mean_index] = ranges[mean_index];
