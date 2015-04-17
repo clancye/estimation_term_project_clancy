@@ -8,7 +8,7 @@ std::vector<float> detectTargets(std::vector<float> ranges)
 	float mean_range = 0.0;
 	int mean_index;
 	new_series = 1;
-	for (int i = 85;i<630;i++) //iterate through the data
+	for (int i = 85;i<650;i++) //iterate through the data
 	{
 		if(ranges[i]<4.8)
 		{
