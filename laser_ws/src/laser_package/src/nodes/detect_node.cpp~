@@ -7,20 +7,25 @@ class SubscribeAndPublish
 public:
     SubscribeAndPublish()
  	{
-		laser_sub = n.subscribe<sensor_msgs::LaserScan>("/scan0",1000,&SubscribeAndPublish::laserCallBack,this);
+		ROS_INFO("Constructing SAP");
+		laser_sub = n.subscribe<sensor_msgs::LaserScan>("/scan",1000,&SubscribeAndPublish::laserCallBack,this);
 		target_pub = n.advertise<sensor_msgs::LaserScan>("/targets",1000); //publish targets to new topic
-        ROS_INFO("Constructing SAP");
+		std::vector<float> initial_target_vector (682);
+        std::vector<float> filtered_ranges (682);
+		scan_counter = 0;
 	}
+	int scan_counter;//NEW CODE
+	std::vector<float> initial_target_vector;//NEW CODE
+	std::vector<float> filtered_ranges;
+	sensor_msgs::LaserScan targets_msg;
 
-	
 	void laserCallBack(const sensor_msgs::LaserScan::ConstPtr& msg)
 	{ 
-        sensor_msgs::LaserScan targets_msg;
         targets_msg = *msg;
-		std::vector<float> filtered_ranges (682);
 		filtered_ranges = detectTargets(msg->ranges);
 		targets_msg.ranges = filtered_ranges;
-		target_pub.publish(targets_msg);
+		if(scan_counter>10)target_pub.publish(targets_msg);//NEW CODE ADDED CONITIONAL
+		if(scan_counter<10)scan_counter++;//NEW CODE
 	}
 private:
    
@@ -34,15 +39,14 @@ private:
 
 int main(int argc, char **argv)
 {
-  //Initiate ROS
-  ros::init(argc, argv, "detect_node");
+	//Initiate ROS
+	ros::init(argc, argv, "detect_node");
 
-  //Create an object of class SubscribeAndPublish that will take care of everything
-  SubscribeAndPublish SAPDetect;
+	//Create an object of class SubscribeAndPublish that will take care of everything
+	SubscribeAndPublish SAPDetect;
+	ros::spin();
 
-  ros::spin();
-
-  return 0;
+	return 0;
 }
 
 

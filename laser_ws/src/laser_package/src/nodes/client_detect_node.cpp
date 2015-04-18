@@ -1,48 +1,54 @@
 #include "../../include/detect.h"
 
-std::vector<float> detectTargets(std::vector<float> ranges);
+
+Detector target_detector = Detector();
 
 class SubscribeAndPublish
 {
-public:
-    SubscribeAndPublish()
- 	{
-		laser_sub = n.subscribe<sensor_msgs::LaserScan>("/client_scan",1000,&SubscribeAndPublish::laserCallBack,this);
-		target_pub = n.advertise<sensor_msgs::LaserScan>("/client_targets",1000); //publish targets to new topic
-        ROS_INFO("Constructing SAP");
-	}
+	public:
+		SubscribeAndPublish()
+		{
+			ROS_INFO("Constructing SAP");
+			laser_sub = n.subscribe<sensor_msgs::LaserScan>("/client_scan",1000,&SubscribeAndPublish::laserCallBack,this);
+			target_pub = n.advertise<sensor_msgs::LaserScan>("/client_targets",1000); //publish targets to new topic
+			//std::vector<float> filtered_ranges (682);
+			scan_counter = 0;
+			state = INITIALIZING;
+		}
+		
 
-	
-	void laserCallBack(const sensor_msgs::LaserScan::ConstPtr& msg)
-	{ 
-        sensor_msgs::LaserScan targets_msg;
-        targets_msg = *msg;
-		std::vector<float> filtered_ranges (682);
-		filtered_ranges = detectTargets(msg->ranges);
-		targets_msg.ranges = filtered_ranges;
-		target_pub.publish(targets_msg);
-	}
-private:
-   
-    ros::NodeHandle n; 
-    ros::Publisher target_pub;
-    ros::Subscriber laser_sub;
-
+		void laserCallBack(const sensor_msgs::LaserScan::ConstPtr& msg)
+		{ 
+			targets_msg = *msg;
+			target_detector.setState(state);
+			filtered_ranges = target_detector.detectTargets(msg->ranges);
+			targets_msg.ranges = filtered_ranges;
+			target_pub.publish(targets_msg);//NEW CODE ADDED CONITIONAL
+			if(scan_counter<=10)scan_counter++;//NEW CODE
+			else{state = WAITING_FOR_MOVING_TARGET;}
+		}//dfd
+	private:
+	   
+		ros::NodeHandle n; 
+		ros::Publisher target_pub;
+		ros::Subscriber laser_sub;
+		int scan_counter, state;//NEW CODE
+		std::vector<float> filtered_ranges;
+		sensor_msgs::LaserScan targets_msg;
 };//End of class SubscribeAndPublish
 
 
 
 int main(int argc, char **argv)
 {
-  //Initiate ROS
-  ros::init(argc, argv, "client_detect_node");
+	//Initiate ROS
+	ros::init(argc, argv, "detect_node");
 
-  //Create an object of class SubscribeAndPublish that will take care of everything
-  SubscribeAndPublish SAPDetect;
+	//Create an object of class SubscribeAndPublish that will take care of everything
+	SubscribeAndPublish SAPDetect;
+	ros::spin();
 
-  ros::spin();
-
-  return 0;
+	return 0;
 }
 
 

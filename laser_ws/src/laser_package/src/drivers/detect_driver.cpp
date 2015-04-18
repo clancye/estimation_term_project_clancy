@@ -1,10 +1,9 @@
 #include "../../include/detect.h"
 
-int place_keeper,new_series, num_points_min, num_points_max,num_points;
-
-std::vector<float> detectTargets(std::vector<float> ranges)
+std::vector<float> Detector::detectTargets(const std::vector<float>& ranges)
 {
-	std::vector<float> filtered_values (682), point_targets (682);
+	
+
 	float mean_range = 0.0;
 	int mean_index;
 	new_series = 1;
@@ -31,7 +30,17 @@ std::vector<float> detectTargets(std::vector<float> ranges)
 					
 					mean_range /= num_points;
 					mean_index = place_keeper + floor(num_points/2);
-					point_targets[mean_index] = ranges[mean_index];
+					switch(state)
+					{
+						case INITIALIZING:
+							initial_target_vec[mean_index] = ranges[mean_index];
+							point_targets = initial_target_vec;
+							
+							break;
+						case WAITING_FOR_MOVING_TARGET:
+							point_targets = initial_target_vec;
+							break;
+					}
 					mean_range = 0;
 				}
 				num_points = 0;
@@ -41,3 +50,9 @@ std::vector<float> detectTargets(std::vector<float> ranges)
 	}
 	return point_targets; //change to filtered_ranges to show extended targets, point_targets for point targets
 }
+
+void Detector::setState(int some_state)
+{
+	state = some_state;
+}
+	
