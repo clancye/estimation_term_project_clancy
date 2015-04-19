@@ -13,6 +13,7 @@
 #define MAX_TARGET_WIDTH 0.7  //60cm
 #define MAX_TARGET_DEPTH 0.7  //40cm
 #define THETA_DELTA 0.006283185 //angular resolution of lidar in radians
+#define INDEX_SHIFT = 83
 #define START_STEP 44
 #define END_STEP 725
 #define MIN_VAR 0.05  //how far the mean of the points should be away from the median. rough approximation. 
