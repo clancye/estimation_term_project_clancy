@@ -11,9 +11,11 @@ class SubscribeAndPublish
 			ROS_INFO("Constructing SAP");
 			laser_sub = n.subscribe<sensor_msgs::LaserScan>("/scan",1000,&SubscribeAndPublish::laserCallBack,this);
 			target_pub = n.advertise<sensor_msgs::LaserScan>("/targets",1000); //publish targets to new topic
-			//std::vector<float> filtered_ranges (682);
+			std::vector<float> filtered_ranges (682);
+			std::vector<float> initial_targets (682);
 			scan_counter = 0;
 			state = INITIALIZING;
+			//ros::Duration(10).sleep(); // sleep for 10 seconds
 		}
 		
 
@@ -25,7 +27,7 @@ class SubscribeAndPublish
 			targets_msg.ranges = filtered_ranges;
 			target_pub.publish(targets_msg);//NEW CODE ADDED CONITIONAL
 			if(scan_counter<=10)scan_counter++;//NEW CODE
-			else{state = WAITING_FOR_MOVING_TARGET;}
+			else{state = WAITING_FOR_MOVING_TARGET;};
 		}//dfd
 	private:
 	   
@@ -33,7 +35,7 @@ class SubscribeAndPublish
 		ros::Publisher target_pub;
 		ros::Subscriber laser_sub;
 		int scan_counter, state;//NEW CODE
-		std::vector<float> filtered_ranges;
+		std::vector<float> filtered_ranges, initial_targets;
 		sensor_msgs::LaserScan targets_msg;
 };//End of class SubscribeAndPublish
 
@@ -44,7 +46,6 @@ int main(int argc, char **argv)
 	//Initiate ROS
 	ros::init(argc, argv, "detect_node");
 
-	ros::Duration(10).sleep(); // sleep for half a second
 	//Create an object of class SubscribeAndPublish that will take care of everything
 	SubscribeAndPublish SAPDetect;
 	ros::spin();

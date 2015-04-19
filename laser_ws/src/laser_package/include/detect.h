@@ -22,24 +22,19 @@
 class Detector
 {
 	public:
-		Detector()
-			{
-				//std::vector<float>  filtered_ranges (682);
-				//std::vector<float>  point_targets (682);
-				//std::vector<float>  initial_target_vec (682);
-			}
+		Detector():point_targets (682)
+			{}
 	
 		
 	
-		std::vector<float> detectTargets(const std::vector<float>& ranges);
+		std::vector<float> detectTargets(std::vector<float> ranges);
 		void setState(int some_state);
+		int getState();
 	
 	private:
 	
-		int place_keeper,new_series, num_points_min, num_points_max,num_points,mean_index,state;
-		std::vector<float>  filtered_ranges, point_targets,initial_target_vec;
-		sensor_msgs::LaserScan scan_msg;
-		float mean_range;
+		int place_keeper,new_series, num_points_min, num_points_max,num_points,state;
+		std::vector<float>  point_targets,initial_target_vec;
 };
 
 #endif

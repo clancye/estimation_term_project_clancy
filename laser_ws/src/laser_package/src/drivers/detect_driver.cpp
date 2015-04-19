@@ -1,9 +1,8 @@
 #include "../../include/detect.h"
 
-std::vector<float> Detector::detectTargets(const std::vector<float>& ranges)
+std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 {
 	
-
 	float mean_range = 0.0;
 	int mean_index;
 	new_series = 1;
@@ -33,12 +32,12 @@ std::vector<float> Detector::detectTargets(const std::vector<float>& ranges)
 					switch(state)
 					{
 						case INITIALIZING:
-							initial_target_vec[mean_index] = ranges[mean_index];
-							point_targets = initial_target_vec;
+							point_targets[mean_index] = ranges[mean_index];
+							//point_targets = initial_target_vec;
 							
 							break;
 						case WAITING_FOR_MOVING_TARGET:
-							point_targets = initial_target_vec;
+							//point_targets = initial_target_vec;
 							break;
 					}
 					mean_range = 0;
@@ -48,11 +47,17 @@ std::vector<float> Detector::detectTargets(const std::vector<float>& ranges)
 			}
 		}
 	}
+	//ROS_INFO("size of point_targets = %d", point_targets.size());
 	return point_targets; //change to filtered_ranges to show extended targets, point_targets for point targets
 }
 
 void Detector::setState(int some_state)
 {
 	state = some_state;
+}
+
+int Detector::getState()
+{
+	return state;
 }
 	
