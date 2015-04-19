@@ -76,6 +76,7 @@ bool Detector::inSomeZone(float range,int index)
 
 void Detector::createZone(float range,int index)
 {
+	ROS_INFO("range = %f \n index = %d\n", range, index);
 	zone_index_min.push_back(index - floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
 	zone_index_max.push_back(index + floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
 	zone_range_min.push_back(range - MAX_MOVEMENT_PER_SCAN);
