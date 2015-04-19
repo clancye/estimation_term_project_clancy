@@ -92,7 +92,7 @@ void Detector::createZone(float range,int index,int zoneToTrack)
 {
 	if(zoneToTrack==-1)
 	{
-		ROS_INFO("range = %f \n index = %d\n", range, index);
+		//ROS_INFO("range = %f \n index = %d\n", range, index);
 		possible_target_range.push_back(range);
 		possible_target_index.push_back(index);
 		possible_target_x.push_back(getCartesianX(range, index));
@@ -103,10 +103,10 @@ void Detector::createZone(float range,int index,int zoneToTrack)
 		zone_range_min.push_back(range - MAX_MOVEMENT_PER_SCAN);
 		zone_range_max.push_back(range + MAX_MOVEMENT_PER_SCAN);
 		int i = zone_counter;
-		ROS_INFO("zone_index_min[%d] = %d\n zone_index_max[%d] = %d\n zone_range_min[%d] = %f, zone_range_max[%d] = %f", i,zone_index_min[i],i,zone_index_max[i],i,zone_range_min[i],i,zone_range_max[i]);
-		ROS_INFO("possible target range and index = [%f,%d]", possible_target_range[zone_counter],possible_target_index[zone_counter]);
-		ROS_INFO("possible target [x,y] = [%f,%f]", possible_target_x[zone_counter],possible_target_y[zone_counter]);
-		ROS_INFO("TIME OF AQUISITION %f \n", possible_target_time[zone_counter]);
+		//ROS_INFO("zone_index_min[%d] = %d\n zone_index_max[%d] = %d\n zone_range_min[%d] = %f, zone_range_max[%d] = %f", i,zone_index_min[i],i,zone_index_max[i],i,zone_range_min[i],i,zone_range_max[i]);
+		//ROS_INFO("possible target range and index = [%f,%d]", possible_target_range[zone_counter],possible_target_index[zone_counter]);
+		//ROS_INFO("possible target [x,y] = [%f,%f]", possible_target_x[zone_counter],possible_target_y[zone_counter]);
+		//ROS_INFO("TIME OF AQUISITION %f \n", possible_target_time[zone_counter]);
 		zone_counter++;
 	}
 	else
@@ -125,18 +125,18 @@ void Detector::updateVelocity(int zone,float range, int index, double time)
 	float distance = sqrt(pow((tempX-possible_target_x[zone]),2)+pow((tempY-possible_target_y[zone]),2));
 	float timeBetweenMeasurements = time - possible_target_time[zone];
 	float velocity = distance/timeBetweenMeasurements;
-	ROS_INFO("velocity = %f\n", velocity);
+	//ROS_INFO("velocity = %f\n", velocity);
 	if(velocity>VELOCITY_THRESHOLD_MIN&&velocity<VELOCITY_THRESHOLD_MAX)
 	{
 		if(zoneBeingTracked == -1)trackZone(zone);
-		ROS_INFO("distance = %f\n start time = %f \n now_time %f\n VELOCITY FOR ZONE %d = %f\n", distance, possible_target_time[zone],scan_time,zone, velocity);
+		//ROS_INFO("distance = %f\n start time = %f \n now_time %f\n VELOCITY FOR ZONE %d = %f\n", distance, possible_target_time[zone],scan_time,zone, velocity);
 	}
 }
 
 void Detector::setScanTime()
 {
 	scan_time = ros::Time::now().toSec();
-	ROS_INFO("scan_time = %f \n", scan_time);
+	//ROS_INFO("scan_time = %f \n", scan_time);
 }
 
 int Detector::getNumberOfZones()
