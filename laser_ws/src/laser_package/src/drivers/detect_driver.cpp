@@ -25,7 +25,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			}
 			else //if we come across a point that is too far from the first point
 			{
-				last_index = place_keeper+num_points;
+				last_index = place_keeper+num_points-1;
 				if(num_points>num_points_min&&num_points<num_points_max) //check if num_points makes sense
 				{
 					mean_index = place_keeper + floor(num_points/2);
