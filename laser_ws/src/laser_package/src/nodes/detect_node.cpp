@@ -8,14 +8,15 @@ class SubscribeAndPublish
 	public:
 		SubscribeAndPublish()
 		{
-			ROS_INFO("Constructing SAP");
+			ROS_INFO("Constructing SAP...");
+			ros::Duration(10).sleep(); // sleep for 10 seconds
 			laser_sub = n.subscribe<sensor_msgs::LaserScan>("/scan",1000,&SubscribeAndPublish::laserCallBack,this);
 			target_pub = n.advertise<sensor_msgs::LaserScan>("/targets",1000); //publish targets to new topic
 			std::vector<float> filtered_ranges (682);
 			std::vector<float> initial_targets (682);
 			scan_counter = 0;
 			state = INITIALIZING;
-			//ros::Duration(10).sleep(); // sleep for 10 seconds
+			ROS_INFO("Go!");
 		}
 		
 
