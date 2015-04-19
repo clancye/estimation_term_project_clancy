@@ -46,7 +46,7 @@ class Detector
 	private:
 	
 		int place_keeper,new_series, num_points_min, num_points_max,num_points,state, zone_counter,zoneBeingTracked;
-		volatile float scan_time;
+		float scan_time;
 		std::vector<float>  point_targets,initial_targets, zone_range_min, zone_range_max,possible_target_range, possible_target_x, possible_target_y, possible_target_time;
 		std::vector<int> zone_index_min, zone_index_max,possible_target_index;
 		int getZone(float range,int index);
