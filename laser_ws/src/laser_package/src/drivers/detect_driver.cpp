@@ -178,6 +178,7 @@ bool Detector::isThisAWall(float first_x, float first_y, float mean_x, float mea
 {
 	float slope_1 = getSlope(first_x, first_y, mean_x, mean_y);
 	float slope_2 = getSlope(mean_x, mean_y, last_x, last_y);
+	ROS_INFO("slope_1 = %f \n slope_2 = %f \n", slope_1, slope_2);
 	return ((abs(slope_1-slope_2)<WALL_SLOPE_THRESHOLD)? true : false);
 }
 
