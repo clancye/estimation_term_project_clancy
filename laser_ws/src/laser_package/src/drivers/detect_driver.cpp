@@ -89,6 +89,6 @@ void Detector::createZone(float range,int index)
 	int i = zone_counter;
 	ROS_INFO("zone_index_min[%d] = %d\n zone_index_max[%d] = %d\n zone_range_min[%d] = %f, zone_range_max[%d] = %f", i,zone_index_min[i],i,zone_index_max[i],i,zone_range_min[i],i,zone_range_max[i]);
 	ROS_INFO("possible target range and index = [%f,%d]", possible_target_range[zone_counter],possible_target_index[zone_counter]);
-	ROS_INFO("possible target [x,y] = [%f,%d]", possible_target_x[zone_counter],possible_target_yx[zone_counter]);
+	ROS_INFO("possible target [x,y] = [%f,%f]", possible_target_x[zone_counter],possible_target_y[zone_counter]);
 	zone_counter++;
 }
