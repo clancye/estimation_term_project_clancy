@@ -24,12 +24,11 @@ class SubscribeAndPublish
 		{ 
 			targets_msg = *msg;
 			target_detector.setState(state);
-			filtered_ranges = target_detector.detectTargets(msg->ranges);
-			targets_msg.ranges = filtered_ranges;
-			target_pub.publish(targets_msg);//NEW CODE ADDED CONITIONAL
-			if(scan_counter<=10)scan_counter++;//NEW CODE
+			targets_msg.ranges = target_detector.detectTargets(msg->ranges);
+			target_pub.publish(targets_msg);
+			if(scan_counter<=10)scan_counter++;
 			else{state = WAITING_FOR_MOVING_TARGET;};
-		}//dfd
+		}
 	private:
 	   
 		ros::NodeHandle n; 

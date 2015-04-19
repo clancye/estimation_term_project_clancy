@@ -32,12 +32,11 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 					switch(state)
 					{
 						case INITIALIZING:
-							point_targets[mean_index] = ranges[mean_index];
-							//point_targets = initial_target_vec;
-							
+							initial_targets[mean_index] = ranges[mean_index];
+							point_targets = initial_targets;
 							break;
 						case WAITING_FOR_MOVING_TARGET:
-							//point_targets = initial_target_vec;
+							point_targets = initial_targets;
 							break;
 					}
 					mean_range = 0;

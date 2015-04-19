@@ -22,7 +22,7 @@
 class Detector
 {
 	public:
-		Detector():point_targets (682)
+		Detector():point_targets (682),initial_targets (682)
 			{}
 	
 		
@@ -34,7 +34,7 @@ class Detector
 	private:
 	
 		int place_keeper,new_series, num_points_min, num_points_max,num_points,state;
-		std::vector<float>  point_targets,initial_target_vec;
+		std::vector<float>  point_targets,initial_targets;
 };
 
 #endif
