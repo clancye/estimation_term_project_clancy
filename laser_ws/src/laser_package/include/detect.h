@@ -46,12 +46,12 @@ class Detector
 	private:
 	
 		int place_keeper,new_series, num_points_min, num_points_max,num_points,state, zone_counter,zoneBeingTracked;
-		float scan_time;
+		double scan_time;
 		std::vector<float>  point_targets,initial_targets, zone_range_min, zone_range_max,possible_target_range, possible_target_x, possible_target_y, possible_target_time;
 		std::vector<int> zone_index_min, zone_index_max,possible_target_index;
 		int getZone(float range,int index);
 		void createZone(float mean_range,int mean_index,int zoneBeingTracked);
-		void updateVelocity(int zone, float range, int index, float time);
+		void updateVelocity(int zone, float range, int index, double time);
 		float getCartesianX(float range, float index);
 		float getCartesianY(float range, float index);
 		void trackZone(int zone);

@@ -114,7 +114,7 @@ void Detector::createZone(float range,int index,int zoneToTrack)
 	}
 }
 
-void Detector::updateVelocity(int zone,float range, int index, float time)
+void Detector::updateVelocity(int zone,float range, int index, double time)
 {
 	float tempX = getCartesianX(range, index);
 	float tempY = getCartesianY(range, index);
