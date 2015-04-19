@@ -47,8 +47,12 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								point_targets = initial_targets;
 								break;
 							case TRACKING:
-								createZone(mean_range,mean_index,zoneBeingTracked);
-								tracked_targets[mean_index] = mean_range;
+								zone = getZone(mean_range,mean_index);
+								if(zone == zoneBeingTracked)
+								{	
+									createZone(mean_range,mean_index,zoneBeingTracked);
+									tracked_targets[mean_index] = mean_range;
+								}
 								point_targets = tracked_targets;
 								break;
 						}
