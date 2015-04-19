@@ -122,7 +122,7 @@ void Detector::updateVelocity(int zone,float range, int index, double time)
 	float timeBetweenMeasurements = time - possible_target_time[zone];
 	float velocity = distance/timeBetweenMeasurements;
 	ROS_INFO("velocity = %f\n", velocity);
-	if(velocity>VELOCITY_THRESHOLD)
+	if(velocity>VELOCITY_THRESHOLD_MIN&&velocity<VELOCITY_THRESHOLD_MAX)
 	{
 		trackZone(zone);
 		ROS_INFO("distance = %f\n start time = %f \n now_time %f\n VELOCITY FOR ZONE %d = %f\n", distance, possible_target_time[zone],scan_time,zone, velocity);
