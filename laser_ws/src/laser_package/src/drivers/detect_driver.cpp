@@ -41,7 +41,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								}
 								break;
 							case WAITING_FOR_MOVING_TARGET:
-								//zone = getZone(mean_range,mean_index);
+								zone = getZone(mean_range,mean_index);
 								if(zone != -1)updateVelocity(zone,mean_range, mean_index,scan_time);
 								point_targets = initial_targets;
 								break;
