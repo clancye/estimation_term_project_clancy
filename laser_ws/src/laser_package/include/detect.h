@@ -36,9 +36,11 @@ class Detector
 	private:
 	
 		int place_keeper,new_series, num_points_min, num_points_max,num_points,state, zone_counter;
-		std::vector<float>  point_targets,initial_targets, zone_index_min, zone_index_max, zone_range_min, zone_range_max;
+		std::vector<float>  point_targets,initial_targets, zone_range_min, zone_range_max;
+		std::vector<int> zone_index_min, zone_index_max;
 		bool inSomeZone(float range,int index);
 		void createZone(float mean_range,int mean_index);
+		
 };
 
 #endif
