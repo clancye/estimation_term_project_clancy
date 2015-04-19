@@ -22,13 +22,15 @@ class SubscribeAndPublish
 
 		void laserCallBack(const sensor_msgs::LaserScan::ConstPtr& msg)
 		{ 
+			target_detector.setScanTime();// need this to calculate velocities
 			targets_msg = *msg;
-			time = ros::Time::now().toSec();
 			target_detector.setState(state);
 			targets_msg.ranges = target_detector.detectTargets(msg->ranges);
-			target_pub.publish(targets_msg);
-			if(scan_counter<=10)scan_counter++;
-			else{state = WAITING_FOR_MOVING_TARGET;};
+			target_pub.publish(targets_msg);//publish so we can see on RViz
+			if(scan_counter<=10)scan_counter++;//time to gather some possible targets
+			if(scan_counter>10&&target_detector.getNumberOfZones() >0 )state = WAITING_FOR_MOVING_TARGET;//keep initializing if no targets
+			else if (scan_counter > 10 && target_detector.getNumberOfZones() == 0){scan_counter = 0;}//once we have some targets, wait until they move
+			if (target_detector.getZoneBeingTracked() != -1) state = TRACKING;
 		}
 	private:
 	   
