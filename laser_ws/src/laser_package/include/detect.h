@@ -18,7 +18,7 @@
 #define END_STEP 725
 #define MIN_VAR 0.05  //how far the mean of the points should be away from the median. rough approximation. 
 #define MAX_MOVEMENT_PER_SCAN 0.2
-#define VELOCITY_THRESHOLD_MIN 0.04 // 3cm/s is a good velocity to start
+#define VELOCITY_THRESHOLD_MIN 0.001 // 3cm/s is a good velocity to start
 #define VELOCITY_THRESHOLD_MAX 0.15
 #define INITIALIZING 1
 #define WAITING_FOR_MOVING_TARGET 2
