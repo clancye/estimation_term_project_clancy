@@ -121,6 +121,7 @@ void Detector::updateVelocity(int zone,float range, int index, double time)
 	float distance = sqrt(pow((tempX-possible_target_x[zone]),2)+pow((tempY-possible_target_y[zone]),2));
 	float timeBetweenMeasurements = time - possible_target_time[zone];
 	float velocity = distance/timeBetweenMeasurements;
+	ROS_INFO("velocity = %f\n", velocity);
 	if(velocity>VELOCITY_THRESHOLD)
 	{
 		trackZone(zone);
