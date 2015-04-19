@@ -26,10 +26,8 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			{
 				if(num_points>num_points_min&&num_points<num_points_max) //check if num_points makes sense
 				{
-					
-					mean_range /= num_points;
 					mean_index = place_keeper + floor(num_points/2);
-					ROS_INFO("mean_range before inSomeZone = %f \n", mean_range);
+					mean_range = ranges[mean_index];
 					if(!inSomeZone(mean_range,mean_index))
 					{
 						
