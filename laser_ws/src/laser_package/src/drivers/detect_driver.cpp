@@ -93,7 +93,7 @@ void Detector::createZone(float range,int index,int zoneToTrack)
 		possible_target_index.push_back(index);
 		possible_target_x.push_back(getCartesianX(range, index));
 		possible_target_y.push_back(getCartesianY(range, index));
-		possible_target_time.push_back(scan_time);
+		possible_target_time[zone] = scan_time;
 		zone_index_min.push_back(index - floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
 		zone_index_max.push_back(index + floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
 		zone_range_min.push_back(range - MAX_MOVEMENT_PER_SCAN);
