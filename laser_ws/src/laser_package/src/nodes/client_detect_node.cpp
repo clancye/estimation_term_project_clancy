@@ -23,6 +23,7 @@ class SubscribeAndPublish
 		void laserCallBack(const sensor_msgs::LaserScan::ConstPtr& msg)
 		{ 
 			targets_msg = *msg;
+			time = ros::Time::now().toSec();
 			target_detector.setState(state);
 			targets_msg.ranges = target_detector.detectTargets(msg->ranges);
 			target_pub.publish(targets_msg);
@@ -37,6 +38,7 @@ class SubscribeAndPublish
 		int scan_counter, state;//NEW CODE
 		std::vector<float> filtered_ranges, initial_targets;
 		sensor_msgs::LaserScan targets_msg;
+		float time;
 };//End of class SubscribeAndPublish
 
 
