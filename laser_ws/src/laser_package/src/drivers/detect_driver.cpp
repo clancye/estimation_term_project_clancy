@@ -5,7 +5,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	
 	float mean_range = 0.0;
 	std::vector<float> tracked_targets (682);
-	int mean_index;
+	int mean_index,last_index,place_keeper;
 	new_series = 1;
 	for (int i = 85;i<650;i++) //iterate through the data
 	{
@@ -25,20 +25,30 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			}
 			else //if we come across a point that is too far from the first point
 			{
+				last_index = place_keeper+num_points;
 				if(num_points>num_points_min&&num_points<num_points_max) //check if num_points makes sense
 				{
 					mean_index = place_keeper + floor(num_points/2);
 					mean_range = ranges[mean_index];
-					{
 						switch(state)
 						{
 							int zone;
-							case INITIALIZING:	
-								if(getZone(mean_range,mean_index)==-1) 
+							case INITIALIZING:
+								float first_x,first_y,mean_x,mean_y,last_x,last_y;
+								first_x = getCartesianX(ranges[place_keeper], place_keeper);
+								first_y = getCartesianY(ranges[place_keeper], place_keeper);
+								mean_x = getCartesianX(mean_range,mean_index);
+								mean_y = getCartesianY(mean_range,mean_index);
+								last_x = getCartesianX(ranges[last_index], last_index);
+								last_y = getCartesianY(ranges[last_index], last_index);
+								if(!isThisAWall(first_x, first_y, mean_x,mean_y, last_x,last_y))
 								{
-									createZone(mean_range,mean_index,-1);//not tracking so we use -1
-									initial_targets[mean_index] = ranges[mean_index];
-									point_targets = initial_targets;
+									if(getZone(mean_range,mean_index)==-1) 
+									{
+										createZone(mean_range,mean_index,-1);//not tracking so we use -1
+										initial_targets[mean_index] = ranges[mean_index];
+										point_targets = initial_targets;
+									}
 								}
 								break;
 							case WAITING_FOR_MOVING_TARGET:
@@ -56,7 +66,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								point_targets = tracked_targets;
 								break;
 						}
-					}
+					
 					mean_range = 0;
 				}
 				num_points = 0;
@@ -162,4 +172,16 @@ void Detector::trackZone(int zone)
 int Detector::getZoneBeingTracked()
 {
 	return zoneBeingTracked;
+}
+
+bool Detector::isThisAWall(float first_x, float first_y, float mean_x, float mean_y, float last_x, float last_y)
+{
+	float slope_1 = getSlope(first_x, first_y, mean_x, mean_y);
+	float slope_2 = getSlope(mean_x, mean_y, last_x, last_y);
+	return ((abs(slope_1-slope_2)<WALL_SLOPE_THRESHOLD)? true : false);
+}
+
+float Detector::getSlope(float x_1, float y_1, float x_2, float y_2)
+{
+	return ((y_1-y_2)/(x_1-x_2));
 }

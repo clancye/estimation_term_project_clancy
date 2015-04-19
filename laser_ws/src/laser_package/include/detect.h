@@ -20,6 +20,7 @@
 #define MAX_MOVEMENT_PER_SCAN 0.35
 #define VELOCITY_THRESHOLD_MIN 0.0014 // heuristic
 #define VELOCITY_THRESHOLD_MAX 0.15
+#define WALL_SLOPE_THRESHOLD 0.5
 #define INITIALIZING 1
 #define WAITING_FOR_MOVING_TARGET 2
 #define TRACKING 3
@@ -46,7 +47,7 @@ class Detector
 	
 	private:
 	
-		int place_keeper,new_series, num_points_min, num_points_max,num_points,state, zone_counter,zoneBeingTracked;
+		int new_series, num_points_min, num_points_max,num_points,state, zone_counter,zoneBeingTracked;
 		double scan_time;
 		std::vector<float>  point_targets,initial_targets, zone_range_min, zone_range_max,possible_target_range, possible_target_x, possible_target_y, possible_target_time;
 		std::vector<int> zone_index_min, zone_index_max,possible_target_index;
@@ -56,6 +57,8 @@ class Detector
 		float getCartesianX(float range, float index);
 		float getCartesianY(float range, float index);
 		void trackZone(int zone);
+		bool isThisAWall(float first_x, float first_y, float mean_x, float mean_y, float last_x, float last_y);
+		float getSlope(float x_1, float y_1, float x_2, float y_2);
 		
 };
 
