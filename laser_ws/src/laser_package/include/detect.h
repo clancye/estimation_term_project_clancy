@@ -31,6 +31,7 @@ class Detector
 			:point_targets (682),initial_targets (682)
 			{
 				state = INITIALIZING;
+				zoneBeingTracked = -1;
 			}
 	
 		
