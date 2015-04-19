@@ -28,7 +28,7 @@ class Detector
 	public:
 	
 		Detector()
-			:point_targets (682),initial_targets (682)
+			:point_targets (682),initial_targets (682),tracked_targets(682)
 			{
 				state = INITIALIZING;
 			}
