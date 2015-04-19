@@ -28,14 +28,16 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 				{
 					mean_index = place_keeper + floor(num_points/2);
 					mean_range = ranges[mean_index];
-					if(!inSomeZone(mean_range,mean_index))
 					{
 						switch(state)
 						{
-							case INITIALIZING:
-								createZone(mean_range,mean_index);
-								initial_targets[mean_index] = ranges[mean_index];
-								point_targets = initial_targets;
+							case INITIALIZING:	
+								if(!inSomeZone(mean_range,mean_index)) 
+								{
+									createZone(mean_range,mean_index);
+									initial_targets[mean_index] = ranges[mean_index];
+									point_targets = initial_targets;
+								}
 								break;
 							case WAITING_FOR_MOVING_TARGET:
 								point_targets = initial_targets;
@@ -76,11 +78,14 @@ bool Detector::inSomeZone(float range,int index)
 void Detector::createZone(float range,int index)
 {
 	ROS_INFO("range = %f \n index = %d\n", range, index);
+	possible_target_range.push_back(range);
+	possible_target_index.push_back(index);
 	zone_index_min.push_back(index - floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
 	zone_index_max.push_back(index + floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
 	zone_range_min.push_back(range - MAX_MOVEMENT_PER_SCAN);
 	zone_range_max.push_back(range + MAX_MOVEMENT_PER_SCAN);
 	int i = zone_counter;
 	ROS_INFO("zone_index_min[%d] = %d\n zone_index_max[%d] = %d\n zone_range_min[%d] = %f, zone_range_max[%d] = %f", i,zone_index_min[i],i,zone_index_max[i],i,zone_range_min[i],i,zone_range_max[i]);
+	ROS_INFO("possible target range and index = [%f,%d]", possible_target_range[zone_counter],possible_target_index[zone_counter]);
 	zone_counter++;
 }
