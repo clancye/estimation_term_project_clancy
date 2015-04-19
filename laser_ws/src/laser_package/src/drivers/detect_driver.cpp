@@ -69,6 +69,7 @@ bool Detector::inSomeZone(float range,int index)
 	for(int i = 0; i<zone_counter;i++)
 	{
 		if(range>zone_index_min.at(i)&&range<zone_index_max.at(i)&&index<zone_index_max.at(i)&&index>zone_index_min.at(i)) return true;
+		ROS_INFO("zone_index_min[%d] = %d\n zone_index_max[%d] = %d\n zone_range_min[%d] = %f, zone_range_max[%d] = %f", i,zone_index_min[i],i,zone_index_max[i],i,zone_range_min[i],i,zone_range_max[i]);
 	}
 	return false;
 }
@@ -79,5 +80,6 @@ void Detector::createZone(float range,int index)
 	zone_index_max.push_back(index + floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
 	zone_range_min.push_back(range - MAX_MOVEMENT_PER_SCAN);
 	zone_range_max.push_back(range + MAX_MOVEMENT_PER_SCAN);
+	
 	zone_counter++;
 }
