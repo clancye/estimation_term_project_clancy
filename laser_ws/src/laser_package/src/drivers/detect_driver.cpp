@@ -80,6 +80,8 @@ void Detector::createZone(float range,int index)
 	ROS_INFO("range = %f \n index = %d\n", range, index);
 	possible_target_range.push_back(range);
 	possible_target_index.push_back(index);
+	possible_target_x.push_back(range*cos(THETA_DELTA*index));
+	possible_target_y.push_back(range*sin(THETA_DELTA*index));
 	zone_index_min.push_back(index - floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
 	zone_index_max.push_back(index + floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
 	zone_range_min.push_back(range - MAX_MOVEMENT_PER_SCAN);
@@ -87,5 +89,6 @@ void Detector::createZone(float range,int index)
 	int i = zone_counter;
 	ROS_INFO("zone_index_min[%d] = %d\n zone_index_max[%d] = %d\n zone_range_min[%d] = %f, zone_range_max[%d] = %f", i,zone_index_min[i],i,zone_index_max[i],i,zone_range_min[i],i,zone_range_max[i]);
 	ROS_INFO("possible target range and index = [%f,%d]", possible_target_range[zone_counter],possible_target_index[zone_counter]);
+	ROS_INFO("possible target [x,y] = [%f,%d]", possible_target_x[zone_counter],possible_target_yx[zone_counter]);
 	zone_counter++;
 }
