@@ -29,15 +29,19 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 					
 					mean_range /= num_points;
 					mean_index = place_keeper + floor(num_points/2);
-					switch(state)
+					if(!inSomeZone(mean_range,mean_index))
 					{
-						case INITIALIZING:
-							initial_targets[mean_index] = ranges[mean_index];
-							point_targets = initial_targets;
-							break;
-						case WAITING_FOR_MOVING_TARGET:
-							point_targets = initial_targets;
-							break;
+						createZone(mean_range,mean_index);
+						switch(state)
+						{
+							case INITIALIZING:
+								initial_targets[mean_index] = ranges[mean_index];
+								point_targets = initial_targets;
+								break;
+							case WAITING_FOR_MOVING_TARGET:
+								point_targets = initial_targets;
+								break;
+						}
 					}
 					mean_range = 0;
 				}
@@ -59,4 +63,21 @@ int Detector::getState()
 {
 	return state;
 }
-	
+
+bool Detector::inSomeZone(float range,int index)
+{
+	for(int i = 0; i<zone_counter;i++)
+	{
+		if(range>zone_index_min[i]&&range<zone_index_max[i]&&index<zone_index_max[i]&&index>zone_index_min[i]) return true;
+	}
+	return false;
+}
+
+void Detector::createZone(float range,int index)
+{
+	zone_index_min.push_back(index - floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
+	zone_index_max.push_back(index + floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
+	zone_range_min.push_back(range - MAX_MOVEMENT_PER_SCAN);
+	zone_range_max.push_back(range + MAX_MOVEMENT_PER_SCAN);
+	zone_counter++;
+}

@@ -16,13 +16,15 @@
 #define START_STEP 44
 #define END_STEP 725
 #define MIN_VAR 0.05  //how far the mean of the points should be away from the median. rough approximation. 
+#define MAX_MOVEMENT_PER_SCAN 0.2
 #define INITIALIZING 1
 #define WAITING_FOR_MOVING_TARGET 2
 
 class Detector
 {
 	public:
-		Detector():point_targets (682),initial_targets (682)
+		Detector()
+			:point_targets (682),initial_targets (682)
 			{}
 	
 		
@@ -33,8 +35,10 @@ class Detector
 	
 	private:
 	
-		int place_keeper,new_series, num_points_min, num_points_max,num_points,state;
-		std::vector<float>  point_targets,initial_targets;
+		int place_keeper,new_series, num_points_min, num_points_max,num_points,state, zone_counter;
+		std::vector<float>  point_targets,initial_targets, zone_index_min, zone_index_max, zone_range_min, zone_range_max;
+		bool inSomeZone(float range,int index);
+		void createZone(float mean_range,int mean_index);
 };
 
 #endif
