@@ -31,6 +31,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 					mean_index = place_keeper + floor(num_points/2);
 					if(!inSomeZone(mean_range,mean_index))
 					{
+						ROS_INFO("mean_range before createZone = %f \n", mean_range);
 						createZone(mean_range,mean_index);
 						switch(state)
 						{
