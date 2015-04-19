@@ -30,11 +30,10 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 					mean_range = ranges[mean_index];
 					if(!inSomeZone(mean_range,mean_index))
 					{
-						
-						createZone(mean_range,mean_index);
 						switch(state)
 						{
 							case INITIALIZING:
+								createZone(mean_range,mean_index);
 								initial_targets[mean_index] = ranges[mean_index];
 								point_targets = initial_targets;
 								break;
