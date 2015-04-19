@@ -4,6 +4,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 {
 	
 	float mean_range = 0.0;
+	std::vector<float> tracked_targets (682);
 	int mean_index;
 	new_series = 1;
 	for (int i = 85;i<650;i++) //iterate through the data

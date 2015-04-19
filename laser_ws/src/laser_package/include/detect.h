@@ -28,7 +28,7 @@ class Detector
 	public:
 	
 		Detector()
-			:point_targets (682),initial_targets (682),tracked_targets(682)
+			:point_targets (682),initial_targets (682)
 			{
 				state = INITIALIZING;
 			}
@@ -46,7 +46,7 @@ class Detector
 	
 		int place_keeper,new_series, num_points_min, num_points_max,num_points,state, zone_counter,zoneBeingTracked;
 		float scan_time;
-		std::vector<float>  point_targets,initial_targets, tracked_targets,zone_range_min, zone_range_max,possible_target_range, possible_target_x, possible_target_y, possible_target_time;
+		std::vector<float>  point_targets,initial_targets, zone_range_min, zone_range_max,possible_target_range, possible_target_x, possible_target_y, possible_target_time;
 		std::vector<int> zone_index_min, zone_index_max,possible_target_index;
 		int getZone(float range,int index);
 		void createZone(float mean_range,int mean_index,int zoneBeingTracked);
