@@ -136,7 +136,7 @@ void Detector::updateVelocity(int zone,float range, int index, double time)
 void Detector::setScanTime()
 {
 	scan_time = ros::Time::now().toSec();
-	//ROS_INFO("scan_time = %f \n", scan_time);
+	ROS_INFO("scan_time = %f \n", scan_time);
 }
 
 int Detector::getNumberOfZones()
