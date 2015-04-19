@@ -68,7 +68,7 @@ bool Detector::inSomeZone(float range,int index)
 {
 	for(int i = 0; i<zone_counter;i++)
 	{
-		if(range>zone_index_min[i]&&range<zone_index_max[i]&&index<zone_index_max[i]&&index>zone_index_min[i]) return true;
+		if(range>zone_range_min[i]&&range<zone_range_max[i]&&index<zone_index_max[i]&&index>zone_index_min[i]) return true;
 		
 	}
 	return false;
