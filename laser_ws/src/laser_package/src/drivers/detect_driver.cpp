@@ -73,6 +73,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 					
 					mean_range = 0;
 				}
+				else{ROS_INFO("Target too big or too small");}
 				num_points = 0;
 				new_series = 1;//start looking for more targets
 			}
