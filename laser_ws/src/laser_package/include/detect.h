@@ -18,7 +18,7 @@
 #define START_STEP 44
 #define END_STEP 725
 #define MIN_VAR 0.05  //how far the mean of the points should be away from the median. rough approximation. 
-#define MAX_MOVEMENT_PER_SCAN 0.4
+#define MAX_MOVEMENT_PER_SCAN 0.13
 #define VELOCITY_THRESHOLD_MIN 0.0014 // heuristic
 #define VELOCITY_THRESHOLD_MAX 0.15
 #define WALL_SLOPE_THRESHOLD 0.5
@@ -53,7 +53,7 @@ class Detector
 	
 		int new_series, num_points_min, num_points_max,num_points,state, zone_counter,zoneBeingTracked;
 		double scan_time;
-		std::vector<float>  point_targets,initial_targets, zone_range_min, zone_range_max,possible_target_range, possible_target_x, possible_target_y, possible_target_time;
+		std::vector<float>  point_targets,initial_targets, zone_range_min, zone_range_max,possible_target_range, possible_target_x, possible_target_y, possible_target_time,previous_zone_distance;
 		std::vector<int> zone_index_min, zone_index_max,possible_target_index;
 		int getZone(float range,int index);
 		void createZone(float mean_range,int mean_index,int zoneBeingTracked);
