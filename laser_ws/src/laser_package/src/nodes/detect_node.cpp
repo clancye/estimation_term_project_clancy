@@ -12,6 +12,7 @@ class SubscribeAndPublish
 			ros::Duration(10).sleep(); // sleep for 10 seconds
 			laser_sub = n.subscribe<sensor_msgs::LaserScan>("/scan",1000,&SubscribeAndPublish::laserCallBack,this);
 			target_pub = n.advertise<sensor_msgs::LaserScan>("/targets",1000); //publish targets to new topic
+			client = n.serviceClient<laser_package::update_tracker>("updateTracker");
 			std::vector<float> filtered_ranges (682);
 			std::vector<float> initial_targets (682);
 			scan_counter = 0;
@@ -26,22 +27,32 @@ class SubscribeAndPublish
 			targets_msg = *msg;
 			target_detector.setState(state);
 			targets_msg.ranges = target_detector.detectTargets(msg->ranges);
-			target_pub.publish(targets_msg);//publish so we can see on RViz
+			
 			if(scan_counter<=10)scan_counter++;//time to gather some possible targets
 			if(scan_counter>10&&target_detector.getNumberOfZones() >0 )state = WAITING_FOR_MOVING_TARGET;//keep initializing if no targets
 			else if (scan_counter > 10 && target_detector.getNumberOfZones() == 0){scan_counter = 0;}//once we have some targets, wait until they move
 			if (target_detector.getZoneBeingTracked() != -1) state = TRACKING;
+			if (state == TRACKING)
+			{
+				srv.request.x = targets_msg.ranges[0];
+				srv.request.y = targets_msg.ranges[1];
+				if(client.call(srv));
+				else{ROS_INFO("ERROR SENDING TARGET COORDINATES TO TRACK NODE");}
 			//ROS_INFO("state = %d\n", state);
+			}
+			else{target_pub.publish(targets_msg);}//publish so we can see on RViz
 		}
 	private:
 	   
 		ros::NodeHandle n; 
 		ros::Publisher target_pub;
 		ros::Subscriber laser_sub;
+		ros::ServiceClient client;
 		int scan_counter, state;//NEW CODE
 		std::vector<float> filtered_ranges, initial_targets;
 		sensor_msgs::LaserScan targets_msg;
 		float time;
+		laser_package::update_tracker srv;
 };//End of class SubscribeAndPublish
 
 

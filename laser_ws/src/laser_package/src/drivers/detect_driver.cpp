@@ -9,7 +9,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	new_series = 1;
 	for (int i = 85;i<650;i++) //iterate through the data
 	{
-		if(ranges[i]<4.8)
+		if(ranges[i]<4.8)//random comment
 		{
 			if(new_series) //if we're moving on to a new potential target, reset variables
 			{
@@ -54,7 +54,11 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								if(zone == zoneBeingTracked)
 								{	
 									createZone(mean_range,mean_index,0);//this will be the first zone that getZone checks. 
-									tracked_targets[mean_index] = mean_range;
+									//tracked_targets[mean_index] = mean_range;
+									float x = getCartesianX(mean_range, mean_index);
+									float y = getCartesianY(mean_range, mean_index);
+									tracked_targets[0] = x;
+									tracked_targets[1] = y;
 								}
 								point_targets = tracked_targets;
 								break;

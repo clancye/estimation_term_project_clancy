@@ -7,6 +7,7 @@
 #include <string.h>
 #include <sensor_msgs/LaserScan.h>
 #include <vector>
+#include "laser_package/update_tracker.h"
 
 
 #define MIN_TARGET_WIDTH 0.1	//10cm

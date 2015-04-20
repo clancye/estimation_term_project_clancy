@@ -7,6 +7,9 @@
 #include <string.h>
 #include <sensor_msgs/LaserScan.h>
 #include <vector>
+#include <geometry_msgs/Point.h>
+#include <geometry_msgs/PointStamped.h>
+#include "laser_package/update_tracker.h"
 
 
 
@@ -16,7 +19,7 @@ class Tracker
 	public:
 	
 		Tracker()
-			://INITIALIZE VECTORS HERE
+			//INITIALIZE VECTORS HERE
 			{
 			}
 	

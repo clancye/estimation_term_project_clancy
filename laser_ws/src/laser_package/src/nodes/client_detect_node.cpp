@@ -8,7 +8,7 @@ class SubscribeAndPublish
 	public:
 		SubscribeAndPublish()
 		{
-			ROS_INFO("Constructing SAP...");
+			ROS_INFO("Constructing SAP for client node...");
 			ros::Duration(10).sleep(); // sleep for 10 seconds
 			laser_sub = n.subscribe<sensor_msgs::LaserScan>("/client_scan",1000,&SubscribeAndPublish::laserCallBack,this);
 			target_pub = n.advertise<sensor_msgs::LaserScan>("/client_targets",1000); //publish targets to new topic
