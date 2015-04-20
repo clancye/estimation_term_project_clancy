@@ -83,14 +83,15 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			}
 		}
 	}
-	if(state == TRACKING)
+	/*if(state == TRACKING)
 	{
 		start_step = zone_index_min[zoneBeingTracked];
 		end_step = zone_index_max[zoneBeingTracked];
 		start_range = zone_range_min[zoneBeingTracked];
 		end_range = zone_range_max[zoneBeingTracked];
-		//ROS_INFO("start_step = %d\n end_step = %d\n start_range = %f\n end_range = %f\n",start_step, end_step,start_range, end_range);
-	}
+	}*/
+	ROS_INFO("start_step = %d\n end_step = %d\n start_range = %f\n end_range = %f\n",start_step, end_step,start_range, end_range);
+	
 	//ROS_INFO("size of point_targets = %d", point_targets.size());
 	return point_targets; //change to filtered_ranges to show extended targets, point_targets for point targets
 }
@@ -146,10 +147,14 @@ void Detector::createZone(float range,int index,int zoneToTrack)
 	}
 	else
 	{
-		zone_index_min[zoneToTrack] = (index - floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
-		zone_index_max[zoneToTrack] = (index + floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
-		zone_range_min[zoneToTrack] = (range - MAX_MOVEMENT_PER_SCAN);
-		zone_range_max[zoneToTrack] = (range + MAX_MOVEMENT_PER_SCAN);
+		//zone_index_min[zoneToTrack] = (index - floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
+		//zone_index_max[zoneToTrack] = (index + floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
+		//zone_range_min[zoneToTrack] = (range - MAX_MOVEMENT_PER_SCAN);
+		//zone_range_max[zoneToTrack] = (range + MAX_MOVEMENT_PER_SCAN);
+		start_step = (index - floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
+		end_step = (index + floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
+		start_range = (range - MAX_MOVEMENT_PER_SCAN);
+		end_range = (range + MAX_MOVEMENT_PER_SCAN);
 	}
 }
 
