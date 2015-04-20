@@ -52,25 +52,25 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								point_targets = initial_targets;
 								break;
 							case TRACKING:
-								zone = getZone(mean_range,mean_index);
-								ROS_INFO("ZONE OF TARGET = %d", zone);
-								if(zone == zoneBeingTracked)
-								{	
+								//zone = getZone(mean_range,mean_index);
+								//ROS_INFO("ZONE OF TARGET = %d", zone);
+								//if(zone == zoneBeingTracked)
+								//{	
 									createZone(mean_range,mean_index,zoneBeingTracked);//this will be the first zone that getZone checks. 
 									//tracked_targets[mean_index] = mean_range;
-									tracked_targets[zone_index_min[zoneBeingTracked]+1] = zone_range_min[zoneBeingTracked];
-									tracked_targets[zone_index_max[zoneBeingTracked]+1] = zone_range_max[zoneBeingTracked];
-									tracked_targets[zone_index_max[zoneBeingTracked]] = zone_range_min[zoneBeingTracked];
-									tracked_targets[zone_index_min[zoneBeingTracked]] = zone_range_max[zoneBeingTracked];
+									//tracked_targets[zone_index_min[zoneBeingTracked]+1] = zone_range_min[zoneBeingTracked];
+									//tracked_targets[zone_index_max[zoneBeingTracked]+1] = zone_range_max[zoneBeingTracked];
+									//tracked_targets[zone_index_max[zoneBeingTracked]] = zone_range_min[zoneBeingTracked];
+									//tracked_targets[zone_index_min[zoneBeingTracked]] = zone_range_max[zoneBeingTracked];
 									float x = getCartesianX(mean_range, mean_index);
 									float y = getCartesianY(mean_range, mean_index);
 									tracked_targets[0] = x;
 									tracked_targets[1] = y;
-								}
-								else{ROS_INFO("NOPE. ZONE = %d\n and zoneBeingTracked = %d",zone,getZoneBeingTracked());}
-								tracked_targets[mean_index] = mean_range;
-								tracked_targets[start_step-2] = mean_range;
-								tracked_targets[end_step+2] = mean_range;
+								//}
+								//else{ROS_INFO("NOPE. ZONE = %d\n and zoneBeingTracked = %d",zone,getZoneBeingTracked());}
+								//tracked_targets[mean_index] = mean_range;
+								//tracked_targets[start_step-2] = mean_range;
+								//tracked_targets[end_step+2] = mean_range;
 								point_targets = tracked_targets;
 								break;
 						}
