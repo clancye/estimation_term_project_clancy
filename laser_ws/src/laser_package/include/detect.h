@@ -10,9 +10,9 @@
 #include "laser_package/update_tracker.h"
 
 
-#define MIN_TARGET_WIDTH 0.1	//10cm
-#define MAX_TARGET_WIDTH 0.7  //60cm
-#define MAX_TARGET_DEPTH 0.7  //40cm
+#define MIN_TARGET_WIDTH 0.1	//
+#define MAX_TARGET_WIDTH 0.7  //
+#define MAX_TARGET_DEPTH 0.7  //
 #define THETA_DELTA 0.006283185 //angular resolution of lidar in radians
 #define INDEX_SHIFT  127 //44 + (pi/6)*THETA_DELTA
 #define START_STEP 44
