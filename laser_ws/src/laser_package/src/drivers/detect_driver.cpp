@@ -46,7 +46,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								break;
 							case WAITING_FOR_MOVING_TARGET:
 								zone = getZone(mean_range,mean_index);
-								if(zone != -1)updateVelocity(zone,mean_range, mean_index,scan_time);
+								if(zone != -1)updateZone(zone,mean_range, mean_index,scan_time);
 								point_targets = initial_targets;
 								break;
 							case TRACKING:
@@ -87,10 +87,17 @@ int Detector::getState()
 
 int Detector::getZone(float range,int index)
 {
-	for(int i = 0; i<zone_counter;i++)
+	if(zoneBeingTracked==-1)
 	{
-		if(range>zone_range_min[i]&&range<zone_range_max[i]&&index<zone_index_max[i]&&index>zone_index_min[i]) return i;
-		
+		for(int i = 0; i<zone_counter;i++)
+		{
+			if(range>zone_range_min[i]&&range<zone_range_max[i]&&index<zone_index_max[i]&&index>zone_index_min[i]) return i;
+			
+		}
+	}
+	else
+	{
+		if(range>zone_range_min[zoneBeingTracked]&&range<zone_range_max[zoneBeingTracked]&&index<zone_index_max[zoneBeingTracked]&&index>zone_index_min[zoneBeingTracked]) return zoneBeingTracked;
 	}
 	return -1;
 }
@@ -138,6 +145,14 @@ void Detector::updateVelocity(int zone,float range, int index, double time)
 		if(zoneBeingTracked == -1)trackZone(zone);
 		//ROS_INFO("distance = %f\n start time = %f \n now_time %f\n VELOCITY FOR ZONE %d = %f\n", distance, possible_target_time[zone],scan_time,zone, velocity);
 	}
+}
+
+void Detector::updateZone(int zone, float range, int index, double time)
+{
+	float tempX = getCartesianX(range, index);
+	float tempY = getCartesianY(range, index);
+	float distance = getDistance(tempX, tempY, possible_target_x[zone], possible_target_y[zone]);
+	if(distance>ZONE_DISTANCE_THRESHOLD&&zoneBeingTracked==-1)trackZone(zone);
 }
 
 void Detector::setScanTime()
