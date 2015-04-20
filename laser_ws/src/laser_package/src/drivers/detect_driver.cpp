@@ -11,7 +11,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	{
 		if(ranges[i]<end_range&&ranges[i]>start_range)//adapt to range of target
 		{
-			ROS_INFO("GOT A POINT");
+			ROS_INFO("GOT A POINT %d", i);
 			if(new_series) //if we're moving on to a new potential target, reset variables
 			{
 				place_keeper = i;
