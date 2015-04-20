@@ -40,7 +40,7 @@ class SubscribeAndPublish
 				else{ROS_INFO("ERROR SENDING TARGET COORDINATES TO TRACK NODE \n \n x,y = [%f,%f]", srv.request.x, srv.request.y);}
 			//ROS_INFO("state = %d\n", state);
 			}
-			else{target_pub.publish(targets_msg);}//publish so we can see on RViz
+			target_pub.publish(targets_msg);//publish so we can see on RViz
 		}
 	private:
 	   
