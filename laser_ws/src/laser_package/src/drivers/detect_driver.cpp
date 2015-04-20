@@ -7,7 +7,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	std::vector<float> tracked_targets (682);
 	int mean_index,last_index,place_keeper;
 	new_series = 1;
-	for (int i = 85;i<650;i++) //iterate through the data
+	for (int i = start_step;i<end_step;i++) //iterate through the data
 	{
 		if(ranges[i]<4.8)//random comment
 		{
@@ -59,6 +59,8 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 									tracked_targets[zone_index_max[zoneBeingTracked]+1] = zone_range_max[zoneBeingTracked];
 									tracked_targets[zone_index_max[zoneBeingTracked]] = zone_range_min[zoneBeingTracked];
 									tracked_targets[zone_index_min[zoneBeingTracked]] = zone_range_max[zoneBeingTracked];
+									start_step = zone_index_min[zoneBeingTracked];
+									end_step = zone_index_max[zoneBeingTracked];
 									float x = getCartesianX(mean_range, mean_index);
 									float y = getCartesianY(mean_range, mean_index);
 									tracked_targets[0] = x;

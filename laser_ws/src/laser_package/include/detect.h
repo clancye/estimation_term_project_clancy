@@ -38,6 +38,8 @@ class Detector
 			{
 				state = INITIALIZING;
 				zoneBeingTracked = -1;
+				start_step = 85;
+				end_step = 650;
 			}
 	
 		
@@ -51,7 +53,7 @@ class Detector
 	
 	private:
 	
-		int new_series, num_points_min, num_points_max,num_points,state, zone_counter,zoneBeingTracked;
+		int new_series, num_points_min, num_points_max,num_points,state, zone_counter,zoneBeingTracked, start_step, end_step;
 		double scan_time;
 		std::vector<float>  point_targets,initial_targets, zone_range_min, zone_range_max,possible_target_range, possible_target_x, possible_target_y, possible_target_time,previous_zone_distance;
 		std::vector<int> zone_index_min, zone_index_max,possible_target_index;
