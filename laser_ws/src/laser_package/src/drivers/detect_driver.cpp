@@ -89,6 +89,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 		start_range = zone_range_min[zoneBeingTracked];
 		end_range = zone_range_max[zoneBeingTracked];
 	}*/
+	ROS_INFO("zoneBeingTracked = %d", zoneBeingTracked);
 	ROS_INFO("start_step = %d\n end_step = %d\n start_range = %f\n end_range = %f\n",start_step, end_step,start_range, end_range);
 	
 	//ROS_INFO("size of point_targets = %d", point_targets.size());
