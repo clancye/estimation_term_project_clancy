@@ -1,6 +1,6 @@
 <launch>
     <node name="client_urg" pkg="urg_node" type="urg_node">
-        <param name="serial_port" type="string" value="/dev/ttyACM1" />
+        <param name="serial_port" type="string" value="/dev/ttyACM0" />
         <remap from="scan" to="client_scan" />
     </node>
     <node name="client_tracker" pkg="laser_package" type="track_node" output="screen"></node>
