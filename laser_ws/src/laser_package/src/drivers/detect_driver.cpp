@@ -152,7 +152,8 @@ void Detector::updateZone(int zone, float range, int index, double time)
 	float tempX = getCartesianX(range, index);
 	float tempY = getCartesianY(range, index);
 	float distance = getDistance(tempX, tempY, possible_target_x[zone], possible_target_y[zone]);
-	if(distance>ZONE_DISTANCE_THRESHOLD&&zoneBeingTracked==-1)trackZone(zone);
+	ROS_INFO("Update zone distance = %f\n", distance);
+	if(distance>ZONE_DISTANCE_MIN_THRESHOLD&&zoneBeingTracked==-1)trackZone(zone);
 }
 
 void Detector::setScanTime()
