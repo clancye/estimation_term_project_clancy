@@ -7,9 +7,9 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	std::vector<float> tracked_targets (682);
 	int mean_index,last_index,place_keeper;
 	new_series = 1;
-	for (int i = start_step;i<end_step;i++) //iterate through the data
+	for (int i = start_step;i<end_step;i++) //adapt to angle of target
 	{
-		if(ranges[i]<4.8)//random comment
+		if(ranges[i]<end_range&&ranges[i]>start_range)//adapt to range of target
 		{
 			if(new_series) //if we're moving on to a new potential target, reset variables
 			{
@@ -81,6 +81,8 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	{
 		start_step = zone_index_min[zoneBeingTracked];
 		end_step = zone_index_max[zoneBeingTracked];
+		start_range = zone_range_min[zoneBeingTracked];
+		end_range = zone_range_max[zoneBeingTracked];
 		ROS_INFO("start_step = %d\n end_step = %d\n",start_step, end_step);
 	}
 	//ROS_INFO("size of point_targets = %d", point_targets.size());

@@ -40,6 +40,8 @@ class Detector
 				zoneBeingTracked = -1;
 				start_step = 85;
 				end_step = 650;
+				start_range = 0.0;
+				end_range = 4.8;
 			}
 	
 		
@@ -55,6 +57,7 @@ class Detector
 	
 		int new_series, num_points_min, num_points_max,num_points,state, zone_counter,zoneBeingTracked, start_step, end_step;
 		double scan_time;
+		float start_range, end_range;
 		std::vector<float>  point_targets,initial_targets, zone_range_min, zone_range_max,possible_target_range, possible_target_x, possible_target_y, possible_target_time,previous_zone_distance;
 		std::vector<int> zone_index_min, zone_index_max,possible_target_index;
 		int getZone(float range,int index);
