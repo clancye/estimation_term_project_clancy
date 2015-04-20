@@ -51,7 +51,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								break;
 							case TRACKING:
 								zone = getZone(mean_range,mean_index);
-								ROS_INFO("ZONE BEING TRACKED = %d", zoneBeingTracked);
+								ROS_INFO("ZONE OF TARGET = %d", zone);
 								if(zone == zoneBeingTracked)
 								{	
 									createZone(mean_range,mean_index,zoneBeingTracked);//this will be the first zone that getZone checks. 
