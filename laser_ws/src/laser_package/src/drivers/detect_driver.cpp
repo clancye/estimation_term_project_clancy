@@ -25,6 +25,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			}
 			else //if we come across a point that is too far from the first point
 			{
+				ROS_INFO("REACHED MAX TARGET_DEPTH numpoints= %d", num_points);
 				last_index = place_keeper+num_points-1;
 				if(num_points>num_points_min&&num_points<num_points_max) //check if num_points makes sense
 				{
