@@ -53,7 +53,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								zone = getZone(mean_range,mean_index);
 								if(zone == zoneBeingTracked)
 								{	
-									createZone(mean_range,mean_index,0);//this will be the first zone that getZone checks. 
+									createZone(mean_range,mean_index,zoneBeingTracked);//this will be the first zone that getZone checks. 
 									tracked_targets[mean_index] = mean_range;
 									float x = getCartesianX(mean_range, mean_index);
 									float y = getCartesianY(mean_range, mean_index);
