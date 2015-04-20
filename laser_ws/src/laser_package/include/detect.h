@@ -21,6 +21,7 @@
 #define VELOCITY_THRESHOLD_MIN 0.0014 // heuristic
 #define VELOCITY_THRESHOLD_MAX 0.15
 #define WALL_SLOPE_THRESHOLD 0.5
+#define WALL_DISTANCE_THRESHOLD 0.5
 #define INITIALIZING 1
 #define WAITING_FOR_MOVING_TARGET 2
 #define TRACKING 3
@@ -59,6 +60,7 @@ class Detector
 		void trackZone(int zone);
 		bool isThisAWall(float first_x, float first_y, float mean_x, float mean_y, float last_x, float last_y);
 		float getSlope(float x_1, float y_1, float x_2, float y_2);
+		float getDistance(float x_1, float y_1, float x_2, float y_2);
 		
 };
 

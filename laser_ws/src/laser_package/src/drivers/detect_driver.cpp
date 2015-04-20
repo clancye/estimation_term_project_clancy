@@ -34,14 +34,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 						{
 							int zone;
 							case INITIALIZING:
-								float first_x,first_y,mean_x,mean_y,last_x,last_y;
-								first_x = getCartesianX(ranges[place_keeper], place_keeper);
-								first_y = getCartesianY(ranges[place_keeper], place_keeper);
-								mean_x = getCartesianX(mean_range,mean_index);
-								mean_y = getCartesianY(mean_range,mean_index);
-								last_x = getCartesianX(ranges[last_index], last_index);
-								last_y = getCartesianY(ranges[last_index], last_index);
-								if(!isThisAWall(first_x, first_y, mean_x,mean_y, last_x,last_y))
+								if(abs(ranges[place_keeper-1]-ranges[place_keeper])>WALL_DISTANCE_THRESHOLD&&abs(ranges[last_index+1]-ranges[last_index])>WALL_DISTANCE_THRESHOLD);
 								{
 									if(getZone(mean_range,mean_index)==-1) 
 									{
@@ -185,4 +178,9 @@ bool Detector::isThisAWall(float first_x, float first_y, float mean_x, float mea
 float Detector::getSlope(float x_1, float y_1, float x_2, float y_2)
 {
 	return ((y_1-y_2)/(x_1-x_2));
+}
+
+float Detector::getDistance(float x_1, float y_1, float x_2, float y_2)
+{
+	return sqrt(pow((x_2-x_2),2)+pow((y_1-y_2),2));
 }
