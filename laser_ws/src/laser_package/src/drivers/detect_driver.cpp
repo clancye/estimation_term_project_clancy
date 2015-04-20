@@ -34,7 +34,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 						{
 							int zone;
 							case INITIALIZING:
-								if(abs(ranges[place_keeper-1]-ranges[place_keeper])>WALL_DISTANCE_THRESHOLD&&abs(ranges[last_index+1]-ranges[last_index])>WALL_DISTANCE_THRESHOLD);
+								if(abs(ranges[place_keeper-1]-ranges[place_keeper+1])>WALL_DISTANCE_THRESHOLD&&abs(ranges[last_index+1]-ranges[last_index-1])>WALL_DISTANCE_THRESHOLD);
 								{
 									if(getZone(mean_range,mean_index)==-1) 
 									{
