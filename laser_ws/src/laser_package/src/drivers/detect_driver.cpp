@@ -59,8 +59,6 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 									tracked_targets[zone_index_max[zoneBeingTracked]+1] = zone_range_max[zoneBeingTracked];
 									tracked_targets[zone_index_max[zoneBeingTracked]] = zone_range_min[zoneBeingTracked];
 									tracked_targets[zone_index_min[zoneBeingTracked]] = zone_range_max[zoneBeingTracked];
-									start_step = zone_index_min[zoneBeingTracked];
-									end_step = zone_index_max[zoneBeingTracked];
 									float x = getCartesianX(mean_range, mean_index);
 									float y = getCartesianY(mean_range, mean_index);
 									tracked_targets[0] = x;
@@ -77,6 +75,8 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			}
 		}
 	}
+	start_step = zone_index_min[zoneBeingTracked];
+	end_step = zone_index_max[zoneBeingTracked];
 	//ROS_INFO("size of point_targets = %d", point_targets.size());
 	return point_targets; //change to filtered_ranges to show extended targets, point_targets for point targets
 }
