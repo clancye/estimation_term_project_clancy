@@ -56,7 +56,6 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								//ROS_INFO("ZONE OF TARGET = %d", zone);
 								if(zone == zoneBeingTracked)
 								{	
-									createZone(mean_range,mean_index,zoneBeingTracked);//this will be the first zone that getZone checks. 
 									tracked_targets[mean_index] = mean_range;
 									//tracked_targets[zone_index_min[zoneBeingTracked]+1] = zone_range_min[zoneBeingTracked];
 									//tracked_targets[zone_index_max[zoneBeingTracked]+1] = zone_range_max[zoneBeingTracked];
@@ -83,8 +82,8 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			}
 		}
 	}
-	/*if(state == TRACKING)
-	{
+	if(state == TRACKING)createZone(mean_range,mean_index,zoneBeingTracked);//this will be the first zone that getZone checks. 
+	/*{
 		start_step = zone_index_min[zoneBeingTracked];
 		end_step = zone_index_max[zoneBeingTracked];
 		start_range = zone_range_min[zoneBeingTracked];
