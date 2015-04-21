@@ -9,12 +9,12 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	new_series = 1;
 	for (int i = start_index;i<end_index;i++) //adapt to angle of target
 	{
-		if(ranges[i]<end_range&&ranges[i]>start_range)//adapt to range of target
+		if(ranges[i]<4.8&&ranges[i]>0)//adapt to range of target
 		{
-			ROS_INFO("GOT A POINT %d", i-start_index);
+			//ROS_INFO("GOT A POINT %d", i-start_index);
 			if(new_series) //if we're moving on to a new potential target, reset variables
 			{
-				ROS_INFO("NEW SERIES WOOT");
+			//	ROS_INFO("NEW SERIES WOOT");
 				place_keeper = i;
 				num_points_min = floor(MIN_TARGET_WIDTH/(ranges[place_keeper]*THETA_DELTA));
 				num_points_max = floor(MAX_TARGET_WIDTH/(ranges[place_keeper]*THETA_DELTA));
@@ -25,7 +25,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			{
 				num_points++; //then increment num_points
 			}
-			else //if we come across a point that is too far from the first point
+			else//if we come across a point that is too far from the first point
 			{
 				ROS_INFO("REACHED MAX TARGET_DEPTH numpoints= %d", num_points);
 				last_index = place_keeper+num_points-1;
@@ -67,8 +67,8 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 									tracked_targets[mean_index] = mean_range;
 									createZone(mean_range,mean_index,zoneBeingTracked);
 									if(start_index>0)tracked_targets[start_index+1] = start_range;
-									if(end_index>681)tracked_targets[end_index+1] = end_range;
-									if(end_index>681)tracked_targets[end_index] = start_range;
+									if(end_index<681)tracked_targets[end_index+1] = end_range;
+									if(end_index<681)tracked_targets[end_index] = start_range;
 									if(start_index>0)tracked_targets[start_index] = end_range;
 									
 									float x = getCartesianX(mean_range, mean_index);
