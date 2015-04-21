@@ -27,7 +27,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			}
 			else //if we come across a point that is too far from the first point
 			{
-				ROS_INFO("REACHED MAX TARGET_DEPTH numpoints= %d", num_points);
+				//ROS_INFO("REACHED MAX TARGET_DEPTH numpoints= %d", num_points);
 				last_index = place_keeper+num_points-1;
 				
 				if(num_points>num_points_min&&num_points<num_points_max) //check if num_points makes sense
@@ -61,7 +61,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								break;
 							case TRACKING:
 								zone = getZone(mean_range,mean_index);
-								ROS_INFO("ZONE OF TARGET = %d", zone);
+								//ROS_INFO("ZONE OF TARGET = %d", zone);
 								if(zone == zoneBeingTracked)
 								{	
 									tracked_targets[mean_index] = mean_range;
@@ -154,7 +154,7 @@ void Detector::createZone(float range,int index,int zoneToTrack)
 		//ROS_INFO("zone_index_min[%d] = %d\n zone_index_max[%d] = %d\n zone_range_min[%d] = %f, zone_range_max[%d] = %f", i,zone_index_min[i],i,zone_index_max[i],i,zone_range_min[i],i,zone_range_max[i]);
 		//ROS_INFO("possible target range and index = [%f,%d]", possible_target_range[zone_counter],possible_target_index[zone_counter]);
 		//ROS_INFO("possible target [x,y] = [%f,%f]", possible_target_x[zone_counter],possible_target_y[zone_counter]);
-		ROS_INFO("TIME OF AQUISITION %f \n", possible_target_time[zone_counter]);
+		//ROS_INFO("TIME OF AQUISITION %f \n", possible_target_time[zone_counter]);
 		zone_counter++;
 	}
 	else
@@ -192,7 +192,7 @@ void Detector::updateZone(int zone, float range, int index, double time)
 	float distance = getDistance(tempX, tempY, possible_target_x[zone], possible_target_y[zone]);
 	previous_zone_distance[zone] = distance - previous_zone_distance[zone];
 	//previous_zone_distance[zone] = distance;
-	ROS_INFO("Update zone distance = %f\n", distance);
+	//ROS_INFO("Update zone distance = %f\n", distance);
 	if(distance>ZONE_DISTANCE_MIN_THRESHOLD&&previous_zone_distance[zone]<MAX_MOVEMENT_PER_SCAN&&zoneBeingTracked==-1)trackZone(zone);
 }
 
