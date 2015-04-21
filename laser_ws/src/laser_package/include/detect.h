@@ -12,13 +12,13 @@
 
 #define MIN_TARGET_WIDTH 0.1	//
 #define MAX_TARGET_WIDTH 0.7  //
-#define MAX_TARGET_DEPTH 0.5  //
+#define MAX_TARGET_DEPTH 0.3  //
 #define THETA_DELTA 0.006283185 //angular resolution of lidar in radians
 #define INDEX_SHIFT  127 //44 + (pi/6)*THETA_DELTA
 #define START_STEP 44
 #define END_STEP 725
 #define MIN_VAR 0.05  //how far the mean of the points should be away from the median. rough approximation. 
-#define MAX_MOVEMENT_PER_SCAN 0.8
+#define MAX_MOVEMENT_PER_SCAN 0.5
 #define VELOCITY_THRESHOLD_MIN 0.0014 // heuristic
 #define VELOCITY_THRESHOLD_MAX 0.15
 #define WALL_SLOPE_THRESHOLD 0.5
