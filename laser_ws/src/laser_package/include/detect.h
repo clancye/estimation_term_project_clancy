@@ -65,7 +65,7 @@ class Detector
 		void updateVelocity(int zone, float range, int index, double time);
 		float getCartesianX(float range, int index);
 		float getCartesianY(float range, int index);
-		void trackZone(int zone);
+		void trackZone(int zone, float range, int index);
 		bool isThisAWall(float first_x, float first_y, float mean_x, float mean_y, float last_x, float last_y);
 		float getSlope(float x_1, float y_1, float x_2, float y_2);
 		float getDistance(float x_1, float y_1, float x_2, float y_2);

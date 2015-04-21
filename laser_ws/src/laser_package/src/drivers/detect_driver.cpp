@@ -7,7 +7,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	std::vector<float> tracked_targets (682);
 	int mean_index,last_index,place_keeper;
 	new_series = 1;
-	for (int i = 250;i<450;i++) //adapt to angle of target
+	for (int i = start_index;i<end_index;i++) //adapt to angle of target
 	{
 		if(ranges[i]<end_range&&ranges[i]>start_range)//adapt to range of target
 		{
@@ -34,8 +34,8 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 				{
 					mean_index = place_keeper + floor(num_points/2);
 					mean_range = ranges[mean_index];
-					tracked_targets[place_keeper] = ranges[place_keeper];
-					tracked_targets[last_index] = ranges[last_index];
+					//tracked_targets[place_keeper] = ranges[place_keeper];
+					//tracked_targets[last_index] = ranges[last_index];
 						switch(state)
 						{
 							int zone;
@@ -48,7 +48,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 										initial_targets[mean_index] = ranges[mean_index];
 										//initial_targets[place_keeper-4] = ranges[place_keeper-4];
 										//initial_targets[place_keeper+1] = ranges[place_keeper+1];
-										float distance1 = abs(ranges[place_keeper-4]-ranges[place_keeper+1]);
+										//float distance1 = abs(ranges[place_keeper-4]-ranges[place_keeper+1]);
 										//ROS_INFO("distance = %f", distance1);
 										point_targets = initial_targets;
 									}
@@ -77,9 +77,9 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 									tracked_targets[1] = y;
 								}
 								//else{ROS_INFO("NOPE. ZONE = %d\n and zoneBeingTracked = %d",zone,getZoneBeingTracked());}
-								tracked_targets[mean_index] = mean_range;
-								tracked_targets[start_index-2] = mean_range;
-								tracked_targets[end_index+2] = mean_range;
+								//tracked_targets[mean_index] = mean_range;
+								//tracked_targets[start_index-2] = mean_range;
+								//tracked_targets[end_index+2] = mean_range;
 								point_targets = tracked_targets;
 								break;
 						}
@@ -193,7 +193,7 @@ void Detector::updateZone(int zone, float range, int index, double time)
 	previous_zone_distance[zone] = distance - previous_zone_distance[zone];
 	//previous_zone_distance[zone] = distance;
 	//ROS_INFO("Update zone distance = %f\n", distance);
-	if(distance>ZONE_DISTANCE_MIN_THRESHOLD&&previous_zone_distance[zone]<MAX_MOVEMENT_PER_SCAN&&zoneBeingTracked==-1)trackZone(zone);
+	if(distance>ZONE_DISTANCE_MIN_THRESHOLD&&distance<MAX_MOVEMENT_PER_SCAN&&zoneBeingTracked==-1)trackZone(zone,range, index);
 }
 
 void Detector::setScanTime()
@@ -217,8 +217,9 @@ float Detector::getCartesianY(float range, int index)
 	return range*sin(THETA_DELTA*(index - INDEX_SHIFT));
 }
 
-void Detector::trackZone(int zone)
+void Detector::trackZone(int zone, float range, int index)
 {
+	createZone(range, index, zone);
 	zoneBeingTracked = zone;
 }
 
