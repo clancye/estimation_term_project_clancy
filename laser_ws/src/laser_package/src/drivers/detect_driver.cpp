@@ -73,8 +73,8 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 									
 									float x = getCartesianX(mean_range, mean_index);
 									float y = getCartesianY(mean_range, mean_index);
-									tracked_targets[0] = x;
-									tracked_targets[1] = y;
+									//tracked_targets[0] = x;
+									//tracked_targets[1] = y;
 								}
 								//else{ROS_INFO("NOPE. ZONE = %d\n and zoneBeingTracked = %d",zone,getZoneBeingTracked());}
 								//tracked_targets[mean_index] = mean_range;
