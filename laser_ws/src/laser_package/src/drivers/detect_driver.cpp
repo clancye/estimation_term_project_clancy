@@ -58,10 +58,10 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								{	
 									tracked_targets[mean_index] = mean_range;
 									createZone(mean_range,mean_index,zoneBeingTracked);
-									tracked_targets[zone_index_min[zoneBeingTracked]+1] = start_range;
-									tracked_targets[zone_index_max[zoneBeingTracked]+1] = end_range;
-									tracked_targets[zone_index_max[zoneBeingTracked]] = start_range;
-									tracked_targets[zone_index_min[zoneBeingTracked]] = end_range;
+									tracked_targets[start_index+1] = start_range;
+									tracked_targets[end_index+1] = end_range;
+									tracked_targets[end_index] = start_range;
+									tracked_targets[start_index] = end_range;
 									
 									float x = getCartesianX(mean_range, mean_index);
 									float y = getCartesianY(mean_range, mean_index);
@@ -85,12 +85,12 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 		}
 	}
 	//if(state == TRACKING)createZone(mean_range,mean_index,zoneBeingTracked);//this will be the first zone that getZone checks. 
-	/*{
+	{
 		start_index = zone_index_min[zoneBeingTracked];
 		end_index = zone_index_max[zoneBeingTracked];
 		start_range = zone_range_min[zoneBeingTracked];
 		end_range = zone_range_max[zoneBeingTracked];
-	}*/
+	}
 	ROS_INFO("zoneBeingTracked = %d", zoneBeingTracked);
 	ROS_INFO("start_step = %d\n end_step = %d\n start_range = %f\n end_range = %f\n",start_index, end_index,start_range, end_range);
 	
