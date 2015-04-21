@@ -22,12 +22,8 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 				new_series = 0;	
 				num_points = 1;
 			}
-			if(state==TRACKING)
-			{
-				tracked_targets[i] = ranges[i];
-				num_points++;
-			}
-			if(state!= TRACKING&&(abs(ranges[i+1]-ranges[place_keeper])<MAX_TARGET_DEPTH)) //if the target is reasonably deep
+
+			if(abs(ranges[i+1]-ranges[place_keeper])<MAX_TARGET_DEPTH) //if the target is reasonably deep
 			{
 				num_points++; //then increment num_points
 			}
