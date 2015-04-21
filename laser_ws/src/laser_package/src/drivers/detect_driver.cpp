@@ -12,7 +12,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 		if(ranges[i]<end_range&&ranges[i]>start_range)//adapt to range of target
 		{
 			//ROS_INFO("GOT A POINT %d", i-start_index);
-			if(state==TRACKING)tracked_targets[i] = ranges[i];
+			
 			if(new_series) //if we're moving on to a new potential target, reset variables
 			{
 			//	ROS_INFO("NEW SERIES WOOT");
@@ -21,6 +21,11 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 				num_points_max = floor(MAX_TARGET_WIDTH/(ranges[place_keeper]*THETA_DELTA));
 				new_series = 0;	
 				num_points = 1;
+			}
+			if(state==TRACKING)
+			{
+				tracked_targets[i] = ranges[i];
+				num_points++;
 			}
 			if(state!= TRACKING&&(abs(ranges[i+1]-ranges[place_keeper])<MAX_TARGET_DEPTH)) //if the target is reasonably deep
 			{
