@@ -29,8 +29,9 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 				num_points++; //then increment num_points
 				ROS_INFO("NUM_POINTS = %d", num_points);
 			}
+			else{ROS_INFO("YOU'RE OUTTA YOUR ELEMENT DONNY");}
 			
-			else if (state!= TRACKING || getZone(ranges[i+4],i+4)!=zoneBeingTracked)//if we come across a point that is too far from the first point
+			if (state!= TRACKING || getZone(ranges[i+4],i+4)!=zoneBeingTracked)//if we come across a point that is too far from the first point
 			{
 				ROS_INFO("REACHED MAX TARGET_DEPTH numpoints= %d", num_points);
 				last_index = place_keeper+num_points-1;
