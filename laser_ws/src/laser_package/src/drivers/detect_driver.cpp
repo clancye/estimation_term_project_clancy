@@ -58,19 +58,19 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								{	
 									tracked_targets[mean_index] = mean_range;
 									createZone(mean_range,mean_index,zoneBeingTracked);
-									//tracked_targets[zone_index_min[zoneBeingTracked]+1] = zone_range_min[zoneBeingTracked];
-									//tracked_targets[zone_index_max[zoneBeingTracked]+1] = zone_range_max[zoneBeingTracked];
-									//tracked_targets[zone_index_max[zoneBeingTracked]] = zone_range_min[zoneBeingTracked];
-									//tracked_targets[zone_index_min[zoneBeingTracked]] = zone_range_max[zoneBeingTracked];
+									tracked_targets[zone_index_min[zoneBeingTracked]+1] = zone_range_min[zoneBeingTracked];
+									tracked_targets[zone_index_max[zoneBeingTracked]+1] = zone_range_max[zoneBeingTracked];
+									tracked_targets[zone_index_max[zoneBeingTracked]] = zone_range_min[zoneBeingTracked];
+									tracked_targets[zone_index_min[zoneBeingTracked]] = zone_range_max[zoneBeingTracked];
 									float x = getCartesianX(mean_range, mean_index);
 									float y = getCartesianY(mean_range, mean_index);
 									tracked_targets[0] = x;
 									tracked_targets[1] = y;
 								}
 								//else{ROS_INFO("NOPE. ZONE = %d\n and zoneBeingTracked = %d",zone,getZoneBeingTracked());}
-								//tracked_targets[mean_index] = mean_range;
-								//tracked_targets[start_step-2] = mean_range;
-								//tracked_targets[end_step+2] = mean_range;
+								tracked_targets[mean_index] = mean_range;
+								tracked_targets[start_step-2] = mean_range;
+								tracked_targets[end_step+2] = mean_range;
 								point_targets = tracked_targets;
 								break;
 						}
