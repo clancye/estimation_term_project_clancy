@@ -11,10 +11,10 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	{
 		if(ranges[i]<end_range&&ranges[i]>start_range)//adapt to range of target
 		{
-			//ROS_INFO("GOT A POINT %d", i-start_index);
+			ROS_INFO("GOT A POINT %d", i-start_index);
 			if(new_series) //if we're moving on to a new potential target, reset variables
 			{
-				//ROS_INFO("NEW SERIES WOOT");
+				ROS_INFO("NEW SERIES WOOT");
 				place_keeper = i;
 				num_points_min = floor(MIN_TARGET_WIDTH/(ranges[place_keeper]*THETA_DELTA));
 				num_points_max = floor(MAX_TARGET_WIDTH/(ranges[place_keeper]*THETA_DELTA));
@@ -27,7 +27,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			}
 			else //if we come across a point that is too far from the first point
 			{
-				//ROS_INFO("REACHED MAX TARGET_DEPTH numpoints= %d", num_points);
+				ROS_INFO("REACHED MAX TARGET_DEPTH numpoints= %d", num_points);
 				last_index = place_keeper+num_points-1;
 				
 				if(num_points>num_points_min&&num_points<num_points_max) //check if num_points makes sense
@@ -61,7 +61,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								break;
 							case TRACKING:
 								zone = getZone(mean_range,mean_index);
-								//ROS_INFO("ZONE OF TARGET = %d", zone);
+								ROS_INFO("ZONE OF TARGET = %d", zone);
 								if(zone == zoneBeingTracked)
 								{	
 									tracked_targets[mean_index] = mean_range;
@@ -86,13 +86,13 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 					
 					
 				}
-				//else{ROS_INFO("Target too big or too small");}
+				else{ROS_INFO("Target too big or too small");}
 				num_points = 0;
 				new_series = 1;//start looking for more targets
 			}
 			
 		}
-		//else{ROS_INFO("range is too large");}
+		else{ROS_INFO("range is too large");}
 	}
 	if(state == TRACKING)//this will be the first zone that getZone checks. 
 	{
@@ -102,7 +102,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 		end_range = zone_range_max[zoneBeingTracked];
 	}
 	//ROS_INFO("zoneBeingTracked = %d", zoneBeingTracked);
-	//ROS_INFO("start_step = %d\n end_step = %d\n start_range = %f\n end_range = %f\n",start_index, end_index,start_range, end_range);
+	ROS_INFO("start_step = %d\n end_step = %d\n start_range = %f\n end_range = %f\n",start_index, end_index,start_range, end_range);
 	
 	//ROS_INFO("size of point_targets = %d", point_targets.size());
 	return point_targets; //change to filtered_ranges to show extended targets, point_targets for point targets
