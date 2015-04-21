@@ -23,13 +23,16 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 				num_points = 1;
 			}
 
-			if(abs(ranges[i+1]-ranges[place_keeper])<MAX_TARGET_DEPTH) //if the target is reasonably deep
+			if(state!=TRACKING&&abs(ranges[i+1]-ranges[place_keeper])<MAX_TARGET_DEPTH) //if the target is reasonably deep
 			{
 				//tracked_targets[i] = ranges[i];
 				num_points++; //then increment num_points
 				ROS_INFO("NUM_POINTS = %d", num_points);
 			}
-			
+			else if(state == TRACKING&&getZone(ranges[i+2],i+2)!=zoneBeingTracked)
+			{
+				num_points++;
+			}
 			else//if we come across a point that is too far from the first point
 			{
 				ROS_INFO("REACHED MAX TARGET_DEPTH numpoints= %d", num_points);
