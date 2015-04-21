@@ -38,8 +38,8 @@ class Detector
 			{
 				state = INITIALIZING;
 				zoneBeingTracked = -1;
-				start_step = 85;
-				end_step = 650;
+				start_index = 85;
+				end_index = 650;
 				start_range = 0.0;
 				end_range = 4.8;
 			}
