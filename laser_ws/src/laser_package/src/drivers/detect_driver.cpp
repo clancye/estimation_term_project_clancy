@@ -23,7 +23,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 				num_points = 1;
 			}
 
-			if(abs(ranges[i+3]-ranges[place_keeper])<MAX_TARGET_DEPTH) //if the target is reasonably deep
+			if(abs(ranges[i+1]-ranges[place_keeper])<MAX_TARGET_DEPTH) //if the target is reasonably deep
 			{
 				//tracked_targets[i] = ranges[i];
 				num_points++; //then increment num_points
