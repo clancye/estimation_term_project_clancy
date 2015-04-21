@@ -7,7 +7,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	std::vector<float> tracked_targets (682);
 	int mean_index,last_index,place_keeper;
 	new_series = 1;
-	for (int i = start_step;i<end_step;i++) //adapt to angle of target
+	for (int i = 85;i<650;i++) //adapt to angle of target
 	{
 		if(ranges[i]<end_range&&ranges[i]>start_range)//adapt to range of target
 		{
