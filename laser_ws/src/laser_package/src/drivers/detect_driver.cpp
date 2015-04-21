@@ -14,7 +14,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			//ROS_INFO("GOT A POINT %d", i-start_index);
 			if(new_series) //if we're moving on to a new potential target, reset variables
 			{
-				ROS_INFO("NEW SERIES WOOT");
+				//ROS_INFO("NEW SERIES WOOT");
 				place_keeper = i;
 				num_points_min = floor(MIN_TARGET_WIDTH/(ranges[place_keeper]*THETA_DELTA));
 				num_points_max = floor(MAX_TARGET_WIDTH/(ranges[place_keeper]*THETA_DELTA));
@@ -27,12 +27,15 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			}
 			else //if we come across a point that is too far from the first point
 			{
-				//ROS_INFO("REACHED MAX TARGET_DEPTH numpoints= %d", num_points);
+				ROS_INFO("REACHED MAX TARGET_DEPTH numpoints= %d", num_points);
 				last_index = place_keeper+num_points-1;
+				
 				if(num_points>num_points_min&&num_points<num_points_max) //check if num_points makes sense
 				{
 					mean_index = place_keeper + floor(num_points/2);
 					mean_range = ranges[mean_index];
+					tracked_targets[place_keeper] = ranges[place_keeper];
+					tracked_targets[last_index] = ranges[last_index];
 						switch(state)
 						{
 							int zone;
