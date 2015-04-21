@@ -11,7 +11,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	{
 		if(ranges[i]<end_range&&ranges[i]>start_range)//adapt to range of target
 		{
-			//ROS_INFO("GOT A POINT %d", i-start_index);
+			ROS_INFO("GOT A POINT %d", i-start_index);
 			if(new_series) //if we're moving on to a new potential target, reset variables
 			{
 				place_keeper = i;
@@ -84,7 +84,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			}
 			
 		}
-		else{ROS_INFO("points_not_in_zone");}
+		//else{ROS_INFO("range is too large");}
 	}
 	//if(state == TRACKING)createZone(mean_range,mean_index,zoneBeingTracked);//this will be the first zone that getZone checks. 
 	/*{
