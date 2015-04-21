@@ -94,13 +94,13 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 		}
 		//else{ROS_INFO("range is too large");}
 	}
-	//if(state == TRACKING)createZone(mean_range,mean_index,zoneBeingTracked);//this will be the first zone that getZone checks. 
-	/*{
+	if(state == TRACKING)//this will be the first zone that getZone checks. 
+	{
 		start_index = zone_index_min[zoneBeingTracked];
 		end_index = zone_index_max[zoneBeingTracked];
 		start_range = zone_range_min[zoneBeingTracked];
 		end_range = zone_range_max[zoneBeingTracked];
-	}*/
+	}
 	//ROS_INFO("zoneBeingTracked = %d", zoneBeingTracked);
 	//ROS_INFO("start_step = %d\n end_step = %d\n start_range = %f\n end_range = %f\n",start_index, end_index,start_range, end_range);
 	
