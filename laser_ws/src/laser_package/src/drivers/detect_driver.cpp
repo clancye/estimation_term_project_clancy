@@ -9,7 +9,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	new_series = 1;
 	for (int i = start_index;i<end_index;i++) //adapt to angle of target
 	{
-		if(ranges[i]<4.8&&ranges[i]>0)//adapt to range of target
+		if(ranges[i]<8&&ranges[i]>0)//adapt to range of target
 		{
 			//ROS_INFO("GOT A POINT %d", i-start_index);
 			if(new_series) //if we're moving on to a new potential target, reset variables
