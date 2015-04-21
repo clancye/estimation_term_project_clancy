@@ -28,8 +28,8 @@ class SubscribeAndPublish
 			target_detector.setState(state);
 			targets_msg.ranges = target_detector.detectTargets(msg->ranges);
 			
-			if(scan_counter<=10)scan_counter++;//time to gather some possible targets
-			if(scan_counter>10&&target_detector.getNumberOfZones() >0 )state = WAITING_FOR_MOVING_TARGET;//keep initializing if no targets
+			//if(scan_counter<=10)scan_counter++;//time to gather some possible targets
+			//if(scan_counter>10&&target_detector.getNumberOfZones() >0 )state = WAITING_FOR_MOVING_TARGET;//keep initializing if no targets
 			else if (scan_counter > 10 && target_detector.getNumberOfZones() == 0){scan_counter = 0;}//once we have some targets, wait until they move
 			if (target_detector.getZoneBeingTracked() != -1) state = TRACKING;
 			if (state == TRACKING)
