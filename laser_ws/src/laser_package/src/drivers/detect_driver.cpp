@@ -92,7 +92,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			}
 			
 		}
-		else{ROS_INFO("range is too large");}
+		//else{ROS_INFO("range is too large");}
 	}
 	if(state == TRACKING)//this will be the first zone that getZone checks. 
 	{
