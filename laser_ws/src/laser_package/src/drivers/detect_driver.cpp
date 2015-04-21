@@ -58,10 +58,11 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								{	
 									tracked_targets[mean_index] = mean_range;
 									createZone(mean_range,mean_index,zoneBeingTracked);
-									tracked_targets[zone_index_min[zoneBeingTracked]+1] = zone_range_min[zoneBeingTracked];
-									tracked_targets[zone_index_max[zoneBeingTracked]+1] = zone_range_max[zoneBeingTracked];
-									tracked_targets[zone_index_max[zoneBeingTracked]] = zone_range_min[zoneBeingTracked];
-									tracked_targets[zone_index_min[zoneBeingTracked]] = zone_range_max[zoneBeingTracked];
+									tracked_targets[zone_index_min[zoneBeingTracked]+1] = start_range;
+									tracked_targets[zone_index_max[zoneBeingTracked]+1] = end_range;
+									tracked_targets[zone_index_max[zoneBeingTracked]] = start_range;
+									tracked_targets[zone_index_min[zoneBeingTracked]] = end_range;
+									
 									float x = getCartesianX(mean_range, mean_index);
 									float y = getCartesianY(mean_range, mean_index);
 									tracked_targets[0] = x;
