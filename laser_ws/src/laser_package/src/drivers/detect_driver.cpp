@@ -11,9 +11,10 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	{
 		if(ranges[i]<end_range&&ranges[i]>start_range)//adapt to range of target
 		{
-			ROS_INFO("GOT A POINT %d", i-start_index);
+			//ROS_INFO("GOT A POINT %d", i-start_index);
 			if(new_series) //if we're moving on to a new potential target, reset variables
 			{
+				ROS_INFO("NEW SERIES WOOT");
 				place_keeper = i;
 				num_points_min = floor(MIN_TARGET_WIDTH/(ranges[place_keeper]*THETA_DELTA));
 				num_points_max = floor(MAX_TARGET_WIDTH/(ranges[place_keeper]*THETA_DELTA));
