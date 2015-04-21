@@ -53,7 +53,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								break;
 							case TRACKING:
 								zone = getZone(mean_range,mean_index);
-								//ROS_INFO("ZONE OF TARGET = %d", zone);
+								ROS_INFO("ZONE OF TARGET = %d", zone);
 								if(zone == zoneBeingTracked)
 								{	
 									tracked_targets[mean_index] = mean_range;
@@ -142,7 +142,7 @@ void Detector::createZone(float range,int index,int zoneToTrack)
 		zone_range_min.push_back(range - MAX_MOVEMENT_PER_SCAN);
 		zone_range_max.push_back(range + MAX_MOVEMENT_PER_SCAN);
 		previous_zone_distance.push_back(0.0);
-		int i = zone_counter;
+		//int i = zone_counter;
 		//ROS_INFO("zone_index_min[%d] = %d\n zone_index_max[%d] = %d\n zone_range_min[%d] = %f, zone_range_max[%d] = %f", i,zone_index_min[i],i,zone_index_max[i],i,zone_range_min[i],i,zone_range_max[i]);
 		//ROS_INFO("possible target range and index = [%f,%d]", possible_target_range[zone_counter],possible_target_index[zone_counter]);
 		//ROS_INFO("possible target [x,y] = [%f,%f]", possible_target_x[zone_counter],possible_target_y[zone_counter]);
@@ -183,6 +183,7 @@ void Detector::updateZone(int zone, float range, int index, double time)
 	float tempY = getCartesianY(range, index);
 	float distance = getDistance(tempX, tempY, possible_target_x[zone], possible_target_y[zone]);
 	previous_zone_distance[zone] = distance - previous_zone_distance[zone];
+	//previous_zone_distance[zone] = distance;
 	ROS_INFO("Update zone distance = %f\n", distance);
 	if(distance>ZONE_DISTANCE_MIN_THRESHOLD&&previous_zone_distance[zone]<MAX_MOVEMENT_PER_SCAN&&zoneBeingTracked==-1)trackZone(zone);
 }
