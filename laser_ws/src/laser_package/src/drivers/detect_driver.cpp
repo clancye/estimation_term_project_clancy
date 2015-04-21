@@ -29,7 +29,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 				num_points++; //then increment num_points
 				ROS_INFO("NUM_POINTS = %d", num_points);
 			}
-			else if(state == TRACKING&&getZone(ranges[i+2],i+2)!=zoneBeingTracked)
+			else if(state == TRACKING&&getZone(ranges[i+2],i+2)==zoneBeingTracked)
 			{
 				num_points++;
 			}
