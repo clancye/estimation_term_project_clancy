@@ -40,19 +40,21 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 						{
 							int zone;
 							case INITIALIZING:
-								if(abs(ranges[place_keeper-4]-ranges[place_keeper+1])>WALL_DISTANCE_THRESHOLD&&abs(ranges[last_index+4]-ranges[last_index-1])>WALL_DISTANCE_THRESHOLD);
+								if((abs(ranges[place_keeper-4]-ranges[place_keeper+1])>WALL_DISTANCE_THRESHOLD)&&(abs(ranges[last_index+4]-ranges[last_index-1])>WALL_DISTANCE_THRESHOLD));
 								{
 									if(getZone(mean_range,mean_index)==-1) 
 									{
 										createZone(mean_range,mean_index,-1);//not tracking so we use -1
 										initial_targets[mean_index] = ranges[mean_index];
+										initial_targets[place_keeper-4] = ranges[place_keeper-4];
+										initial_targets[place_keeper+1] = ranges[place_keeper+1];
 										point_targets = initial_targets;
 									}
 								}
 								break;
 							case WAITING_FOR_MOVING_TARGET:
-								zone = getZone(mean_range,mean_index);
-								if(zone != -1)updateZone(zone,mean_range, mean_index,scan_time);
+								//zone = getZone(mean_range,mean_index);
+								//if(zone != -1)updateZone(zone,mean_range, mean_index,scan_time);
 								point_targets = initial_targets;
 								break;
 							case TRACKING:
