@@ -7,7 +7,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	std::vector<float> tracked_targets (682);
 	int mean_index,last_index,place_keeper;
 	new_series = 1;
-	for (int i = 85;i<650;i++) //adapt to angle of target
+	for (int i = start_index;i<end_index;i++) //adapt to angle of target
 	{
 		if(ranges[i]<end_range&&ranges[i]>start_range)//adapt to range of target
 		{
@@ -85,8 +85,8 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 	}
 	//if(state == TRACKING)createZone(mean_range,mean_index,zoneBeingTracked);//this will be the first zone that getZone checks. 
 	/*{
-		start_step = zone_index_min[zoneBeingTracked];
-		end_step = zone_index_max[zoneBeingTracked];
+		start_index = zone_index_min[zoneBeingTracked];
+		end_index = zone_index_max[zoneBeingTracked];
 		start_range = zone_range_min[zoneBeingTracked];
 		end_range = zone_range_max[zoneBeingTracked];
 	}*/
@@ -119,7 +119,7 @@ int Detector::getZone(float range,int index)
 	}
 	else
 	{
-		if(range>zone_range_min[zoneBeingTracked]&&range<zone_range_max[zoneBeingTracked]&&index<zone_index_max[zoneBeingTracked]&&index>zone_index_min[zoneBeingTracked]) return zoneBeingTracked;
+		if(range>start_range&&range<end_Range&&index<end_index&&index>start_index) return zoneBeingTracked;
 	}
 	return -1;
 }
@@ -152,8 +152,8 @@ void Detector::createZone(float range,int index,int zoneToTrack)
 		//zone_index_max[zoneToTrack] = (index + floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
 		//zone_range_min[zoneToTrack] = (range - MAX_MOVEMENT_PER_SCAN);
 		//zone_range_max[zoneToTrack] = (range + MAX_MOVEMENT_PER_SCAN);
-		start_step = (index - floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
-		end_step = (index + floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
+		start_index = (index - floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
+		end_index = (index + floor(MAX_MOVEMENT_PER_SCAN/((range-MAX_MOVEMENT_PER_SCAN)*THETA_DELTA)));
 		start_range = (range - MAX_MOVEMENT_PER_SCAN);
 		end_range = (range + MAX_MOVEMENT_PER_SCAN);
 	}
