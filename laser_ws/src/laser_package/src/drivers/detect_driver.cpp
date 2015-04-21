@@ -119,7 +119,7 @@ int Detector::getZone(float range,int index)
 	}
 	else
 	{
-		if(range>start_range&&range<end_Range&&index<end_index&&index>start_index) return zoneBeingTracked;
+		if(range>start_range&&range<end_range&&index<end_index&&index>start_index) return zoneBeingTracked;
 	}
 	return -1;
 }
