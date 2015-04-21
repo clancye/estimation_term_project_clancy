@@ -70,8 +70,8 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								}
 								//else{ROS_INFO("NOPE. ZONE = %d\n and zoneBeingTracked = %d",zone,getZoneBeingTracked());}
 								tracked_targets[mean_index] = mean_range;
-								tracked_targets[start_step-2] = mean_range;
-								tracked_targets[end_step+2] = mean_range;
+								tracked_targets[start_index-2] = mean_range;
+								tracked_targets[end_index+2] = mean_range;
 								point_targets = tracked_targets;
 								break;
 						}
