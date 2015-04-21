@@ -26,7 +26,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			}
 			else //if we come across a point that is too far from the first point
 			{
-				//ROS_INFO("REACHED MAX TARGET_DEPTH numpoints= %d", num_points);
+				ROS_INFO("REACHED MAX TARGET_DEPTH numpoints= %d", num_points);
 				last_index = place_keeper+num_points-1;
 				if(num_points>num_points_min&&num_points<num_points_max) //check if num_points makes sense
 				{
@@ -53,7 +53,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								break;
 							case TRACKING:
 								zone = getZone(mean_range,mean_index);
-								//ROS_INFO("ZONE OF TARGET = %d", zone);
+								ROS_INFO("ZONE OF TARGET = %d", zone);
 								if(zone == zoneBeingTracked)
 								{	
 									tracked_targets[mean_index] = mean_range;
@@ -78,11 +78,13 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 					
 					
 				}
-				//else{ROS_INFO("Target too big or too small");}
+				else{ROS_INFO("Target too big or too small");}
 				num_points = 0;
 				new_series = 1;//start looking for more targets
 			}
+			
 		}
+		else{ROS_INFO("points_not_in_zone");}
 	}
 	//if(state == TRACKING)createZone(mean_range,mean_index,zoneBeingTracked);//this will be the first zone that getZone checks. 
 	/*{
@@ -231,5 +233,5 @@ float Detector::getSlope(float x_1, float y_1, float x_2, float y_2)
 
 float Detector::getDistance(float x_1, float y_1, float x_2, float y_2)
 {
-	return sqrt(pow((x_2-x_2),2)+pow((y_1-y_2),2));
+	return sqrt(pow((x_1-x_2),2)+pow((y_1-y_2),2));
 }
