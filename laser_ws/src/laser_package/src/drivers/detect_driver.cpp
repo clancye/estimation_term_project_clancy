@@ -57,6 +57,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								if(zone == zoneBeingTracked)
 								{	
 									tracked_targets[mean_index] = mean_range;
+									createZone(mean_range,mean_index,zoneBeingTracked);
 									//tracked_targets[zone_index_min[zoneBeingTracked]+1] = zone_range_min[zoneBeingTracked];
 									//tracked_targets[zone_index_max[zoneBeingTracked]+1] = zone_range_max[zoneBeingTracked];
 									//tracked_targets[zone_index_max[zoneBeingTracked]] = zone_range_min[zoneBeingTracked];
@@ -82,7 +83,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 			}
 		}
 	}
-	if(state == TRACKING)createZone(mean_range,mean_index,zoneBeingTracked);//this will be the first zone that getZone checks. 
+	//if(state == TRACKING)createZone(mean_range,mean_index,zoneBeingTracked);//this will be the first zone that getZone checks. 
 	/*{
 		start_step = zone_index_min[zoneBeingTracked];
 		end_step = zone_index_max[zoneBeingTracked];
