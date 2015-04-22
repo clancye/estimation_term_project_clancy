@@ -41,7 +41,7 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 				if(num_points>num_points_min&&num_points<num_points_max) //check if num_points makes sense
 				{
 					mean_index = place_keeper + floor(num_points/2);
-					mean_range = ranges[mean_index];
+					mean_range = (ranges[place_keeper]+ranges[mean_index]+ranges[last_index])/3;
 					//tracked_targets[place_keeper] = ranges[place_keeper];
 					//tracked_targets[last_index] = ranges[last_index];
 						switch(state)
