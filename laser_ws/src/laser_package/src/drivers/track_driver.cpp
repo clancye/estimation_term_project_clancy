@@ -39,23 +39,38 @@ void Tracker::update(float x, float y, double an_update_time)
 
 void Tracker::updateSpeed(float some_x, float some_y, double time_of_measurement)
 {
-	float speed_temp_sum = 0.0;
+	//float speed_temp_sum = 0.0;
+	float velocity_x_temp_sum = 0.0;
+	float velocity_y_temp_sum = 0.0;
 	for(int i = MEASUREMENT_MEMORY-1;i>0;i--)
 	{
-		speed_temp_sum += speed_memory[i];
-		speed_memory[i] = speed_memory[i-1];
+		//speed_temp_sum += speed_memory[i];
+		//speed_memory[i] = speed_memory[i-1];
+		velocity_x_temp_sum += velocity_x_memory[i];
+		velocity_y_temp_sum += velocity_y_memory[i];
+		velocity_x_memory[i] = velocity_x_memory[i-1];
+		velocity_y_memory[i] = velocity_y_memory[i-1];
 	}
-	float distanceBetweenMeasurements = getDistance(some_x, some_y, last_x, last_y);
-	float timeBetweenMeasurements = time_of_measurement - last_time;
-	float current_instantaneous_speed = distanceBetweenMeasurements/timeBetweenMeasurements;
-	speed_memory[0] = current_instantaneous_speed;
-	speed_temp_sum += current_instantaneous_speed;
-	current_speed = speed_temp_sum/MEASUREMENT_MEMORY;
-	max_current_speed = (current_speed-max_current_speed>0)? current_speed : max_current_speed;
+	//float distanceBetweenMeasurements = getDistance(some_x, some_y, last_x, last_y);
+	float difference_of_x = some_x - last_x;
+	float difference_of_y = some_y - last_y;
+	float time_between_measurements = time_of_measurement - last_time;
+	float instantaneous_velocity_x = difference_of_x/time_between_measurements;
+	float instantaneous_velocity_y = difference_of_y/time_between_measurements;
+	//float current_instantaneous_speed = distanceBetweenMeasurements/timeBetweenMeasurements;
+	//speed_memory[0] = current_instantaneous_speed;
+	//speed_temp_sum += current_instantaneous_speed;
+	velocity_x_memory[0] = instantaneous_velocity_x;
+	velocity_y_memory[0] = instantaneous_velocity_y;
+	
+	velocity_x_temp_sum += instantaneous_velocity_x;
+	velocity_y_temp_sum += instantaneous_velocity_y;
+	//current_speed = speed_temp_sum/MEASUREMENT_MEMORY;
+	//max_current_speed = (current_speed-max_current_speed>0)? current_speed : max_current_speed; //David current victory (5.039412 m/s)
 	last_x = some_x;
 	last_y = some_y;
 	last_time = time_of_measurement;
-	ROS_INFO("current speed = %f\n TIME BETWEEN = %f \n, DISTANCE BETWEEN = %f", max_current_speed, timeBetweenMeasurements, distanceBetweenMeasurements);
+	ROS_INFO("current_x_velocity = %f\n current_y_velocity = %f\n", current_x_velocity, current_y_velocity);
 }
 
 float Tracker::getDistance(float x_1, float y_1, float x_2, float y_2)
