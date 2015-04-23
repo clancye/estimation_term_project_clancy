@@ -51,6 +51,7 @@ void Tracker::updateSpeed(float some_x, float some_y, double time_of_measurement
 	speed_memory[0] = current_instantaneous_speed;
 	speed_temp_sum += current_instantaneous_speed;
 	current_speed = speed_temp_sum/MEASUREMENT_MEMORY;
+	max_current_speed = (current_speed-max_current_speed>0)? current_speed : max_current_speed;
 	last_x = some_x;
 	last_y = some_y;
 	last_time = time_of_measurement;
