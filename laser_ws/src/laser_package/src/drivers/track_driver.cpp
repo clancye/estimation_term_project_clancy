@@ -55,7 +55,7 @@ void Tracker::updateSpeed(float some_x, float some_y, double time_of_measurement
 	last_x = some_x;
 	last_y = some_y;
 	last_time = time_of_measurement;
-	ROS_INFO("current speed = %f\n TIME BETWEEN = %f \n, DISTANCE BETWEEN = %f", current_speed, timeBetweenMeasurements, distanceBetweenMeasurements);
+	ROS_INFO("current speed = %f\n TIME BETWEEN = %f \n, DISTANCE BETWEEN = %f", max_current_speed, timeBetweenMeasurements, distanceBetweenMeasurements);
 }
 
 float Tracker::getDistance(float x_1, float y_1, float x_2, float y_2)
