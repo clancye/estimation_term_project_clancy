@@ -35,9 +35,10 @@ class Tracker //We'll treat this as only a KF for now
 		void update(float x, float y, double an_update_time);
 	
 	private:
-		float sigma_v, sigma_w, mu_v, mu_w, last_x,last_y, current_speed, max_current_speed,speed_memory[MEASUREMENT_MEMORY], velocity_x_memory[MEASUREMENT_MEMORY], velocity_y_memory[MEASUREMENT_MEMORY];
-		float current_x_velocity, current_y_velocity;
-		double last_time;
+		float sigma_v, sigma_w, mu_v, mu_w, last_x,last_y, current_speed, max_current_speed,speed_memory[MEASUREMENT_MEMORY];
+		float velocity_x_memory[MEASUREMENT_MEMORY], velocity_y_memory[MEASUREMENT_MEMORY], current_x_velocity, current_y_velocity;
+		float accel_x_memory[MEASUREMENT_MEMORY], accel_y_memory[MEASUREMENT_MEMORY], current_x_accel, current_y_accel;
+		double last_time, second_last_time;
 		std::vector<Eigen::MatrixXf> x_hat;
 		void initializeNoises(Eigen::RowVector4f noise_data);
 		Eigen::MatrixXf H,P;
