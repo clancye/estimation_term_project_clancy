@@ -14,7 +14,7 @@
 
 #define DWNA = 0
 #define CT = 1
-#define MEASUREMENT_MEMORY 20
+#define MEASUREMENT_MEMORY 15
 #define MEMORY_COEFFICIENT 0.96
 
 
