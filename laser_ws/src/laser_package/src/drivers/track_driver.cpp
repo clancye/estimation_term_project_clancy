@@ -98,4 +98,25 @@ float Tracker::getDistance(float x_1, float y_1, float x_2, float y_2)
 	return sqrt(pow((x_1-x_2),2)+pow((y_1-y_2),2));
 }
 
+float Tracker::getXAcceleration()
+{
+	return current_x_accel;
+}
+
+float Tracker::getYAcceleration()
+{
+	return current_y_accel;
+}
+
+float Tracker::getXVelocity()
+{
+	return current_x_velocity;
+}
+
+float Tracker::getYVelocity()
+{
+	return current_y_velocity;
+}
+
+
 

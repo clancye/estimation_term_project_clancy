@@ -11,6 +11,7 @@
 #include <geometry_msgs/PointStamped.h>
 #include "laser_package/update_tracker.h"
 #include </usr/include/eigen3/Eigen/Dense>
+#include "laser_package/state.h"
 
 #define DWNA = 0
 #define CT = 1
@@ -34,6 +35,10 @@ class Tracker //We'll treat this as only a KF for now
 	
 		void predictState();
 		void update(float x, float y, double an_update_time);
+		float getXAcceleration();
+		float getYAcceleration();
+		float getXVelocity();
+		float getYVelocity();
 	
 	private:
 		float sigma_v, sigma_w, mu_v, mu_w, last_x,last_y, current_speed, max_current_speed,speed_memory[MEASUREMENT_MEMORY];

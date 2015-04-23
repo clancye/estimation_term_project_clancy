@@ -17,6 +17,7 @@ class SubscribeAndPublish
 			tracker = Tracker(noise_data,0,measurement_matrix, initial_covariance, initial_state);
 			ROS_INFO("Constructing SAP for tracking node...");
 			target_pub = n.advertise<geometry_msgs::PointStamped>("/target_topic",1000); //publish targets to new topic
+			state_pub = n.advertise<laser_package::state>("/state_topic",1000); //publish targets to new topic
 			service = n.advertiseService("updateTracker", &SubscribeAndPublish::updateTrackerCallBack,this);
 			real_msg.point = msg;
 			real_msg.header.frame_id = "/my_frame";
@@ -27,6 +28,13 @@ class SubscribeAndPublish
 		{ 
 			msg.x = req.x;
 			msg.y = req.y;
+			state_msg.x = req.x;
+			state_msg.y = req.y;
+			state_msg.Acceleration_X = tracker.getXAcceleration();
+			state_msg.Acceleration_Y = tracker.getYAcceleration();
+			state_msg.Velocity_X = tracker.getXVelocity();
+			state_msg.Velocity_Y = tracker.getYVelocity();
+			state_pub.publish(state_msg);
 			tracker.update(req.x,req.y, req.update_time);
 			real_msg.point = msg;
 			target_pub.publish(real_msg);
@@ -35,10 +43,11 @@ class SubscribeAndPublish
 	private:
 	   
 		ros::NodeHandle n; 
-		ros::Publisher target_pub;	
+		ros::Publisher target_pub, state_pub;	
 		ros::ServiceServer service; 
 		geometry_msgs::Point msg;
 		geometry_msgs::PointStamped real_msg;
+		laser_package::state state_msg;
 		Eigen::RowVector4f noise_data;
 		Tracker tracker;
 		//Eigen::MatrixXf measurement_matrix;
