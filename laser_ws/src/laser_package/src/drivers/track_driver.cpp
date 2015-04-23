@@ -16,6 +16,7 @@ Eigen::MatrixXf an_initial_state)
 	system_model = a_system_model;// this will be used in calculations to determine the matrices
 	H = a_measurement_matrix;
 	P = an_initial_covariance;
+	last_time = 0.0;// need to fix for initialization
 	x_hat.push_back(an_initial_state);
 	ROS_INFO("mu_v = %f\n sigma_v = %f\n mu_w = %f, sigma_w = %f", mu_v, sigma_v, mu_w, sigma_w);
 	ROS_INFO("P11 = %f, P12 = %f, P21 = %f, P22 = %f", P(0,0),P(0,1),P(1,0),P(1,1));
