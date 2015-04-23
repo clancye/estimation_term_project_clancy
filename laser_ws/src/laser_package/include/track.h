@@ -15,6 +15,7 @@
 #define DWNA = 0
 #define CT = 1
 #define MEASUREMENT_MEMORY 10
+#define MEMORY_COEFFICIENT 0.96
 
 
 class Tracker //We'll treat this as only a KF for now
