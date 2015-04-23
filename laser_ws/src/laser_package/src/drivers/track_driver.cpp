@@ -54,8 +54,8 @@ void Tracker::updateSpeed(float some_x, float some_y, double time_of_measurement
 		velocity_x_memory[i] = velocity_x_memory[i-1];
 		velocity_y_memory[i] = velocity_y_memory[i-1];
 		
-		accel_x_temp_sum += MEASUREMENT_COEFFICIENT*accel_x_memory[i];
-		accel_y_temp_sum += MEASUREMENT_COEFFICIENT*accel_y_memory[i];
+		accel_x_temp_sum += MEMORY_COEFFICIENT*accel_x_memory[i];
+		accel_y_temp_sum += MEMORY_COEFFICIENT*accel_y_memory[i];
 		accel_x_memory[i] = accel_x_memory[i-1];
 		accel_y_memory[i] = accel_y_memory[i-1];
 	}
