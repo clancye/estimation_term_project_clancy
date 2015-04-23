@@ -4,6 +4,5 @@
         <remap from="scan" to="client_scan" />
     </node>
     <node name="client_tracker" pkg="laser_package" type="track_node" output="screen"></node>
-    <node name="client_detect_node" pkg="laser_package" type="client_detect_node" output="screen">
-    </node>
+    <node name="client_detect_node" pkg="laser_package" type="client_detect_node" output="screen"></node>
 </launch>
