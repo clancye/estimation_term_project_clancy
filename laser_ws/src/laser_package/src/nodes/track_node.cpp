@@ -34,7 +34,7 @@ class SubscribeAndPublish
 			state_msg.Acceleration_Y = tracker.getYAcceleration();
 			state_msg.Velocity_X = tracker.getXVelocity();
 			state_msg.Velocity_Y = tracker.getYVelocity();
-			if(req.y>1&&req.y<4.5)state_pub.publish(state_msg);
+			if(req.y>1.25&&req.y<4.5)state_pub.publish(state_msg);
 			tracker.update(req.x,req.y, req.update_time);
 			real_msg.point = msg;
 			target_pub.publish(real_msg);
