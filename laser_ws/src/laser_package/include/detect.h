@@ -50,6 +50,7 @@ class Detector
 		void setState(int some_state);
 		int getState();
 		void setScanTime();
+		double getScanTime();
 		int getNumberOfZones();
 		int getZoneBeingTracked();
 	

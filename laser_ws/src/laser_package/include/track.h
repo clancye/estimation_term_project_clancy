@@ -32,6 +32,7 @@ class Tracker //We'll treat this as only a KF for now
 
 	
 		void predictState();
+		void update(float x, float y, double an_update_time);
 	
 	private:
 		float sigma_v, sigma_w, mu_v, mu_w;

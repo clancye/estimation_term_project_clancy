@@ -210,6 +210,11 @@ void Detector::setScanTime()
 	//ROS_INFO("scan_time = %f \n", scan_time);
 }
 
+double Detector::getScanTime()
+{
+	return scan_time;
+}
+
 int Detector::getNumberOfZones()
 {
 	return zone_counter;

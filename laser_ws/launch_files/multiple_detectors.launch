@@ -1,5 +1,0 @@
-<launch>
-    <node name="detect_node0" pkg="laser_package" type="detect_node">
-        <remap from="targets" to="targets0" />
-    </node>
-</launch>
