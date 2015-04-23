@@ -33,7 +33,7 @@ void Tracker::initializeNoises(Eigen::RowVector4f noise_data)
 void Tracker::update(float x, float y, double an_update_time)
 {
 	updateSpeed(x,y, an_update_time);
-	ROS_INFO("Updating tracker");
+	//ROS_INFO("Updating tracker");
 }
 
 void Tracker::updateSpeed(float some_x, float some_y, double time_of_measurement)
@@ -53,7 +53,7 @@ void Tracker::updateSpeed(float some_x, float some_y, double time_of_measurement
 	last_x = some_x;
 	last_y = some_y;
 	last_time = time_of_measurement;
-	ROS_INFO("current speed = %f\n", current_speed);
+	ROS_INFO("current speed = %f\n TIME BETWEEN = %f \n, DISTANCE BETWEEN = %f", current_speed, timeBetweenMeasurements, distanceBetweenMeasurements);
 }
 
 float Tracker::getDistance(float x_1, float y_1, float x_2, float y_2)

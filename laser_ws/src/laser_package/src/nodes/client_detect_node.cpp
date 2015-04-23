@@ -38,8 +38,8 @@ class SubscribeAndPublish
 				srv.request.y = targets_msg.ranges[1];
 				srv.request.update_time = target_detector.getScanTime();
 				if(client.call(srv));
-				else{ROS_INFO("ERROR SENDING TARGET COORDINATES TO TRACK NODE \n \n x,y = [%f,%f]", srv.request.x, srv.request.y);}
-				ROS_INFO("state = %d\n", state);
+				//else{ROS_INFO("ERROR SENDING TARGET COORDINATES TO TRACK NODE \n \n x,y = [%f,%f]", srv.request.x, srv.request.y);}
+				//ROS_INFO("state = %d\n", state);
 			}
 			target_pub.publish(targets_msg);//publish so we can see on RViz
 		}
