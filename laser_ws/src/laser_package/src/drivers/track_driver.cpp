@@ -49,8 +49,8 @@ void Tracker::updateSpeed(float some_x, float some_y, double time_of_measurement
 	{
 		//speed_temp_sum += speed_memory[i];
 		//speed_memory[i] = speed_memory[i-1];
-		velocity_x_temp_sum += velocity_x_memory[i];
-		velocity_y_temp_sum += velocity_y_memory[i];
+		velocity_x_temp_sum += MEMORY_COEFFICIENT*velocity_x_memory[i];
+		velocity_y_temp_sum += MEMORY_COEFFICIENT*velocity_y_memory[i];
 		velocity_x_memory[i] = velocity_x_memory[i-1];
 		velocity_y_memory[i] = velocity_y_memory[i-1];
 		
@@ -82,8 +82,8 @@ void Tracker::updateSpeed(float some_x, float some_y, double time_of_measurement
 	
 	current_x_velocity = velocity_x_temp_sum/MEASUREMENT_MEMORY;
 	current_y_velocity = velocity_y_temp_sum/MEASUREMENT_MEMORY;
-	current_x_accel = accel_x_temp_sum/ACCEL_MEASUREMENT_MEMORY;
-	current_y_accel = accel_y_temp_sum/ACCEL_MEASUREMENT_MEMORY;
+	current_x_accel = accel_x_temp_sum/MEASUREMENT_MEMORY;
+	current_y_accel = accel_y_temp_sum/MEASUREMENT_MEMORY;
 	//current_speed = speed_temp_sum/MEASUREMENT_MEMORY;
 	//max_current_speed = (current_speed-max_current_speed>0)? current_speed : max_current_speed; //David current victory (5.039412 m/s)
 	last_x = some_x;
