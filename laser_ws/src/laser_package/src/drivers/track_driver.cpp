@@ -90,7 +90,7 @@ void Tracker::updateSpeed(float some_x, float some_y, double time_of_measurement
 	last_y = some_y;
 	second_last_time = last_time;
 	last_time = time_of_measurement;
-	ROS_INFO("X_accel = %f\n Y_accel = %f\n time between = %f\n\n-----------------------------------------------------", accel_x_memory[0], accel_y_memory[0], time_between_measurements);
+	ROS_INFO("X_accel = %f\n Y_accel = %f\n time between = %f\n\n-----------------------------------------------------", current_x_accel, current_y_accel, time_between_measurements);
 }
 
 float Tracker::getDistance(float x_1, float y_1, float x_2, float y_2)
