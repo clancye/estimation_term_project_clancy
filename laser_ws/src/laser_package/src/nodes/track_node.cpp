@@ -27,10 +27,11 @@ class SubscribeAndPublish
 		{ 
 			msg.x = req.x;
 			msg.y = req.y;
-			tracker.update(msg.x,msg.y, req.update_time);
+			tracker.update(req.x,req.y, req.update_time);
 			real_msg.point = msg;
 			target_pub.publish(real_msg);
 		}
+
 	private:
 	   
 		ros::NodeHandle n; 
