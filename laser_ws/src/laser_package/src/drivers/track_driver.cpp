@@ -19,10 +19,10 @@ Tracker::Tracker(int a_system_model, Eigen::MatrixXf an_initial_state)
 
 void Tracker::initializeNoises()
 {
-	mu_v = 0.0;//process noise mean
-	sigma_v = 1.0;//process noise standard deviation
-	mu_w = 0.0;//measurement noise mean
-	sigma_w = 1.0;// measurement noise standard deviation
+	mu_v = MU_V;//process noise mean
+	sigma_v = SIGMA_V;//process noise standard deviation
+	mu_w = MU_W;//measurement noise mean
+	sigma_w = SIGMA_W;// measurement noise standard deviation
 }
 
 void Tracker::initializeStateModel()
@@ -239,6 +239,31 @@ float Tracker::getPredictedXVel()
 float Tracker::getPredictedYVel()
 {
 	return x_hat(ETA_DOT);
+}
+
+float Tracker::getPositionVariance()
+{
+	return P(0,0);
+}
+
+float Tracker::getVelocityVariance()
+{
+	return P(1,1);
+}
+
+float Tracker::getPositionGain()
+{
+	return W(0,0);
+}
+
+float Tracker::getVelocityGain()
+{
+	return W(1,0);
+}
+
+float Tracker::getInnovation()
+{
+	return nu(0,0);
 }
 
 

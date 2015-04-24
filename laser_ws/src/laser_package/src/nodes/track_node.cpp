@@ -11,8 +11,8 @@ class SubscribeAndPublish
 			ROS_INFO("Constructing SAP for tracking node...");
 			target_pub = n.advertise<geometry_msgs::PointStamped>("/target_topic",1000); //publish targets to new topic
 			state_pub = n.advertise<laser_package::state>("/state_topic",1000); //publish targets to new topic
-			service = n.advertiseService("updateTracker", &SubscribeAndPublish::updateTrackerCallBack,this);
-			service = n.advertiseService("initializeTracker", &SubscribeAndPublish::initializeTrackerCallBack,this);
+			update_service = n.advertiseService("updateTracker", &SubscribeAndPublish::updateTrackerCallBack,this);
+			initialize_service = n.advertiseService("initializeTracker", &SubscribeAndPublish::initializeTrackerCallBack,this);
 			real_msg.point = msg;
 			real_msg.header.frame_id = "/my_frame";
 		}
@@ -25,12 +25,20 @@ class SubscribeAndPublish
 			tracker.updateX(req.measured_x, req.update_time);//change this command based on how many variables you are updating
 			state_msg.Measured_X = req.measured_x;
 			state_msg.Measured_Y = req.measured_y;
+			state_msg.Predicted_X = tracker.getPredictedX();
+			state_msg.Predicted_X_Velocity = tracker.getPredictedXVel();
 			state_msg.Real_X = req.real_x;
 			state_msg.Real_Y = req.real_y;
 			state_msg.Acceleration_X = tracker.getXAcceleration();
 			state_msg.Acceleration_Y = tracker.getYAcceleration();
 			state_msg.Velocity_X = tracker.getXVelocity();
 			state_msg.Velocity_Y = tracker.getYVelocity();
+			state_msg.Position_Variance = tracker.getPositionVariance();
+			state_msg.Velocity_Variance = tracker.getVelocityVariance();
+			state_msg.Position_Gain = tracker.getPositionGain();
+			state_msg.Velocity_Gain = tracker.getVelocityGain();
+			state_msg.Innovation = tracker.getInnovation();
+			ROS_INFO("Measure x on track node = %f", state_msg.Measured_X);
 			state_pub.publish(state_msg);
 			
 			//real_msg.point = msg;
@@ -43,20 +51,18 @@ class SubscribeAndPublish
 			initial_state << req.initial_x, req.initial_x_velocity, req.initial_y, req.initial_y_velocity;
 			tracker = Tracker(DWNA_X,initial_state);
 			state_msg.Predicted_X = tracker.getPredictedX();
-			
 			//state_msg.Predicted_Y = tracker.getPredictedY();
 			state_msg.Predicted_X_Velocity = tracker.getPredictedXVel();
-			
-			ROS_INFO("HERE?");
 			//state_msg.Predicted_Y_Velocity = tracker.getPredictedYVel();
 			state_pub.publish(state_msg);
+			ROS_INFO("Tracker initialized");
 		}
 
 	private:
 	   
 		ros::NodeHandle n; 
 		ros::Publisher target_pub, state_pub;	
-		ros::ServiceServer service; 
+		ros::ServiceServer initialize_service, update_service; 
 		geometry_msgs::Point msg;
 		geometry_msgs::PointStamped real_msg;
 		laser_package::state state_msg;

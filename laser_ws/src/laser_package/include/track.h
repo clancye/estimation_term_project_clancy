@@ -19,11 +19,17 @@
 #define CT 2
 #define MEASUREMENT_MEMORY 15
 #define MEMORY_COEFFICIENT 0.96
-#define SAMPLE_TIME 0.1
+#define SAMPLE_TIME 1
 #define XI 0
 #define XI_DOT 1
 #define ETA 2
 #define ETA_DOT 3
+#define MU_V 0.0
+#define MU_W 0.0
+#define SIGMA_V 1.0
+#define SIGMA_W 1.0
+#define VAR_V SIGMA_V*SIGMA_V
+#define VAR_W SIGMA_W*SIGMA_W
 
 class Tracker //We'll treat this as only a KF for now
 {
@@ -43,6 +49,11 @@ class Tracker //We'll treat this as only a KF for now
 		float getPredictedY();
 		float getPredictedXVel();
 		float getPredictedYVel();
+		float getPositionVariance();
+		float getVelocityVariance();
+		float getPositionGain();
+		float getVelocityGain();
+		float getInnovation();
 	
 	private:
 	

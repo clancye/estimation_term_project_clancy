@@ -10,3 +10,8 @@ float32 Velocity_X
 float32 Velocity_Y
 float32 Acceleration_X
 float32 Acceleration_Y
+float32 Position_Variance
+float32 Velocity_Variance
+float32 Position_Gain
+float32 Velocity_Gain
+float32 Innovation
