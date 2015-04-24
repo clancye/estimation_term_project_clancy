@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(laser_package)
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -88,6 +90,10 @@ include_directories(
 
 ## Declare a cpp executable
 # add_executable(laser_package_node src/laser_package_node.cpp)
+add_executable(simulate_node src/nodes/simulate_node.cpp )
+target_link_libraries(simulate_node ${catkin_LIBRARIES})
+add_dependencies(simulate_node laser_package_generate_messages_cpp)
+
 add_executable(track_node src/nodes/track_node.cpp src/drivers/track_driver.cpp)
 target_link_libraries(track_node ${catkin_LIBRARIES})
 add_dependencies(track_node laser_package_generate_messages_cpp)

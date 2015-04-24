@@ -1,5 +1,7 @@
-float64 x
-float64 y
+float64 real_x
+float64 real_y
+float64 measured_x
+float64 measured_y
 float64 update_time
 ---
 bool success
