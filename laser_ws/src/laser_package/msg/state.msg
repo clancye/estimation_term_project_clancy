@@ -1,3 +1,7 @@
+float32 Predicted_X_Velocity
+float32 Predicted_Y_Velocity
+float32 Predicted_X
+float32 Predicted_Y
 float32 Measured_X
 float32 Measured_Y
 float32 Real_X

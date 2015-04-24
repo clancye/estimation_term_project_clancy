@@ -2,6 +2,10 @@ float64 real_x
 float64 real_y
 float64 measured_x
 float64 measured_y
+float64 initial_x
+float64 initial_y
+float64 initial_x_velocity
+float64 initial_y_velocity
 float64 update_time
 ---
 bool success

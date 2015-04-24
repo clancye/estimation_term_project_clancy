@@ -7,14 +7,12 @@ class SubscribeAndPublish
 {
 	public:
 		SubscribeAndPublish()
-		{
-			Eigen::MatrixXf initial_state(2,1);	
-			noise_data << 0.0,1.0,0.0,1.0;//mu_v, sigma_v, mu_w, sigma_w
-			initial_state << 0,10;tracker = Tracker(noise_data,DWNA_X,initial_state);
+		{	
 			ROS_INFO("Constructing SAP for tracking node...");
 			target_pub = n.advertise<geometry_msgs::PointStamped>("/target_topic",1000); //publish targets to new topic
 			state_pub = n.advertise<laser_package::state>("/state_topic",1000); //publish targets to new topic
 			service = n.advertiseService("updateTracker", &SubscribeAndPublish::updateTrackerCallBack,this);
+			service = n.advertiseService("initializeTracker", &SubscribeAndPublish::initializeTrackerCallBack,this);
 			real_msg.point = msg;
 			real_msg.header.frame_id = "/my_frame";
 		}
@@ -37,6 +35,21 @@ class SubscribeAndPublish
 			
 			//real_msg.point = msg;
 			//target_pub.publish(real_msg);
+		}
+		
+		bool initializeTrackerCallBack(laser_package::update_tracker::Request &req, laser_package::update_tracker::Response &res)
+		{ 
+			Eigen::MatrixXf initial_state(4,1);	
+			initial_state << req.initial_x, req.initial_x_velocity, req.initial_y, req.initial_y_velocity;
+			tracker = Tracker(DWNA_X,initial_state);
+			state_msg.Predicted_X = tracker.getPredictedX();
+			
+			//state_msg.Predicted_Y = tracker.getPredictedY();
+			state_msg.Predicted_X_Velocity = tracker.getPredictedXVel();
+			
+			ROS_INFO("HERE?");
+			//state_msg.Predicted_Y_Velocity = tracker.getPredictedYVel();
+			state_pub.publish(state_msg);
 		}
 
 	private:
