@@ -1,0 +1,3 @@
+<launch>
+	<node name="track_node" pkg="laser_package" type="track_node" launch-prefix="xterm -e gdb --args"></node>
+</launch>

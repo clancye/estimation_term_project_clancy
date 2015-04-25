@@ -1,0 +1,3 @@
+<launch>
+	<node name="detect_node" pkg="laser_package" type="detect_node" launch-prefix="xterm -e gdb --args"></node>
+</launch>
