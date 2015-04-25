@@ -5,110 +5,52 @@ Tracker::Tracker()
 	ROS_INFO("Empty tracker");
 }
 
-Tracker::Tracker(int a_system_model, Eigen::MatrixXf an_initial_state)
+Tracker::Tracker(Eigen::MatrixXf an_initial_state)
 {
-	system_model = a_system_model;
 	temp_initial_state = an_initial_state;
-	initializeNoises();
+	
 	initializeStateModel();
+	
 	last_time = 0.0;// need to fix for initialization
 	second_last_time = 0.0;
 	
-	//printValues();//use this to debug
-}
-
-void Tracker::initializeNoises()
-{
-	mu_v = MU_V;//process noise mean
-	sigma_v = SIGMA_V;//process noise standard deviation
-	mu_w = MU_W;//measurement noise mean
-	sigma_w = SIGMA_W;// measurement noise standard deviation
+	//printValues();//USE TO DEBUG VALUES IN MATRICES
 }
 
 void Tracker::initializeStateModel()
-{
-	if(system_model == DWNA_X_AND_Y)
-	{
-		float sigma_v_squared = pow(sigma_v, 2);
-		float sigma_w_squared = pow(sigma_w, 2);
-		F.resize(4,4);
-		Gamma.resize(4,1);
-		Q.resize(4,4);
-		R.resize(4,4);
-		F << 1, SAMPLE_TIME, 0,0,0,1,0,0,0,0,1,SAMPLE_TIME,0,0,0,1;
-		Gamma << (1/2)*pow(SAMPLE_TIME,2), SAMPLE_TIME, (1/2)*pow(SAMPLE_TIME,2), SAMPLE_TIME;
-		Q = Gamma*sigma_v_squared*Gamma.transpose();
-		R << sigma_v_squared, 0, 0, 0, 0, sigma_v_squared, 0, 0, 0, 0, sigma_v_squared, 0, 0, 0, 0,sigma_v_squared;
-	}
-	else if(system_model == DWNA_X)
-	{
-		float sigma_v_squared = pow(sigma_v, 2);
-		float sigma_w_squared = pow(sigma_w, 2);	
+{		
+		resizeMatrices(); // resizes all the matrices for a 2-vector measurement
+		initializeMatrices();
+		updateStateCovariance();
 		
-		//resize matrices
-		H.resize(1,2);
-		
-		P.resize(2,2);
-		P_bar.resize(2,2);
-		x_hat_bar.resize(2,1);
-		S.resize(2,2);
-		W.resize(2,1);
-		x_hat.resize(2,1);
-		F.resize(2,2);
-		Gamma.resize(2,1);
-		Q.resize(2,2);
-		R.resize(1,1);
-		z_hat.resize(1,1);
-		nu.resize(1,1);
-		
-		x_hat << temp_initial_state(0,0), temp_initial_state(1,0);
-		
+		x_hat << temp_initial_state(0,0), temp_initial_state(1,0), temp_initial_state(2,0), temp_initial_state(3,0);	
 		x_hat_vec.push_back(x_hat);
-		
-		
-		//run through first iteration of KF
-		R << sigma_w_squared;
-		P << R, R/SAMPLE_TIME, R/SAMPLE_TIME, 2*R/(SAMPLE_TIME*SAMPLE_TIME); //initial covariance from 2-point differencing
-		
-		H << 1,0;
-		F << 1, SAMPLE_TIME, 0,1;
-		Gamma << (0.5*SAMPLE_TIME*SAMPLE_TIME), (SAMPLE_TIME);
-		Q = Gamma*sigma_v_squared*Gamma.transpose();
-		P_bar = F*P*F.transpose() + Q;
-		S = H*P_bar*H.transpose() + R;
-		W = P_bar*H.transpose()*S.inverse();
-		P = P_bar - W*S*W.transpose();
 		x_hat_bar = F*x_hat;
 		z_hat = H*x_hat_bar;
-		
+}
+
+void Tracker::update(Eigen::Vector2f z, double an_update_time)
+{
+	updateDerivatives(z, an_update_time);
+	ROS_INFO("HERE?");
 	
-		//ROS_INFO("\nGamma11 = %f \n F12 = %f \n Gamma21 = %f \n Q22 = %f ", R(0,0), R(0,1),R(1,0),R(1,1)); //use to test if values are correct
-	}
-}
-
-void Tracker::updateXY(float x, float y, double an_update_time)
-{
-	updateSpeedXY(x,y, an_update_time);
-	//ROS_INFO("Updating tracker");
-}
-
-void Tracker::updateX(float z,  double an_update_time)
-{
-	updateSpeedX(z, an_update_time);
-	nu << z - z_hat(0);
+	nu = z-z_hat;
 	
 	x_hat = x_hat_bar + W*nu;
-	P_bar = F*P*F.transpose() + Q;
-	S = H*P_bar*H.transpose() + R;
-	W = P_bar*H.transpose()*S.inverse();
+	
+	updateStateCovariance();
+	
 	x_hat_bar = F*x_hat;
 	z_hat = H*x_hat_bar;
 	//ROS_INFO("Updating tracker");
 }
 
-void Tracker::updateSpeedXY(float some_x, float some_y, double time_of_measurement)
+
+void Tracker::updateDerivatives(Eigen::Vector2f z, double time_of_measurement)
 {
 	//float speed_temp_sum = 0.0;
+	float some_x = z(0);
+	float some_y = z(1);
 	float velocity_x_temp_sum = 0.0;
 	float velocity_y_temp_sum = 0.0;
 	float accel_x_temp_sum = 0.0;
@@ -161,36 +103,6 @@ void Tracker::updateSpeedXY(float some_x, float some_y, double time_of_measureme
 	ROS_INFO("X_accel = %f\n Y_accel = %f\n time between = %f\n\n-----------------------------------------------------", current_x_accel, current_y_accel, time_between_measurements);
 }
 
-void Tracker::updateSpeedX(float some_x, double time_of_measurement)
-{
-	//float speed_temp_sum = 0.0;
-	float velocity_x_temp_sum = 0.0;
-	float accel_x_temp_sum = 0.0;
-	for(int i = MEASUREMENT_MEMORY-1;i>0;i--)
-	{
-		velocity_x_temp_sum += MEMORY_COEFFICIENT*velocity_x_memory[i];
-		velocity_x_memory[i] = velocity_x_memory[i-1];
-		
-		accel_x_temp_sum += MEMORY_COEFFICIENT*accel_x_memory[i];
-		accel_x_memory[i] = accel_x_memory[i-1];
-	}
-	float difference_of_x = some_x - last_x;
-	float time_between_measurements = time_of_measurement - last_time;
-	float time_between_velocity_measurements = time_of_measurement - second_last_time;
-	float instantaneous_velocity_x = difference_of_x/time_between_measurements;
-	velocity_x_memory[0] = instantaneous_velocity_x;
-	accel_x_memory[0] = (velocity_x_memory[0]-velocity_x_memory[1])/time_between_velocity_measurements;
-	
-	velocity_x_temp_sum += instantaneous_velocity_x;
-	accel_x_temp_sum += accel_x_memory[0];
-	
-	current_x_velocity = velocity_x_temp_sum/MEASUREMENT_MEMORY;
-	current_x_accel = accel_x_temp_sum/MEASUREMENT_MEMORY;
-	last_x = some_x;
-	second_last_time = last_time;
-	last_time = time_of_measurement;
-	ROS_INFO("X_accel = %f\n time between = %f\n\n-----------------------------------------------------", current_x_accel, time_between_measurements);
-}
 
 float Tracker::getDistance(float x_1, float y_1, float x_2, float y_2)
 {
@@ -241,29 +153,107 @@ float Tracker::getPredictedYVel()
 	return x_hat(ETA_DOT);
 }
 
-float Tracker::getPositionVariance()
+float Tracker::getPositionVarianceX()
 {
 	return P(0,0);
 }
 
-float Tracker::getVelocityVariance()
+float Tracker::getVelocityVarianceX()
 {
 	return P(1,1);
 }
 
-float Tracker::getPositionGain()
+float Tracker::getPositionGainX()
 {
 	return W(0,0);
 }
 
-float Tracker::getVelocityGain()
+float Tracker::getVelocityGainX()
 {
 	return W(1,0);
 }
 
-float Tracker::getInnovation()
+float Tracker::getInnovationX()
 {
 	return nu(0,0);
+}
+
+float Tracker::getPredictedMeasurementX()
+{
+	return z_hat(0);
+}
+
+float Tracker::getPositionVarianceY()
+{
+	return P(0,0);
+}
+
+float Tracker::getVelocityVarianceY()
+{
+	return P(1,1);
+}
+
+float Tracker::getPositionGainY()
+{
+	return W(2,1);
+}
+
+float Tracker::getVelocityGainY()
+{
+	return W(3,1);
+}
+
+float Tracker::getInnovationY()
+{
+	return nu(1);
+}
+
+float Tracker::getPredictedMeasurementY()
+{
+	return z_hat(2);
+}
+
+void Tracker::resizeMatrices()
+{
+		H_temp.resize(1,2);
+		H.resize(2,4);
+		x_hat.resize(4,1);
+		z_hat.resize(2,1);
+		P.resize(2,2);
+		P_bar.resize(2,2);
+		Q.resize(2,2);
+		R.resize(1,1);
+		Gamma.resize(2,1);
+		nu.resize(2,1);
+		W_temp.resize(2,1);
+		W.resize(4,2);
+		F_temp.resize(2,2);
+		F.resize(4,4);
+}
+
+void Tracker::initializeMatrices()
+{
+	R << VAR_W;
+	P << R, R/T, R/T, 2*R/(T*T);
+	H_temp << 1, 0;
+	H << H_temp, Eigen::MatrixXf::Zero(1,2),Eigen::MatrixXf::Zero(1,2),H_temp;
+	F_temp << 1, T, 0,1; 
+	F << F_temp, Eigen::MatrixXf::Zero(2,2), Eigen::MatrixXf::Zero(2,2), F_temp;	
+	Gamma << 0.5*T*T , T;
+	Q = Gamma*VAR_V*Gamma.transpose();
+}
+ 
+void Tracker::updateStateCovariance()
+{
+	//P_bar
+	P_bar = F_temp*P*F_temp.transpose() + Q;
+	//S
+	S = H_temp*P_bar*H_temp.transpose() + R;
+	//W
+	W_temp = P_bar*H_temp.transpose()*S.inverse();
+	W << W_temp, Eigen::MatrixXf::Zero(2,1), Eigen::MatrixXf::Zero(2,1), W_temp; 
+	//P
+	P = P_bar - W_temp*S*W_temp.transpose();
 }
 
 
