@@ -1,57 +1,59 @@
-#include "../../include/track.h"
-#include <random>
+#include "../../include/simulate.h"
 
 
 int main(int argc, char **argv)
 {
-	//Initiate ROS
-	ros::init(argc, argv, "client_detect_node");
+	//ROS stuff
+	ros::init(argc, argv, "simulate_node");
 	ros::NodeHandle n;
 	ros::ServiceClient client_update = n.serviceClient<laser_package::update_tracker>("updateTracker");
 	ros::ServiceClient client_initialize = n.serviceClient<laser_package::update_tracker>("initializeTracker");
 	laser_package::update_tracker srv;
+	ros::Rate r(floor(1/SAMPLING_INTERVAL+0.5));
 	
-	std::default_random_engine measurement_generator, process_generator;
-	std::normal_distribution<double> meas_noise(MU_W,VAR_W),process_noise(MU_V,VAR_V);
+	//random noise stuff
+	std::default_random_engine measurement_generator;
+	std::normal_distribution<double> meas_noise(MU_W,VAR_W);
 	
-	float x,last_x, x_vel, last_x_vel;
-	float y,last_y, y_vel, last_y_vel;
-	double w,v;
+	//simulator class
+	Simulator simulator = Simulator();
 	
-	ros::Rate r(T);//T is the sampling interval defined in track.h
+	//other variables
+	Eigen::VectorXf next_x(5), past_x(5);
+	double w;
 	
-	last_x = 0;
-	last_x_vel = 10;
-	last_y = 0;
-	last_y_vel = 10;
+	past_x << 0, 10, 0, 10, 0; // initial vector: xi, xi_dot, eta, eta_dot, omega
 	
-	srv.request.initial_x = last_x;
-	srv.request.initial_x_velocity = last_x_vel;
-	srv.request.initial_y = last_y;
-	srv.request.initial_y_velocity = last_y_vel;
+	
+	simulator.initializeSimulators(past_x);
+	//initial state
+	srv.request.initial_x = past_x(XI);
+	srv.request.initial_x_velocity = past_x(XI_DOT);
+	srv.request.initial_y = past_x(ETA);
+	srv.request.initial_y_velocity = past_x(ETA_DOT);
+	srv.request.initial_turn_rate = past_x(OMEGA);
+	srv.request.sampling_interval = SAMPLING_INTERVAL;
 	srv.request.update_time = ros::Time::now().toSec();
+	srv.request.measurement_noise_mean = MU_W;
+	srv.request.measurement_noise_variance = VAR_W;
+	//initialize tracker(s)
 	
 	client_initialize.call(srv);
 	
 	while(ros::ok())
 	{
 		w = meas_noise(measurement_generator);//noise
-		v = process_noise(process_generator);
-		x = last_x + T*last_x_vel+pow(T,2)*v/2;//perfect model, no noise assumptions
-		x_vel = last_x_vel + T*v;//system velocity evolution
-		srv.request.real_x = x;
-		srv.request.measured_x = x + w;//measurement value to send
-		y = last_y + T*last_y_vel+pow(T,2)*v/2;//perfect model, no noise assumptions
-		y_vel = last_y_vel + T*v;//system velocity evolution
-		srv.request.real_y = y;
-		srv.request.measured_y = y + w;//measurement value to send
+		next_x = simulator.simulateCoordinatedTurn(TURNING_RATE);
+		
+		//update values
+		srv.request.real_x = next_x(XI);
+		srv.request.measured_x = next_x(XI) + w;
+		srv.request.real_y = next_x(ETA);
+		srv.request.measured_y = next_x(ETA) + w;
 		srv.request.update_time = ros::Time::now().toSec();
+		
+		//send update
 		if(client_update.call(srv));
-		//else{ROS_INFO("X_meas = %f\n", srv.request.measured_x);}
-		last_x = x;
-		last_x_vel = x_vel;
-		last_y = y;
-		last_y_vel = y_vel;
 		
 		ros::spinOnce();
 		

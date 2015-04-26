@@ -5,40 +5,130 @@ Tracker::Tracker()
 	ROS_INFO("Empty tracker");
 }
 
-Tracker::Tracker(Eigen::MatrixXf an_initial_state)
+Tracker::Tracker(Eigen::MatrixXf an_initial_state, float a_sampling_interval, Eigen::MatrixXf noise_data, bool CT_model)
 {
-	temp_initial_state = an_initial_state;
+	T = a_sampling_interval;
 	
-	initializeStateModel();
+	initializeNoises(noise_data);
 	
+	resizeMatrices(); 
+	initializeMatrices();
+	
+		
+	x_hat << an_initial_state(0,0), an_initial_state(1,0), an_initial_state(2,0), an_initial_state(3,0),an_initial_state(4,0);	
+	
+	
+	if(!CT_model)initializeUniformMotionSystemMatrix();
+	else
+	{
+		initializeCoordinatedTurnSystemMatrix();
+		updateCoordinatedTurnJacobian();
+	}
+	
+	
+	updateStateCovariance();
 	last_time = 0.0;// need to fix for initialization
 	second_last_time = 0.0;
-	
+	x_hat_vec.push_back(x_hat);
+	x_hat_bar = F*x_hat;
+	z_hat = H*x_hat_bar;
 	//printValues();//USE TO DEBUG VALUES IN MATRICES
 }
 
-void Tracker::initializeStateModel()
-{		
-		resizeMatrices(); // resizes all the matrices for a 2-vector measurement
-		initializeMatrices();
-		updateStateCovariance();
-		
-		x_hat << temp_initial_state(0,0), temp_initial_state(1,0), temp_initial_state(2,0), temp_initial_state(3,0);	
-		x_hat_vec.push_back(x_hat);
-		x_hat_bar = F*x_hat;
-		z_hat = H*x_hat_bar;
+void Tracker::initializeNoises(Eigen::MatrixXf noise_data)
+{
+	mu_w = noise_data(MU_W,0);
+	sigma_w = noise_data(SIGMA_W,0);
+	var_w = noise_data(VAR_W,0);
+	
+	mu_v_xi = noise_data(MU_V_XI,0);
+	sigma_v_xi = noise_data(SIGMA_V_XI,0);
+	var_v_xi = noise_data(VAR_V_XI,0);
+	
+	mu_v_eta = noise_data(MU_V_ETA,0);
+	sigma_v_eta = noise_data(SIGMA_V_ETA,0);
+	var_v_eta = noise_data(VAR_V_ETA,0);
+	
+	mu_v_omega = noise_data(MU_V_OMEGA,0);
+	sigma_v_omega = noise_data(SIGMA_V_OMEGA,0);
+	var_v_omega = noise_data(VAR_V_OMEGA,0);
 }
 
-void Tracker::update(Eigen::Vector2f z, double an_update_time)
+void Tracker::initializeMatrices()
+{
+	
+	Gamma <<
+	0.5*T*T, 0, 0,
+	T, 0, 0,
+	0, 0.5*T*T, 0,
+	0, T, 0,
+	0, 0, T;
+	
+	V <<
+	var_v_xi, 0, 0,
+	0, var_v_eta, 0,
+	0, 0, var_v_omega;
+	
+	Q = Gamma*V*Gamma.transpose();
+	
+	H << 
+	1, 0, 0, 0, 0,
+	0, 0, 1, 0, 0;
+	
+	R << 
+	var_w, 0,
+	0, var_w;
+	
+	
+	
+	P <<
+	var_w,var_w/T,0,0,0,
+	var_w/T, 2*var_w/(T*T),0,0,0,
+	0,0,var_w,var_w/T,0,
+	0,0,var_w/T,2*var_w/(T*T),0,
+	0,0,0,0,0;
+}
+
+void Tracker::updateCoordinatedTurnJacobian()
+{
+	updateOmegaPartials();
+	ROS_INFO("Updating CT Jacobian");
+}
+
+void Tracker::initializeCoordinatedTurnSystemMatrix()
+{
+	float omega = x_hat(OMEGA);
+	float inverse_omega = 1/omega; 
+	F <<
+	1, sin(omega*T)*inverse_omega, 0, (1-cos(omega*T))*inverse_omega, 0,
+	0, cos(omega*T), 0, -sin(omega*T), 0,
+	0, (1-cos(omega*T))*inverse_omega, 1, sin(omega*T)*inverse_omega, 0,
+	0, sin(omega*T), 0, cos(omega*T), 0,
+	0, 0, 0, 0, 1;
+}
+
+void Tracker::initializeUniformMotionSystemMatrix()
+{
+	F <<
+	1, T, 0, 0, 0,
+	0, 1, 0, 0, 0,
+	0, 0, 1, T, 0,
+	0, 0, 0, 1, 0,
+	0, 0, 0, 0, 0;
+}
+
+void Tracker::update(Eigen::Vector2f z, double an_update_time, bool CT_model)
 {
 	updateDerivatives(z, an_update_time);
-	ROS_INFO("HERE?");
 	
 	nu = z-z_hat;
-	
 	x_hat = x_hat_bar + W*nu;
 	
 	updateStateCovariance();
+	
+	if(CT_model)updateCoordinatedTurnJacobian();
+	
+	ROS_INFO("Velocity gain = %f\n", getVelocityGainX());
 	
 	x_hat_bar = F*x_hat;
 	z_hat = H*x_hat_bar;
@@ -103,6 +193,11 @@ void Tracker::updateDerivatives(Eigen::Vector2f z, double time_of_measurement)
 	ROS_INFO("X_accel = %f\n Y_accel = %f\n time between = %f\n\n-----------------------------------------------------", current_x_accel, current_y_accel, time_between_measurements);
 }
 
+void Tracker::updateOmegaPartials()
+{
+	
+	ROS_INFO("updating omega partials");
+}
 
 float Tracker::getDistance(float x_1, float y_1, float x_2, float y_2)
 {
@@ -138,34 +233,64 @@ void Tracker::printValues()
 
 float Tracker::getPredictedX()
 {
-	return x_hat(XI);
+	return x_hat(XI,0);
 }
+
 float Tracker::getPredictedY()
 {
-	return x_hat(ETA);
+	return x_hat(ETA,0);
 }
+
 float Tracker::getPredictedXVel()
 {
-	return x_hat(XI_DOT);
+	return x_hat(XI_DOT,0);
 }
+
 float Tracker::getPredictedYVel()
 {
-	return x_hat(ETA_DOT);
+	return x_hat(ETA_DOT,0);
+}
+
+float Tracker::getPredictedOmega()
+{
+	return x_hat(OMEGA,0);
 }
 
 float Tracker::getPositionVarianceX()
 {
-	return P(0,0);
+	return P(XI,XI);
+}
+
+float Tracker::getPositionVarianceY()
+{
+	return P(ETA,ETA);
 }
 
 float Tracker::getVelocityVarianceX()
 {
-	return P(1,1);
+	return P(XI_DOT,XI_DOT);
+}
+
+float Tracker::getVelocityVarianceY()
+{
+	return P(ETA_DOT,ETA_DOT);
+}
+
+float Tracker::getOmegaVariance()
+{
+	return P(OMEGA, OMEGA);
 }
 
 float Tracker::getPositionGainX()
 {
-	return W(0,0);
+	return W(XI,XI);
+}
+
+
+
+float Tracker::getPositionGainY()
+{
+	return W(2,1);
 }
 
 float Tracker::getVelocityGainX()
@@ -173,9 +298,20 @@ float Tracker::getVelocityGainX()
 	return W(1,0);
 }
 
+float Tracker::getVelocityGainY()
+{
+	return W(3,1);
+}
+
+
 float Tracker::getInnovationX()
 {
 	return nu(0,0);
+}
+
+float Tracker::getInnovationY()
+{
+	return nu(1,0);
 }
 
 float Tracker::getPredictedMeasurementX()
@@ -183,77 +319,50 @@ float Tracker::getPredictedMeasurementX()
 	return z_hat(0);
 }
 
-float Tracker::getPositionVarianceY()
-{
-	return P(0,0);
-}
-
-float Tracker::getVelocityVarianceY()
-{
-	return P(1,1);
-}
-
-float Tracker::getPositionGainY()
-{
-	return W(2,1);
-}
-
-float Tracker::getVelocityGainY()
-{
-	return W(3,1);
-}
-
-float Tracker::getInnovationY()
-{
-	return nu(1);
-}
-
 float Tracker::getPredictedMeasurementY()
 {
-	return z_hat(2);
+	return z_hat(1);
 }
+
+
+
+
+
+
+
+
+
+
 
 void Tracker::resizeMatrices()
 {
-		H_temp.resize(1,2);
-		H.resize(2,4);
-		x_hat.resize(4,1);
-		z_hat.resize(2,1);
-		P.resize(2,2);
-		P_bar.resize(2,2);
-		Q.resize(2,2);
-		R.resize(1,1);
-		Gamma.resize(2,1);
-		nu.resize(2,1);
-		W_temp.resize(2,1);
-		W.resize(4,2);
-		F_temp.resize(2,2);
-		F.resize(4,4);
-}
-
-void Tracker::initializeMatrices()
-{
-	R << VAR_W;
-	P << R, R/T, R/T, 2*R/(T*T);
-	H_temp << 1, 0;
-	H << H_temp, Eigen::MatrixXf::Zero(1,2),Eigen::MatrixXf::Zero(1,2),H_temp;
-	F_temp << 1, T, 0,1; 
-	F << F_temp, Eigen::MatrixXf::Zero(2,2), Eigen::MatrixXf::Zero(2,2), F_temp;	
-	Gamma << 0.5*T*T , T;
-	Q = Gamma*VAR_V*Gamma.transpose();
+	
+	
+		H.resize(NUM_MEASUREMENTS,NUM_STATES); //2x5
+		x_hat.resize(NUM_STATES,1);//5x1
+		x_hat_bar.resize(NUM_STATES,1);//5x1
+		z_hat.resize(NUM_MEASUREMENTS,1);//2x1
+		P.resize(NUM_STATES,NUM_STATES);//5x5
+		P_bar.resize(NUM_STATES,NUM_STATES);//5x5
+		Q.resize(NUM_STATES,NUM_STATES);//5x5
+		R.resize(NUM_MEASUREMENTS,NUM_MEASUREMENTS);//2x2
+		Gamma.resize(NUM_STATES,NUM_PROCESS_NOISES);//5x3
+		nu.resize(NUM_MEASUREMENTS,1);//2x1
+		W.resize(NUM_STATES,NUM_MEASUREMENTS);//5x2
+		F.resize(NUM_STATES,NUM_STATES);//5x5
+		V.resize(NUM_PROCESS_NOISES, NUM_PROCESS_NOISES);//3x3
 }
  
 void Tracker::updateStateCovariance()
 {
-	//P_bar
-	P_bar = F_temp*P*F_temp.transpose() + Q;
-	//S
-	S = H_temp*P_bar*H_temp.transpose() + R;
-	//W
-	W_temp = P_bar*H_temp.transpose()*S.inverse();
-	W << W_temp, Eigen::MatrixXf::Zero(2,1), Eigen::MatrixXf::Zero(2,1), W_temp; 
-	//P
-	P = P_bar - W_temp*S*W_temp.transpose();
+	
+	ROS_INFO("P = %f..%f\n%f..%f", P(0,0),P(0,1),P(1,0),P(1,1));
+	P_bar = F*P*F.transpose() + Q;
+	S = H*P_bar*H.transpose() + R;
+	W = P_bar*H.transpose()*S.inverse();
+	P = P_bar - W*S*W.transpose();
+	
+	
 }
 
 

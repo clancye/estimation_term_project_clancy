@@ -12,32 +12,46 @@
 #include "laser_package/update_tracker.h"
 #include </usr/include/eigen3/Eigen/Dense>
 #include "laser_package/state.h"
+#include "gen_defs.h"
 
 
 
 #define MEASUREMENT_MEMORY 15
 #define MEMORY_COEFFICIENT 0.96
-#define T 1
-#define XI 0
-#define XI_DOT 1
-#define ETA 2
-#define ETA_DOT 3
-#define MU_V 0.0
-#define MU_W 0.0
-#define SIGMA_V 3.0
-#define SIGMA_W 1.0
-#define VAR_V SIGMA_V*SIGMA_V
-#define VAR_W SIGMA_W*SIGMA_W
+
+#define TURN_RATE 4
+#define TRACKER_1 0
+#define TRACKER_2 1
+#define NUM_STATES 5
+#define NUM_MEASUREMENTS 2
+#define NUM_PROCESS_NOISES 3
+
+
+#define MU_W 0
+#define SIGMA_W 1
+#define VAR_W 2
+
+#define MU_V_XI 3
+#define SIGMA_V_XI 4
+#define VAR_V_XI 5
+
+#define MU_V_ETA 6
+#define SIGMA_V_ETA 7
+#define VAR_V_ETA 8
+
+#define MU_V_OMEGA 9
+#define SIGMA_V_OMEGA 10
+#define VAR_V_OMEGA 11
 
 class Tracker //We'll treat this as only a KF for now
 {
 	public:
 	
 		Tracker();
-		Tracker(Eigen::MatrixXf an_initial_state);
+		Tracker(Eigen::MatrixXf an_initial_state, float a_sampling_interval, Eigen::MatrixXf noise_data, bool CT_model);
 
 		void predictState();
-		void update(Eigen::Vector2f z, double an_update_time);
+		void update(Eigen::Vector2f z, double an_update_time, bool CT_model);
 		float getXAcceleration();
 		float getYAcceleration();
 		float getXVelocity();
@@ -52,29 +66,37 @@ class Tracker //We'll treat this as only a KF for now
 		float getVelocityGainX();
 		float getPositionVarianceY();
 		float getVelocityVarianceY();
+		float getOmegaVariance();
 		float getPositionGainY();
 		float getVelocityGainY();
 		float getInnovationX();
 		float getInnovationY();
 		float getPredictedMeasurementX();
 		float getPredictedMeasurementY();
+		float getPredictedOmega();
 	
 	private:
 	
-		float last_x,last_y, current_speed, max_current_speed,speed_memory[MEASUREMENT_MEMORY];
+		float last_x,last_y, current_speed, max_current_speed,speed_memory[MEASUREMENT_MEMORY],T;
+		float mu_w, sigma_w, var_w, mu_v_xi, sigma_v_xi,var_v_xi, mu_v_eta, sigma_v_eta,var_v_eta, mu_v_omega, sigma_v_omega,var_v_omega; 
 		float velocity_x_memory[MEASUREMENT_MEMORY], velocity_y_memory[MEASUREMENT_MEMORY], current_x_velocity, current_y_velocity;
 		float accel_x_memory[MEASUREMENT_MEMORY], accel_y_memory[MEASUREMENT_MEMORY], current_x_accel, current_y_accel;
 		double last_time, second_last_time;
 		std::vector<Eigen::MatrixXf> x_hat_vec, P_vec;
-		Eigen::MatrixXf H,H_temp,P,F,F_temp,Q,R,Gamma, P_bar, S, W,W_temp, x_hat_bar, x_hat, z_hat, nu, temp_initial_state;
+		Eigen::MatrixXf H,P,F,Q,R,Gamma, P_bar, S, W,x_hat_bar, x_hat, z_hat, nu, V;
 		int system_model;
 		void updateDerivatives(Eigen::Vector2f z, double time_of_measurement);
+		void initializeNoises(Eigen::MatrixXf noise_data);
 		float getDistance(float x_1, float y_1, float x_2, float y_2);
 		void initializeStateModel();
 		void printValues();
 		void resizeMatrices();
-		void initializeMatrices();
 		void updateStateCovariance();
+		void initializeUniformMotionSystemMatrix();
+		void initializeCoordinatedTurnSystemMatrix();
+		void updateCoordinatedTurnJacobian();
+		void initializeMatrices();
+		void updateOmegaPartials();
 		
 };
 

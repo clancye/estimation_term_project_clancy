@@ -90,7 +90,7 @@ include_directories(
 
 ## Declare a cpp executable
 # add_executable(laser_package_node src/laser_package_node.cpp)
-add_executable(simulate_node src/nodes/simulate_node.cpp )
+add_executable(simulate_node src/nodes/simulate_node.cpp src/drivers/simulate_driver.cpp)
 target_link_libraries(simulate_node ${catkin_LIBRARIES})
 add_dependencies(simulate_node laser_package_generate_messages_cpp)
 
