@@ -83,7 +83,8 @@ class Tracker //We'll treat this as only a KF for now
 		float accel_x_memory[MEASUREMENT_MEMORY], accel_y_memory[MEASUREMENT_MEMORY], current_x_accel, current_y_accel;
 		double last_time, second_last_time;
 		std::vector<Eigen::MatrixXf> x_hat_vec, P_vec;
-		Eigen::MatrixXf H,P,F,Q,R,Gamma, P_bar, S, W,x_hat_bar, x_hat, z_hat, nu, V;
+		Eigen::MatrixXf H,P,F,Q,R,Gamma, P_bar, S, W,x_hat_bar, x_hat, z_hat, nu, V,f_x;
+		Eigen::Vector4f omega_partials;
 		int system_model;
 		void updateDerivatives(Eigen::Vector2f z, double time_of_measurement);
 		void initializeNoises(Eigen::MatrixXf noise_data);
@@ -91,12 +92,13 @@ class Tracker //We'll treat this as only a KF for now
 		void initializeStateModel();
 		void printValues();
 		void resizeMatrices();
-		void updateStateCovariance();
+		void updateUMStateCovariance();
+		void updateCTStateCovariance();
 		void initializeUniformMotionSystemMatrix();
 		void initializeCoordinatedTurnSystemMatrix();
 		void updateCoordinatedTurnJacobian();
 		void initializeMatrices();
-		void updateOmegaPartials();
+		void updateOmegaPartials(float xi_hat, float xi_dot_hat, float eta_hat, float eta_dot_hat, float omega_hat);
 		
 };
 
