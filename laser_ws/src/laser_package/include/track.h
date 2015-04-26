@@ -19,6 +19,9 @@
 #define MEASUREMENT_MEMORY 15
 #define MEMORY_COEFFICIENT 0.96
 
+#define UM 0
+#define CT 1
+
 #define TURN_RATE 4
 #define TRACKER_1 0
 #define TRACKER_2 1
@@ -48,10 +51,10 @@ class Tracker //We'll treat this as only a KF for now
 	public:
 	
 		Tracker();
-		Tracker(Eigen::MatrixXf an_initial_state, float a_sampling_interval, Eigen::MatrixXf noise_data, bool CT_model);
+		Tracker(Eigen::MatrixXf an_initial_state, float a_sampling_interval, Eigen::MatrixXf noise_data, int CT_model);
 
 		void predictState();
-		void update(Eigen::Vector2f z, double an_update_time, bool CT_model);
+		void update(Eigen::Vector2f z, double an_update_time, int CT_model);
 		float getXAcceleration();
 		float getYAcceleration();
 		float getXVelocity();

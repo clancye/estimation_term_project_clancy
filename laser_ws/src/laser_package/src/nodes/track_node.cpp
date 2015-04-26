@@ -34,7 +34,7 @@ class SubscribeAndPublish
 			
 			//update the trackers
 			tracker_1.update(z, req.update_time,UM);
-			tracker_2.update(z, req.update_time,UM);
+			tracker_2.update(z, req.update_time,CT);
 			
 			//update the state messages
 			updateStateMessage(&tracker_1, &state_msg_1, req);
@@ -56,7 +56,7 @@ class SubscribeAndPublish
 			
 			initial_state << req.initial_x, req.initial_x_velocity, req.initial_y, req.initial_y_velocity, req.initial_turn_rate;
 			tracker_1 = Tracker(initial_state, req.sampling_interval, noise_data[TRACKER_1], UM);
-			tracker_2 = Tracker(initial_state, req.sampling_interval, noise_data[TRACKER_2], UM);
+			tracker_2 = Tracker(initial_state, req.sampling_interval, noise_data[TRACKER_2], CT);
 			updateStateMessage(&tracker_1, &state_msg_1, req);
 			updateStateMessage(&tracker_2, &state_msg_2, req);
 			state_pub_1.publish(state_msg_1);
@@ -133,7 +133,7 @@ class SubscribeAndPublish
 			noise_data_1(VAR_V_ETA,0) = noise_data_1(SIGMA_V_ETA,0)*noise_data_1(SIGMA_V_ETA,0);
 			
 			noise_data_1(MU_V_OMEGA,0) = 0.0;
-			noise_data_1(SIGMA_V_OMEGA,0) = 0.0;
+			noise_data_1(SIGMA_V_OMEGA,0) = 1.0;
 			noise_data_1(VAR_V_OMEGA,0) = noise_data_1(SIGMA_V_OMEGA,0)*noise_data_1(SIGMA_V_OMEGA,0);
 			
 			///////////Tracker 2//////////////
@@ -151,7 +151,7 @@ class SubscribeAndPublish
 			noise_data_2(VAR_V_ETA) = noise_data_2(SIGMA_V_ETA)*noise_data_2(SIGMA_V_ETA);
 			
 			noise_data_2(MU_V_OMEGA) = 0.0;
-			noise_data_2(SIGMA_V_OMEGA) = 0.0;
+			noise_data_2(SIGMA_V_OMEGA) = 1.0;
 			noise_data_2(VAR_V_OMEGA) = noise_data_2(SIGMA_V_OMEGA)*noise_data_2(SIGMA_V_OMEGA);
 			
 			noise_data.push_back(noise_data_1);

@@ -5,7 +5,7 @@ Tracker::Tracker()
 	ROS_INFO("Empty tracker");
 }
 
-Tracker::Tracker(Eigen::MatrixXf an_initial_state, float a_sampling_interval, Eigen::MatrixXf noise_data, bool CT_model)
+Tracker::Tracker(Eigen::MatrixXf an_initial_state, float a_sampling_interval, Eigen::MatrixXf noise_data, int CT_model)
 {
 	T = a_sampling_interval;
 	
@@ -15,13 +15,14 @@ Tracker::Tracker(Eigen::MatrixXf an_initial_state, float a_sampling_interval, Ei
 	initializeMatrices();
 	
 		
-	x_hat << an_initial_state(0,0), an_initial_state(1,0), an_initial_state(2,0), an_initial_state(3,0),an_initial_state(4,0);	
+	x_hat << an_initial_state(XI,0), an_initial_state(XI_DOT,0), an_initial_state(ETA,0), an_initial_state(ETA_DOT,0),an_initial_state(OMEGA,0);	
 	
 	
 	if(!CT_model)
 	{
 		initializeUniformMotionSystemMatrix();
 		updateUMStateCovariance();
+	}
 	else
 	{
 		initializeCoordinatedTurnSystemMatrix();
@@ -100,13 +101,26 @@ void Tracker::updateCoordinatedTurnJacobian()
 	float eta_hat = x_hat(ETA);
 	float eta_dot_hat = x_hat(ETA_DOT);
 	float omega_hat = x_hat(OMEGA);
-	updateOmegaPartials(xi_hat, xi_dot_hat, eta_hat, eta_dot_hat, omega_hat);
-	f_x <<
-	1, (sin(omega_hat*T)/omega_hat), 0, -((1-cos(omega_hat*T))/omega_hat), omega_partial(0),
-	0, cos(omega_hat*T), 0, -sin(omega_hat*T), omega_partial(1),
-	0, ((1-cos(omega_hat*T))/omega_hat), 1, (sin(omega_hat*T)/omega_hat), omega_partial(2),
-	0, sin(omega_hat*T), 0, cos(omega_hat*T), omega_partial(3),
-	0, 0, 0, 0, 1;
+	if(abs(omega_hat>0.1))
+	{
+		updateOmegaPartials(xi_hat, xi_dot_hat, eta_hat, eta_dot_hat, omega_hat);
+		f_x <<
+		1, (sin(omega_hat*T)/omega_hat), 0, -((1-cos(omega_hat*T))/omega_hat), omega_partials(0),
+		0, cos(omega_hat*T), 0, -sin(omega_hat*T), omega_partials(1),
+		0, ((1-cos(omega_hat*T))/omega_hat), 1, (sin(omega_hat*T)/omega_hat), omega_partials(2),
+		0, sin(omega_hat*T), 0, cos(omega_hat*T), omega_partials(3),
+		0, 0, 0, 0, 1;
+	}
+	else
+	{
+		f_x <<
+		1, T, 0, 0, -0.5*T*T*eta_dot_hat,
+		0, 1, 0, 0, -T*eta_dot_hat,
+		0, 0, 1, T, 0.5*T*T*xi_dot_hat,
+		0, 0, 0, 1, T*xi_dot_hat,
+		0, 0, 0, 0, 1;
+	}
+		
 	ROS_INFO("Updating CT Jacobian");
 }
 
@@ -132,7 +146,7 @@ void Tracker::initializeUniformMotionSystemMatrix()
 	0, 0, 0, 0, 0;
 }
 
-void Tracker::update(Eigen::Vector2f z, double an_update_time, bool CT_model)
+void Tracker::update(Eigen::Vector2f z, double an_update_time, int CT_model)
 {
 	updateDerivatives(z, an_update_time);
 	
@@ -148,9 +162,9 @@ void Tracker::update(Eigen::Vector2f z, double an_update_time, bool CT_model)
 	}
 	else
 	{
-		updateStateCovariance();
+		updateUMStateCovariance();
 	}
-	ROS_INFO("Velocity gain = %f\n", getVelocityGainX());
+	ROS_INFO("Velocity gain[%d] = %f\n",CT_model, getVelocityGainX());
 	
 	x_hat_bar = F*x_hat;
 	z_hat = H*x_hat_bar;
@@ -217,10 +231,10 @@ void Tracker::updateDerivatives(Eigen::Vector2f z, double time_of_measurement)
 
 void Tracker::updateOmegaPartials(float xi_hat, float xi_dot_hat, float eta_hat, float eta_dot_hat, float omega_hat)
 {	
-	omega_partial(0) = (cos(omega_hat*T)*T*xi_dot_hat/omega_hat)-(sin(omega_hat*T)*xi_dot_hat/(omega_hat*omega_hat))-(sin(omega_hat*T)*T*eta_dot_hat/omega_hat)-((-1+cos(omega_hat*T))*eta_dot_hat/(omega_hat*omega_hat));
-	omega_partial(1) = -(sin(omega_hat*T)*T*xi_dot_hat)-(cos(omega_hat*T))*T*eta_dot_hat;
-	omega_partial(2) = (sin(omega_hat*T)*T*xi_dot_hat/omega_hat)-((1-cos(omega_hat*T))*xi_dot_hat/(omega_hat*omega_hat))+(cos(omega_hat*T)*T*eta_dot_hat/omega_hat)-(sin(omega_hat*T)*eta_dot_hat/(omega_hat*omega_hat));
-	omega_partial(3) = (cos(omega_hat*T)*T*xi_dot_hat)-(sin(omega_hat*T)*T*eta_dot_hat);
+	omega_partials(0) = (cos(omega_hat*T)*T*xi_dot_hat/omega_hat)-(sin(omega_hat*T)*xi_dot_hat/(omega_hat*omega_hat))-(sin(omega_hat*T)*T*eta_dot_hat/omega_hat)-((-1+cos(omega_hat*T))*eta_dot_hat/(omega_hat*omega_hat));
+	omega_partials(1) = -(sin(omega_hat*T)*T*xi_dot_hat)-(cos(omega_hat*T))*T*eta_dot_hat;
+	omega_partials(2) = (sin(omega_hat*T)*T*xi_dot_hat/omega_hat)-((1-cos(omega_hat*T))*xi_dot_hat/(omega_hat*omega_hat))+(cos(omega_hat*T)*T*eta_dot_hat/omega_hat)-(sin(omega_hat*T)*eta_dot_hat/(omega_hat*omega_hat));
+	omega_partials(3) = (cos(omega_hat*T)*T*xi_dot_hat)-(sin(omega_hat*T)*T*eta_dot_hat);
 	ROS_INFO("updating omega partials");
 }
 
@@ -389,7 +403,7 @@ void Tracker::updateUMStateCovariance()
 	P = P_bar - W*S*W.transpose();
 }
 
-void updateCTStateCovariance()
+void Tracker::updateCTStateCovariance()
 {
 	P_bar = f_x*P*f_x.transpose() + Q;
 	S = H*P_bar*H.transpose() + R;
