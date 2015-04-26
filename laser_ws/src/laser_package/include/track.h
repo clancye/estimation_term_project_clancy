@@ -3,6 +3,7 @@
 
 #include <ros/ros.h>
 #include <math.h>
+#include <cmath>
 #include <rosbag/bag.h>
 #include <string.h>
 #include <sensor_msgs/LaserScan.h>

@@ -21,8 +21,7 @@ int main(int argc, char **argv)
 	//other variables
 	Eigen::VectorXf next_x(5), past_x(5);
 	double w;
-	
-	past_x << 0, 10, 0, 10, 20; // initial vector: xi, xi_dot, eta, eta_dot, omega
+	past_x << 0, 10, 0, 0, OMEGA_RADS; // initial vector: xi, xi_dot, eta, eta_dot, omega
 	
 	
 	simulator.initializeSimulators(past_x);
@@ -38,20 +37,27 @@ int main(int argc, char **argv)
 	srv.request.measurement_noise_variance = VAR_W;
 	//initialize tracker(s)
 	
+	int counter = 0;
+	
 	client_initialize.call(srv);
 	
 	while(ros::ok())
 	{
 		w = meas_noise(measurement_generator);//noise
-		next_x = simulator.simulateCoordinatedTurn(TURNING_RATE);
-		
+		if(counter<300)
+		{
+			next_x = simulator.simulateCoordinatedTurn(OMEGA_RADS);	
+		}
+		else if (counter>300&counter<500){next_x = simulator.simulateUniformMotion();}
+		else if (counter>500&&counter<1100){next_x = simulator.simulateCoordinatedTurn(OMEGA_RADS);}
+		else{next_x = simulator.simulateUniformMotion();}
 		//update values
 		srv.request.real_x = next_x(XI);
 		srv.request.measured_x = next_x(XI) + w;
 		srv.request.real_y = next_x(ETA);
 		srv.request.measured_y = next_x(ETA) + w;
 		srv.request.update_time = ros::Time::now().toSec();
-		
+		counter++;
 		//send update
 		if(client_update.call(srv));
 		

@@ -91,7 +91,7 @@ void Tracker::initializeMatrices()
 	var_w/T, 2*var_w/(T*T),0,0,0,
 	0,0,var_w,var_w/T,0,
 	0,0,var_w/T,2*var_w/(T*T),0,
-	0,0,0,0,0;
+	0,0,0,0,var_w/T;
 }
 
 void Tracker::updateCoordinatedTurnJacobian()
@@ -101,7 +101,7 @@ void Tracker::updateCoordinatedTurnJacobian()
 	float eta_hat = x_hat(ETA);
 	float eta_dot_hat = x_hat(ETA_DOT);
 	float omega_hat = x_hat(OMEGA);
-	if(abs(omega_initial-omega_hat>0.00000000005))
+	if(fabs(omega_hat)>0.04)
 	{
 		updateOmegaPartials(xi_hat, xi_dot_hat, eta_hat, eta_dot_hat, omega_hat);
 		f_x <<
@@ -122,7 +122,7 @@ void Tracker::updateCoordinatedTurnJacobian()
 		0, 0, 0, 0, 1;
 	}
 		
-	ROS_INFO("Updating CT Jacobian");
+	ROS_INFO("Updating CT Jacobian OMEGA_HAT = %f", fabs(omega_hat));
 }
 
 void Tracker::initializeCoordinatedTurnSystemMatrix()
@@ -165,7 +165,7 @@ void Tracker::update(Eigen::Vector2f z, double an_update_time, int CT_model)
 	{
 		updateUMStateCovariance();
 	}
-	ROS_INFO("Velocity gain[%d] = %f\n",CT_model, getVelocityGainX());
+	ROS_INFO("\nPosition gain [%d] = %f \nVelocity gain[%d] = %f\n",CT_model, getPositionGainX(),CT_model, getVelocityGainX());
 	
 	x_hat_bar = F*x_hat;
 	z_hat = H*x_hat_bar;
