@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 	Eigen::VectorXf next_x(5), past_x(5);
 	double w;
 	
-	past_x << 0, 10, 0, 10, 0; // initial vector: xi, xi_dot, eta, eta_dot, omega
+	past_x << 0, 10, 0, 10, 20; // initial vector: xi, xi_dot, eta, eta_dot, omega
 	
 	
 	simulator.initializeSimulators(past_x);

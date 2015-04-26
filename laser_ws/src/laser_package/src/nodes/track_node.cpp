@@ -151,7 +151,7 @@ class SubscribeAndPublish
 			noise_data_2(VAR_V_ETA) = noise_data_2(SIGMA_V_ETA)*noise_data_2(SIGMA_V_ETA);
 			
 			noise_data_2(MU_V_OMEGA) = 0.0;
-			noise_data_2(SIGMA_V_OMEGA) = 1.0;
+			noise_data_2(SIGMA_V_OMEGA) = 0.15;
 			noise_data_2(VAR_V_OMEGA) = noise_data_2(SIGMA_V_OMEGA)*noise_data_2(SIGMA_V_OMEGA);
 			
 			noise_data.push_back(noise_data_1);
