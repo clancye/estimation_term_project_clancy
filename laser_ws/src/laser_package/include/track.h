@@ -80,7 +80,7 @@ class Tracker //We'll treat this as only a KF for now
 	
 	private:
 	
-		float last_x,last_y, current_speed, max_current_speed,speed_memory[MEASUREMENT_MEMORY],T;
+		float last_x,last_y, current_speed, max_current_speed,speed_memory[MEASUREMENT_MEMORY],T, omega_initial;
 		float mu_w, sigma_w, var_w, mu_v_xi, sigma_v_xi,var_v_xi, mu_v_eta, sigma_v_eta,var_v_eta, mu_v_omega, sigma_v_omega,var_v_omega; 
 		float velocity_x_memory[MEASUREMENT_MEMORY], velocity_y_memory[MEASUREMENT_MEMORY], current_x_velocity, current_y_velocity;
 		float accel_x_memory[MEASUREMENT_MEMORY], accel_y_memory[MEASUREMENT_MEMORY], current_x_accel, current_y_accel;

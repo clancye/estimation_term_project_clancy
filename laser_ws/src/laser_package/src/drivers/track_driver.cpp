@@ -16,7 +16,7 @@ Tracker::Tracker(Eigen::MatrixXf an_initial_state, float a_sampling_interval, Ei
 	
 		
 	x_hat << an_initial_state(XI,0), an_initial_state(XI_DOT,0), an_initial_state(ETA,0), an_initial_state(ETA_DOT,0),an_initial_state(OMEGA,0);	
-	
+	omega_initial = an_initial_state(OMEGA);
 	
 	if(!CT_model)
 	{
@@ -101,7 +101,7 @@ void Tracker::updateCoordinatedTurnJacobian()
 	float eta_hat = x_hat(ETA);
 	float eta_dot_hat = x_hat(ETA_DOT);
 	float omega_hat = x_hat(OMEGA);
-	if(abs(omega_hat>0.1))
+	if(abs(omega_initial-omega_hat>0.005))
 	{
 		updateOmegaPartials(xi_hat, xi_dot_hat, eta_hat, eta_dot_hat, omega_hat);
 		f_x <<
