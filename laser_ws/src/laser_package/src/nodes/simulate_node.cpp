@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	Simulator simulator = Simulator();
 	
 	//other variables
-	Eigen::VectorXf next_x(5), past_x(5);
+	Eigen::VectorXd next_x(5), past_x(5);
 	double w;
 	past_x << 0, 10, 0, 0, OMEGA_RADS; // initial vector: xi, xi_dot, eta, eta_dot, omega
 	
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 	
 	while(ros::ok())
 	{
-		w = meas_noise(measurement_generator);//noise
+		w = meas_noise(measurement_generator);//noises
 		if(counter<300)
 		{
 			next_x = simulator.simulateCoordinatedTurn(OMEGA_RADS);	

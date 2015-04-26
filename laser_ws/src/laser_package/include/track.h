@@ -52,47 +52,47 @@ class Tracker //We'll treat this as only a KF for now
 	public:
 	
 		Tracker();
-		Tracker(Eigen::MatrixXf an_initial_state, float a_sampling_interval, Eigen::MatrixXf noise_data, int CT_model);
+		Tracker(Eigen::MatrixXd an_initial_state, double a_sampling_interval, Eigen::MatrixXd noise_data, int CT_model);
 
 		void predictState();
-		void update(Eigen::Vector2f z, double an_update_time, int CT_model);
-		float getXAcceleration();
-		float getYAcceleration();
-		float getXVelocity();
-		float getYVelocity();
-		float getPredictedX();
-		float getPredictedY();
-		float getPredictedXVel();
-		float getPredictedYVel();
-		float getPositionVarianceX();
-		float getVelocityVarianceX();
-		float getPositionGainX();
-		float getVelocityGainX();
-		float getPositionVarianceY();
-		float getVelocityVarianceY();
-		float getOmegaVariance();
-		float getPositionGainY();
-		float getVelocityGainY();
-		float getInnovationX();
-		float getInnovationY();
-		float getPredictedMeasurementX();
-		float getPredictedMeasurementY();
-		float getPredictedOmega();
+		void update(Eigen::Vector2d z, double an_update_time, int CT_model);
+		double getXAcceleration();
+		double getYAcceleration();
+		double getXVelocity();
+		double getYVelocity();
+		double getPredictedX();
+		double getPredictedY();
+		double getPredictedXVel();
+		double getPredictedYVel();
+		double getPositionVarianceX();
+		double getVelocityVarianceX();
+		double getPositionGainX();
+		double getVelocityGainX();
+		double getPositionVarianceY();
+		double getVelocityVarianceY();
+		double getOmegaVariance();
+		double getPositionGainY();
+		double getVelocityGainY();
+		double getInnovationX();
+		double getInnovationY();
+		double getPredictedMeasurementX();
+		double getPredictedMeasurementY();
+		double getPredictedOmega();
 	
 	private:
 	
-		float last_x,last_y, current_speed, max_current_speed,speed_memory[MEASUREMENT_MEMORY],T, omega_initial;
-		float mu_w, sigma_w, var_w, mu_v_xi, sigma_v_xi,var_v_xi, mu_v_eta, sigma_v_eta,var_v_eta, mu_v_omega, sigma_v_omega,var_v_omega; 
-		float velocity_x_memory[MEASUREMENT_MEMORY], velocity_y_memory[MEASUREMENT_MEMORY], current_x_velocity, current_y_velocity;
-		float accel_x_memory[MEASUREMENT_MEMORY], accel_y_memory[MEASUREMENT_MEMORY], current_x_accel, current_y_accel;
+		double last_x,last_y, current_speed, max_current_speed,speed_memory[MEASUREMENT_MEMORY],T, omega_initial;
+		double mu_w, sigma_w, var_w, mu_v_xi, sigma_v_xi,var_v_xi, mu_v_eta, sigma_v_eta,var_v_eta, mu_v_omega, sigma_v_omega,var_v_omega; 
+		double velocity_x_memory[MEASUREMENT_MEMORY], velocity_y_memory[MEASUREMENT_MEMORY], current_x_velocity, current_y_velocity;
+		double accel_x_memory[MEASUREMENT_MEMORY], accel_y_memory[MEASUREMENT_MEMORY], current_x_accel, current_y_accel;
 		double last_time, second_last_time;
-		std::vector<Eigen::MatrixXf> x_hat_vec, P_vec;
-		Eigen::MatrixXf H,P,F,Q,R,Gamma, P_bar, S, W,x_hat_bar, x_hat, z_hat, nu, V,f_x;
-		Eigen::Vector4f omega_partials;
+		std::vector<Eigen::MatrixXd> x_hat_vec, P_vec;
+		Eigen::MatrixXd H,P,F,Q,R,Gamma, P_bar, S, W,x_hat_bar, x_hat, z_hat, nu, V,f_x;
+		Eigen::Vector4d omega_partials;
 		int system_model;
-		void updateDerivatives(Eigen::Vector2f z, double time_of_measurement);
-		void initializeNoises(Eigen::MatrixXf noise_data);
-		float getDistance(float x_1, float y_1, float x_2, float y_2);
+		void updateDerivatives(Eigen::Vector2d z, double time_of_measurement);
+		void initializeNoises(Eigen::MatrixXd noise_data);
+		double getDistance(double x_1, double y_1, double x_2, double y_2);
 		void initializeStateModel();
 		void printValues();
 		void resizeMatrices();
@@ -102,7 +102,7 @@ class Tracker //We'll treat this as only a KF for now
 		void initializeCoordinatedTurnSystemMatrix();
 		void updateCoordinatedTurnJacobian();
 		void initializeMatrices();
-		void updateOmegaPartials(float xi_hat, float xi_dot_hat, float eta_hat, float eta_dot_hat, float omega_hat);
+		void updateOmegaPartials(double xi_hat, double xi_dot_hat, double eta_hat, double eta_dot_hat, double omega_hat);
 		
 };
 

@@ -52,7 +52,7 @@ class SubscribeAndPublish
 		
 		bool initializeTrackerCallBack(laser_package::update_tracker::Request &req, laser_package::update_tracker::Response &res)
 		{ 
-			Eigen::MatrixXf initial_state(5,1);
+			Eigen::MatrixXd initial_state(5,1);
 			
 			initial_state << req.initial_x, req.initial_x_velocity, req.initial_y, req.initial_y_velocity, req.initial_turn_rate;
 			tracker_1 = Tracker(initial_state, req.sampling_interval, noise_data[TRACKER_1], UM);
@@ -73,9 +73,9 @@ class SubscribeAndPublish
 		geometry_msgs::Point msg_1, msg_2;
 		geometry_msgs::PointStamped real_msg_1, real_msg_2;
 		laser_package::state state_msg_1, state_msg_2;
-		Eigen::Vector2f z;
-		std::vector<Eigen::MatrixXf> noise_data;
-		Eigen::MatrixXf noise_data_1, noise_data_2;
+		Eigen::Vector2d z;
+		std::vector<Eigen::MatrixXd> noise_data;
+		Eigen::MatrixXd noise_data_1, noise_data_2;
 		Tracker tracker_1, tracker_2;
 		void updateStateMessage(Tracker *tracker, laser_package::state *state_msg, laser_package::update_tracker::Request &req)
 		{
