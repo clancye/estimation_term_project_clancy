@@ -101,7 +101,7 @@ void Tracker::updateCoordinatedTurnJacobian()
 	float eta_hat = x_hat(ETA);
 	float eta_dot_hat = x_hat(ETA_DOT);
 	float omega_hat = x_hat(OMEGA);
-	if(abs(omega_initial-omega_hat>0.005))
+	if(abs(omega_initial-omega_hat>0.00000000005))
 	{
 		updateOmegaPartials(xi_hat, xi_dot_hat, eta_hat, eta_dot_hat, omega_hat);
 		f_x <<
@@ -110,6 +110,7 @@ void Tracker::updateCoordinatedTurnJacobian()
 		0, ((1-cos(omega_hat*T))/omega_hat), 1, (sin(omega_hat*T)/omega_hat), omega_partials(2),
 		0, sin(omega_hat*T), 0, cos(omega_hat*T), omega_partials(3),
 		0, 0, 0, 0, 1;
+		ROS_INFO("VALUE ACHIEVED");
 	}
 	else
 	{
