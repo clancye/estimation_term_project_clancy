@@ -1,11 +1,11 @@
-#include "../../include/track.h"
+#include "../../include/filter.h"
 
-Tracker::Tracker()
+Filter::Filter()
 {
-	ROS_INFO("Empty tracker");
+	ROS_INFO("Empty Filter");
 }
 
-Tracker::Tracker(Eigen::MatrixXd an_initial_state, double a_sampling_interval, Eigen::MatrixXd noise_data, int CT_model)
+Filter::Filter(Eigen::MatrixXd an_initial_state, double a_sampling_interval, Eigen::MatrixXd noise_data, int CT_model)
 {
 	T = a_sampling_interval;
 	
@@ -40,7 +40,7 @@ Tracker::Tracker(Eigen::MatrixXd an_initial_state, double a_sampling_interval, E
 	//printValues();//USE TO DEBUG VALUES IN MATRICES
 }
 
-void Tracker::initializeNoises(Eigen::MatrixXd noise_data)
+void Filter::initializeNoises(Eigen::MatrixXd noise_data)
 {
 	mu_w = noise_data(MU_W,0);
 	sigma_w = noise_data(SIGMA_W,0);
@@ -59,7 +59,7 @@ void Tracker::initializeNoises(Eigen::MatrixXd noise_data)
 	var_v_omega = noise_data(VAR_V_OMEGA,0);
 }
 
-void Tracker::initializeMatrices()
+void Filter::initializeMatrices()
 {
 	
 	Gamma <<
@@ -94,7 +94,7 @@ void Tracker::initializeMatrices()
 	0,0,0,0,var_w/T;
 }
 
-void Tracker::updateCoordinatedTurnJacobian()
+void Filter::updateCoordinatedTurnJacobian()
 {
 	double xi_hat = x_hat(XI);
 	double xi_dot_hat = x_hat(XI_DOT);
@@ -125,7 +125,7 @@ void Tracker::updateCoordinatedTurnJacobian()
 	ROS_INFO("Updating CT Jacobian OMEGA_HAT = %f", fabs(omega_hat));
 }
 
-void Tracker::initializeCoordinatedTurnSystemMatrix()
+void Filter::initializeCoordinatedTurnSystemMatrix()
 {
 	double omega = x_hat(OMEGA);
 	double inverse_omega = 1/omega; 
@@ -137,7 +137,7 @@ void Tracker::initializeCoordinatedTurnSystemMatrix()
 	0, 0, 0, 0, 1;
 }
 
-void Tracker::initializeUniformMotionSystemMatrix()
+void Filter::initializeUniformMotionSystemMatrix()
 {
 	F <<
 	1, T, 0, 0, 0,
@@ -147,7 +147,7 @@ void Tracker::initializeUniformMotionSystemMatrix()
 	0, 0, 0, 0, 0;
 }
 
-void Tracker::update(Eigen::Vector2d z, double an_update_time, int CT_model)
+void Filter::update(Eigen::Vector2d z, double an_update_time, int CT_model)
 {
 	updateDerivatives(z, an_update_time);
 	
@@ -169,11 +169,11 @@ void Tracker::update(Eigen::Vector2d z, double an_update_time, int CT_model)
 	
 	x_hat_bar = F*x_hat;
 	z_hat = H*x_hat_bar;
-	//ROS_INFO("Updating tracker");
+	//ROS_INFO("Updating Filter");
 }
 
 
-void Tracker::updateDerivatives(Eigen::Vector2d z, double time_of_measurement)
+void Filter::updateDerivatives(Eigen::Vector2d z, double time_of_measurement)
 {
 	//double speed_temp_sum = 0.0;
 	double some_x = z(0);
@@ -230,7 +230,7 @@ void Tracker::updateDerivatives(Eigen::Vector2d z, double time_of_measurement)
 	ROS_INFO("X_accel = %f\n Y_accel = %f\n time between = %f\n\n-----------------------------------------------------", current_x_accel, current_y_accel, time_between_measurements);
 }
 
-void Tracker::updateOmegaPartials(double xi_hat, double xi_dot_hat, double eta_hat, double eta_dot_hat, double omega_hat)
+void Filter::updateOmegaPartials(double xi_hat, double xi_dot_hat, double eta_hat, double eta_dot_hat, double omega_hat)
 {	
 	omega_partials(0) = (cos(omega_hat*T)*T*xi_dot_hat/omega_hat)-(sin(omega_hat*T)*xi_dot_hat/(omega_hat*omega_hat))-(sin(omega_hat*T)*T*eta_dot_hat/omega_hat)-((-1+cos(omega_hat*T))*eta_dot_hat/(omega_hat*omega_hat));
 	omega_partials(1) = -(sin(omega_hat*T)*T*xi_dot_hat)-(cos(omega_hat*T))*T*eta_dot_hat;
@@ -239,142 +239,132 @@ void Tracker::updateOmegaPartials(double xi_hat, double xi_dot_hat, double eta_h
 	ROS_INFO("updating omega partials");
 }
 
-double Tracker::getDistance(double x_1, double y_1, double x_2, double y_2)
+double Filter::getDistance(double x_1, double y_1, double x_2, double y_2)
 {
 	return sqrt(pow((x_1-x_2),2)+pow((y_1-y_2),2));
 }
 
-double Tracker::getXAcceleration()
+double Filter::getXAcceleration()
 {
 	return current_x_accel;
 }
 
-double Tracker::getYAcceleration()
+double Filter::getYAcceleration()
 {
 	return current_y_accel;
 }
 
-double Tracker::getXVelocity()
+double Filter::getXVelocity()
 {
 	return current_x_velocity;
 }
 
-double Tracker::getYVelocity()
+double Filter::getYVelocity()
 {
 	return current_y_velocity;
 }
 
-void Tracker::printValues()
+void Filter::printValues()
 {
 	//ROS_INFO("mu_v = %f\n sigma_v = %f\n mu_w = %f, sigma_w = %f", mu_v, sigma_v, mu_w, sigma_w);
 	//ROS_INFO("P11 = %f, ", P(0,0));//P12 = %f, P21 = %f, P22 = %f", P(0,0),P(0,1),P(1,0),P(1,1));
 	//ROS_INFO("X_initial = [%f; %f] \n", x_hat[0](0), x_hat[0](1));
 }
 
-double Tracker::getPredictedX()
+double Filter::getPredictedX()
 {
 	return x_hat(XI,0);
 }
 
-double Tracker::getPredictedY()
+double Filter::getPredictedY()
 {
 	return x_hat(ETA,0);
 }
 
-double Tracker::getPredictedXVel()
+double Filter::getPredictedXVel()
 {
 	return x_hat(XI_DOT,0);
 }
 
-double Tracker::getPredictedYVel()
+double Filter::getPredictedYVel()
 {
 	return x_hat(ETA_DOT,0);
 }
 
-double Tracker::getPredictedOmega()
+double Filter::getPredictedOmega()
 {
 	return x_hat(OMEGA,0);
 }
 
-double Tracker::getPositionVarianceX()
+double Filter::getPositionVarianceX()
 {
 	return P(XI,XI);
 }
 
-double Tracker::getPositionVarianceY()
+double Filter::getPositionVarianceY()
 {
 	return P(ETA,ETA);
 }
 
-double Tracker::getVelocityVarianceX()
+double Filter::getVelocityVarianceX()
 {
 	return P(XI_DOT,XI_DOT);
 }
 
-double Tracker::getVelocityVarianceY()
+double Filter::getVelocityVarianceY()
 {
 	return P(ETA_DOT,ETA_DOT);
 }
 
-double Tracker::getOmegaVariance()
+double Filter::getOmegaVariance()
 {
 	return P(OMEGA, OMEGA);
 }
 
-double Tracker::getPositionGainX()
+double Filter::getPositionGainX()
 {
 	return W(XI,XI);
 }
 
 
 
-double Tracker::getPositionGainY()
+double Filter::getPositionGainY()
 {
 	return W(2,1);
 }
 
-double Tracker::getVelocityGainX()
+double Filter::getVelocityGainX()
 {
 	return W(1,0);
 }
 
-double Tracker::getVelocityGainY()
+double Filter::getVelocityGainY()
 {
 	return W(3,1);
 }
 
 
-double Tracker::getInnovationX()
+double Filter::getInnovationX()
 {
 	return nu(0,0);
 }
 
-double Tracker::getInnovationY()
+double Filter::getInnovationY()
 {
 	return nu(1,0);
 }
 
-double Tracker::getPredictedMeasurementX()
+double Filter::getPredictedMeasurementX()
 {
 	return z_hat(0);
 }
 
-double Tracker::getPredictedMeasurementY()
+double Filter::getPredictedMeasurementY()
 {
 	return z_hat(1);
 }
 
-
-
-
-
-
-
-
-
-
-
-void Tracker::resizeMatrices()
+void Filter::resizeMatrices()
 {
 	
 	
@@ -394,7 +384,7 @@ void Tracker::resizeMatrices()
 		f_x.resize(NUM_STATES,NUM_STATES);
 }
  
-void Tracker::updateUMStateCovariance()
+void Filter::updateUMStateCovariance()
 {
 	
 	ROS_INFO("P = %f..%f\n%f..%f", P(0,0),P(0,1),P(1,0),P(1,1));
@@ -404,7 +394,7 @@ void Tracker::updateUMStateCovariance()
 	P = P_bar - W*S*W.transpose();
 }
 
-void Tracker::updateCTStateCovariance()
+void Filter::updateCTStateCovariance()
 {
 	P_bar = f_x*P*f_x.transpose() + Q;
 	S = H*P_bar*H.transpose() + R;

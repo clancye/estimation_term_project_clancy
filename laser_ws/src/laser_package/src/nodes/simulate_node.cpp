@@ -6,14 +6,16 @@ int main(int argc, char **argv)
 	//ROS stuff
 	ros::init(argc, argv, "simulate_node");
 	ros::NodeHandle n;
-	ros::ServiceClient client_update = n.serviceClient<laser_package::update_tracker>("updateTracker");
-	ros::ServiceClient client_initialize = n.serviceClient<laser_package::update_tracker>("initializeTracker");
+	ros::Publisher filter_target_pub = n.advertise<laser_package::state>("/filter_topic",1000); //publish targets to new topic
+	//ros::ServiceClient client_update = n.serviceClient<laser_package::update_tracker>("updateFilter");
+	//ros::ServiceClient client_initialize = n.serviceClient<laser_package::update_tracker>("initializeFilter");
 	laser_package::update_tracker srv;
+	laser_package::state state_msg;
 	ros::Rate r(floor(1/SAMPLING_INTERVAL+0.5));
 	
 	//random noise stuff
 	std::default_random_engine measurement_generator;
-	std::normal_distribution<double> meas_noise(MU_W,VAR_W);
+	std::normal_distribution<double> meas_noise(MU_W_SIMULATE,VAR_W_SIMULATE);
 	
 	//simulator class
 	Simulator simulator = Simulator();
@@ -25,8 +27,7 @@ int main(int argc, char **argv)
 	
 	
 	simulator.initializeSimulators(past_x);
-	//initial state
-	srv.request.initial_x = past_x(XI);
+	/*srv.request.initial_x = past_x(XI);
 	srv.request.initial_x_velocity = past_x(XI_DOT);
 	srv.request.initial_y = past_x(ETA);
 	srv.request.initial_y_velocity = past_x(ETA_DOT);
@@ -34,32 +35,34 @@ int main(int argc, char **argv)
 	srv.request.sampling_interval = SAMPLING_INTERVAL;
 	srv.request.update_time = ros::Time::now().toSec();
 	srv.request.measurement_noise_mean = MU_W;
-	srv.request.measurement_noise_variance = VAR_W;
+	srv.request.measurement_noise_variance = VAR_W;*/
 	//initialize tracker(s)
+
 	
 	int counter = 0;
 	
-	client_initialize.call(srv);
+	//client_initialize.call(srv);
 	
 	while(ros::ok())
 	{
 		w = meas_noise(measurement_generator);//noises
-		if(counter<300)
+		if(counter<3000)
 		{
 			next_x = simulator.simulateCoordinatedTurn(OMEGA_RADS);	
 		}
-		else if (counter>300&counter<500){next_x = simulator.simulateUniformMotion();}
-		else if (counter>500&&counter<1100){next_x = simulator.simulateCoordinatedTurn(OMEGA_RADS);}
+		else if (counter>3000&counter<5000){next_x = simulator.simulateUniformMotion();}
+		else if (counter>5000&&counter<11000){next_x = simulator.simulateCoordinatedTurn(OMEGA_RADS);}
 		else{next_x = simulator.simulateUniformMotion();}
 		//update values
-		srv.request.real_x = next_x(XI);
-		srv.request.measured_x = next_x(XI) + w;
-		srv.request.real_y = next_x(ETA);
-		srv.request.measured_y = next_x(ETA) + w;
-		srv.request.update_time = ros::Time::now().toSec();
+		state_msg.Real_X = next_x(XI);
+		state_msg.Measured_X = next_x(XI) + w;
+		state_msg.Real_Y = next_x(ETA);
+		state_msg.Measured_Y = next_x(ETA) + w;
+		state_msg.Time_Of_Measurement = ros::Time::now().toSec();
+		filter_target_pub.publish(state_msg);
 		counter++;
 		//send update
-		if(client_update.call(srv));
+		//if(client_update.call(srv));
 		
 		ros::spinOnce();
 		

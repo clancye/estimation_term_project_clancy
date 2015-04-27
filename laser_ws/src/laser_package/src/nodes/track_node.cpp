@@ -1,8 +1,6 @@
 #include "../../include/track.h"
 
 
-//Tracker tracker = Tracker();
-
 class SubscribeAndPublish
 {
 	public:
@@ -14,8 +12,8 @@ class SubscribeAndPublish
 			target_pub_2 = n.advertise<geometry_msgs::PointStamped>("/target_topic_2",1000); //publish targets to new topic
 			state_pub_1 = n.advertise<laser_package::state>("/state_topic_1",1000); //publish targets to new topic
 			state_pub_2 = n.advertise<laser_package::state>("/state_topic_2",1000); //publish targets to new topic
-			update_service = n.advertiseService("updateTracker", &SubscribeAndPublish::updateTrackerCallBack,this);
-			initialize_service = n.advertiseService("initializeTracker", &SubscribeAndPublish::initializeTrackerCallBack,this);
+			update_service = n.advertiseService("updateTracker", &SubscribeAndPublish::updateFilterCallBack,this);
+			initialize_service = n.advertiseService("initializeTracker", &SubscribeAndPublish::initializeFilterCallBack,this);
 			
 			//These are for when we want to publish to Rviz
 			//real_msg_1.point = msg_1;
@@ -26,15 +24,15 @@ class SubscribeAndPublish
 		
 		
 
-		bool updateTrackerCallBack(laser_package::update_tracker::Request &req, laser_package::update_tracker::Response &res)
+		bool updateFilterCallBack(laser_package::update_filter::Request &req, laser_package::update_filter::Response &res)
 		{ 
 			//fill measurement vector with new values
 			z(0) = req.measured_x;
 			z(1) = req.measured_y;
 			
 			//update the trackers
-			tracker_1.update(z, req.update_time,UM);
-			tracker_2.update(z, req.update_time,CT);
+			filter_1.update(z, req.update_time,UM);
+			filter_2.update(z, req.update_time,CT);
 			
 			//update the state messages
 			updateStateMessage(&tracker_1, &state_msg_1, req);
@@ -50,18 +48,18 @@ class SubscribeAndPublish
 			//target_pub_2.publish(real_msg_2);
 		}
 		
-		bool initializeTrackerCallBack(laser_package::update_tracker::Request &req, laser_package::update_tracker::Response &res)
+		bool initializeFilterCallBack(laser_package::update_filter::Request &req, laser_package::update_filter::Response &res)
 		{ 
 			Eigen::MatrixXd initial_state(5,1);
 			
 			initial_state << req.initial_x, req.initial_x_velocity, req.initial_y, req.initial_y_velocity, req.initial_turn_rate;
-			tracker_1 = Tracker(initial_state, req.sampling_interval, noise_data[TRACKER_1], UM);
-			tracker_2 = Tracker(initial_state, req.sampling_interval, noise_data[TRACKER_2], CT);
-			updateStateMessage(&tracker_1, &state_msg_1, req);
-			updateStateMessage(&tracker_2, &state_msg_2, req);
+			filter_1 = Filter(initial_state, req.sampling_interval, noise_data[FILTER_1], UM);
+			filter_2 = Filter(initial_state, req.sampling_interval, noise_data[FILTER_2], CT);
+			updateStateMessage(&filter_1, &state_msg_1, req);
+			updateStateMessage(&filter_2, &state_msg_2, req);
 			state_pub_1.publish(state_msg_1);
 			state_pub_2.publish(state_msg_2);
-			ROS_INFO("Tracker initialized");
+			ROS_INFO("Filter initialized");
 			
 		}
 
@@ -76,8 +74,8 @@ class SubscribeAndPublish
 		Eigen::Vector2d z;
 		std::vector<Eigen::MatrixXd> noise_data;
 		Eigen::MatrixXd noise_data_1, noise_data_2;
-		Tracker tracker_1, tracker_2;
-		void updateStateMessage(Tracker *tracker, laser_package::state *state_msg, laser_package::update_tracker::Request &req)
+		Filter filter_1, filter_2;
+		void updateStateMessage(Filter *filter, laser_package::state *state_msg, laser_package::update_filter::Request &req)
 		{
 			//real vs. measured x and y values
 			state_msg->Real_X = req.real_x;

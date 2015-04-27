@@ -11,7 +11,8 @@ class SubscribeAndPublish
 			ROS_INFO("Constructing SAP...");
 			ros::Duration(10).sleep(); // sleep for 10 seconds
 			laser_sub = n.subscribe<sensor_msgs::LaserScan>("/client_scan",1000,&SubscribeAndPublish::laserCallBack,this);
-			target_pub = n.advertise<sensor_msgs::LaserScan>("/client_targets",1000); //publish targets to new topic
+			rviz_target_pub = n.advertise<sensor_msgs::LaserScan>("/client_targets",1000); //publish targets to new topic
+			filter_target_pub = n.advertise<laser_package::state>("/filter_topic",1000); //publish targets to new topic
 			client = n.serviceClient<laser_package::update_tracker>("updateTracker");
 			std::vector<float> filtered_ranges (682);
 			std::vector<float> initial_targets (682);
@@ -34,24 +35,31 @@ class SubscribeAndPublish
 			if (target_detector.getZoneBeingTracked() != -1) state = TRACKING;
 			if (state == TRACKING)
 			{
-				srv.request.measured_x = targets_msg.ranges[0];
-				srv.request.measured_y = targets_msg.ranges[1];
-				srv.request.update_time = target_detector.getScanTime();
-				if(client.call(srv));
+				//srv.request.measured_x = targets_msg.ranges[0];
+				//srv.request.measured_y = targets_msg.ranges[1];
+				//srv.request.update_time = target_detector.getScanTime();
+				//if(client.call(srv));
+				target_msg.Measured_X = targets_msg.ranges[0];
+				target_msg.Measured_Y = targets_msg.ranges[1];
+				target_msg.Time_Of_Measurement = target_detector.getScanTime();
 				//else{ROS_INFO("ERROR SENDING TARGET COORDINATES TO TRACK NODE \n \n x,y = [%f,%f]", srv.request.x, srv.request.y);}
 				//ROS_INFO("state = %d\n", state);
+				filter_target_pub.publish(target_msg);
+				
 			}
-			target_pub.publish(targets_msg);//publish so we can see on RViz
+			//rviz_target_pub.publish(targets_msg);//publish so we can see on RViz
 		}
 	private:
 	   
 		ros::NodeHandle n; 
-		ros::Publisher target_pub;
+		ros::Publisher rviz_target_pub;
+		ros::Publisher filter_target_pub;
 		ros::Subscriber laser_sub;
 		ros::ServiceClient client;
 		int scan_counter, state;//NEW CODE
 		std::vector<float> filtered_ranges, initial_targets;
 		sensor_msgs::LaserScan targets_msg;
+		laser_package::state target_msg;
 		float time;
 		laser_package::update_tracker srv;
 };//End of class SubscribeAndPublish

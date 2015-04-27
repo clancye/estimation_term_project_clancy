@@ -29,6 +29,7 @@ find_package(catkin REQUIRED COMPONENTS
  add_message_files(
    FILES
    state.msg
+   target.msg
 #   Message1.msg
 #   Message2.msg
  )
@@ -36,7 +37,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate services in the 'srv' folder
  add_service_files(
     FILES
-	update_tracker.srv
+	update_filter.srv
+	add_filter.srv
 #   Service1.srv
 #   Service2.srv
  )
@@ -90,17 +92,29 @@ include_directories(
 
 ## Declare a cpp executable
 # add_executable(laser_package_node src/laser_package_node.cpp)
+add_executable(kf_node src/nodes/kf_node.cpp )
+target_link_libraries(kf_node ${catkin_LIBRARIES})
+add_dependencies(kf_node laser_package_generate_messages_cpp)
+
+add_executable(ekf_node src/nodes/ekf_node.cpp )
+target_link_libraries(ekf_node ${catkin_LIBRARIES})
+add_dependencies(ekf_node laser_package_generate_messages_cpp)
+
+add_executable(imm_node src/nodes/imm_node.cpp src/drivers/imm_driver.cpp)
+target_link_libraries(imm_node ${catkin_LIBRARIES})
+add_dependencies(imm_node laser_package_generate_messages_cpp)
+
 add_executable(simulate_node src/nodes/simulate_node.cpp src/drivers/simulate_driver.cpp)
 target_link_libraries(simulate_node ${catkin_LIBRARIES})
 add_dependencies(simulate_node laser_package_generate_messages_cpp)
 
-add_executable(track_node src/nodes/track_node.cpp src/drivers/track_driver.cpp)
-target_link_libraries(track_node ${catkin_LIBRARIES})
-add_dependencies(track_node laser_package_generate_messages_cpp)
+#add_executable(filter_node src/nodes/filter_node.cpp src/drivers/filter_driver.cpp)
+#target_link_libraries(filter_node ${catkin_LIBRARIES})
+#add_dependencies(filter_node laser_package_generate_messages_cpp)
 
-add_executable(detect_node src/nodes/detect_node.cpp src/drivers/detect_driver.cpp)
-target_link_libraries(detect_node ${catkin_LIBRARIES})
-add_dependencies(detect_node laser_package_generate_messages_cpp)
+#add_executable(detect_node src/nodes/detect_node.cpp src/drivers/detect_driver.cpp)
+#target_link_libraries(detect_node ${catkin_LIBRARIES})
+#add_dependencies(detect_node laser_package_generate_messages_cpp)
 
 add_executable(client_detect_node src/nodes/client_detect_node.cpp src/drivers/detect_driver.cpp)
 target_link_libraries(client_detect_node ${catkin_LIBRARIES})
