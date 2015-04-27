@@ -1,0 +1,4 @@
+int32 addMe
+---
+bool success
+int32 filterID

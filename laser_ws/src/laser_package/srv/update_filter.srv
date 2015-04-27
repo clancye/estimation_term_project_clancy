@@ -1,0 +1,16 @@
+float64 real_x
+float64 real_y
+float64 measured_x
+float64 measured_y
+float64 turn_rate
+float64 initial_x
+float64 initial_y
+float64 initial_x_velocity
+float64 initial_y_velocity
+float64 initial_turn_rate
+float64 update_time
+float64 measurement_noise_mean
+float64 measurement_noise_variance
+float64 sampling_interval
+---
+bool success
