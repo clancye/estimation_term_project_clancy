@@ -7,6 +7,7 @@ class SubscribeAndPublish
 		SubscribeAndPublish()
 		{	
 			ROS_INFO("Constructing SAP for tracking node...");
+			kf = Filter();
 			target_sub = n.subscribe<laser_package::state>("/filter_topic",1000,&SubscribeAndPublish::targetCallBack,this);
 			target_pub = n.advertise<laser_package::state>("/kf_topic",1000); //publish targets to new topic
 			add_filter_to_IMM = n.serviceClient<laser_package::add_filter>("addFilter");
@@ -30,7 +31,7 @@ class SubscribeAndPublish
 	ros::Publisher target_pub;
 	ros::ServiceClient add_filter_to_IMM;
 	laser_package::state state_msg;
-	KF kf;
+	Filter kf;
 	int filterID;
 	laser_package::add_filter srv;
 

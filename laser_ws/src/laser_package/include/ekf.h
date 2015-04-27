@@ -4,15 +4,8 @@
 #include "gen_defs.h"
 #include "laser_package/add_filter.h"
 #include "laser_package/state.h"
+#include "filter.h"
 
-class EKF : public Filter
-{	
-	public:
-		EKF();
-	
-	
-	
-	private:
-};
+
 
 #endif

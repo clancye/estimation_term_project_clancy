@@ -4,15 +4,7 @@
 #include "gen_defs.h"
 #include "laser_package/add_filter.h"
 #include "laser_package/state.h"
+#include "filter.h"
 
-class KF : public Filter
-{
-	public:
-		KF();
-	
-
-	
-	private:
-};
 
 #endif
