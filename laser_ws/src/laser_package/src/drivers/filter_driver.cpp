@@ -10,8 +10,7 @@ Filter::Filter(double a_sampling_interval, Eigen::MatrixXd noise_data, int CT_mo
 	T = a_sampling_interval;
 	system_model = CT_model;
 	
-	resizeMatrices(); 
-	initializeMatrices();
+	
 	initializeNoises(*noise_data);
 	initializeUniformMotionSystemMatrix();//assumes a UM motion model until it reaches initialization
 	
@@ -24,10 +23,12 @@ Filter::Filter(double a_sampling_interval, Eigen::MatrixXd noise_data, int CT_mo
 void Filter::initializeKF(Eigen::VectorXd an_initial_state, double a_sampling_interval, Eigen::MatrixXd noise_data)
 {
 	T = a_sampling_interval;
+	resizeMatrices(); 
+	initializeMatrices();
 	x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
 	omega_initial = an_initial_state(OMEGA,0);
+	
 	initializeNoises(noise_data);
-
 	initializeKFSystemMatrix();
 	updateKFCovariance();
 	
@@ -39,8 +40,13 @@ void Filter::initializeKF(Eigen::VectorXd an_initial_state, double a_sampling_in
 void Filter::initializeEKF(Eigen::VectorXd an_initial_state, double a_sampling_interval, Eigen::MatrixXd noise_data)
 {
 	T = a_sampling_interval;
+	
+	resizeMatrices(); 
+	initializeMatrices();
 	x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
-	omega_initial = an_initial_state(OMEGA,0);
+	omega_initial = an_initial_state(OMEGA);
+	
+	ROS_INFO("Initializing EKF: \n xi_0 =%f\n x_dot_0 = %f\n eta = %f\n eta_dot_0 = %f \n omega_0 = %f", x_hat(XI), x_hat(XI_DOT), x_hat(ETA), x_hat(ETA_DOT), x_hat(OMEGA)); 
 	
 	initializeNoises(noise_data);
 
@@ -158,7 +164,7 @@ void Filter::initializeKFSystemMatrix()
 	0, 0, 0, 0, 0;
 }
 
-void Filter::updateKF(Eigen::Vector2d z, double an_update_time, int CT_model)
+void Filter::updateKF(Eigen::Vector2d z, double an_update_time)
 {
 	updateDerivatives(z, an_update_time);
 	
@@ -167,14 +173,14 @@ void Filter::updateKF(Eigen::Vector2d z, double an_update_time, int CT_model)
 	
 	
 	updateKFCovariance();
-	ROS_INFO("\nPosition gain [%d] = %f \nVelocity gain[%d] = %f\n",CT_model, getPositionGainX(),CT_model, getVelocityGainX());
+	ROS_INFO("\nPosition gain KF = %f \nVelocity gain KF = %f\n", getPositionGainX(),getVelocityGainX());
 	
 	x_hat_bar = F*x_hat;
 	z_hat = H*x_hat_bar;
 	//ROS_INFO("Updating Filter");
 }
 
-void Filter::updateEKF(Eigen::Vector2d z, double an_update_time, int CT_model)
+void Filter::updateEKF(Eigen::Vector2d z, double an_update_time)
 {
 	updateDerivatives(z, an_update_time);
 	
@@ -184,7 +190,7 @@ void Filter::updateEKF(Eigen::Vector2d z, double an_update_time, int CT_model)
 	updateJacobian();
 	updateEKFCovariance();
 	
-	ROS_INFO("\nPosition gain [%d] = %f \nVelocity gain[%d] = %f\n",CT_model, getPositionGainX(),CT_model, getVelocityGainX());
+	ROS_INFO("\nPosition gain EKF = %f \nVelocity gain EKF= %f\n", getPositionGainX(), getVelocityGainX());
 	
 	x_hat_bar = F*x_hat;
 	z_hat = H*x_hat_bar;

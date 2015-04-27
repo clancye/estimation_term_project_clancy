@@ -1,7 +1,7 @@
-float64 Predicted_X_Velocity
-float64 Predicted_Y_Velocity
-float64 Predicted_X
-float64 Predicted_Y
+float64 Estimated_X_Velocity
+float64 Estimated_Y_Velocity
+float64 Estimated_X
+float64 Estimated_Y
 float64 Measured_X
 float64 Measured_Y
 float64 Real_X
@@ -20,7 +20,7 @@ float64 Position_Gain_Y
 float64 Velocity_Gain_Y
 float64 Innovation_X
 float64 Innovation_Y
-float64 Predicted_X_Measurement
-float64 Predicted_Y_Measurement
+float64 Estimated_X_Measurement
+float64 Estimated_Y_Measurement
 float64 Omega_Variance
 float64 Time_Of_Measurement
