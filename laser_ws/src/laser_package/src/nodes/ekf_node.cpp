@@ -30,6 +30,7 @@ class SubscribeAndPublish
 	ros::Publisher target_pub;
 	ros::ServiceClient add_filter_to_IMM;
 	laser_package::state state_msg;
+	EKF ekf;
 	int filterID;
 	laser_package::add_filter srv;
 

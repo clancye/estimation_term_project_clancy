@@ -92,11 +92,11 @@ include_directories(
 
 ## Declare a cpp executable
 # add_executable(laser_package_node src/laser_package_node.cpp)
-add_executable(kf_node src/nodes/kf_node.cpp )
+add_executable(kf_node src/nodes/kf_node.cpp src/drivers/kf_driver.cpp )
 target_link_libraries(kf_node ${catkin_LIBRARIES})
 add_dependencies(kf_node laser_package_generate_messages_cpp)
 
-add_executable(ekf_node src/nodes/ekf_node.cpp )
+add_executable(ekf_node src/nodes/ekf_node.cpp src/drivers/ekf_driver.cpp)
 target_link_libraries(ekf_node ${catkin_LIBRARIES})
 add_dependencies(ekf_node laser_package_generate_messages_cpp)
 

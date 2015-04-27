@@ -5,4 +5,14 @@
 #include "laser_package/add_filter.h"
 #include "laser_package/state.h"
 
+class EKF
+{	
+	public:
+		EKF();
+	
+	
+	
+	private:
+};
+
 #endif
