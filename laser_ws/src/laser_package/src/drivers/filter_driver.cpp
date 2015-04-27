@@ -21,11 +21,12 @@ Filter::Filter(double a_sampling_interval, Eigen::MatrixXd noise_data, int CT_mo
 	second_last_time = 0.0;
 }*/
 
-void Filter::initializeKF(Eigen::VectorXd an_initial_state)
+void Filter::initializeKF(Eigen::VectorXd an_initial_state, double a_sampling_interval, Eigen::MatrixXd noise_data)
 {
+	T = a_sampling_interval;
 	x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
 	omega_initial = an_initial_state(OMEGA,0);
-	
+	initializeNoises(noise_data);
 
 	initializeKFSystemMatrix();
 	updateKFCovariance();
@@ -35,15 +36,17 @@ void Filter::initializeKF(Eigen::VectorXd an_initial_state)
 	z_hat = H*x_hat_bar;
 }
 
-void Filter::initializeEKF(Eigen::VectorXd an_initial_state)
+void Filter::initializeEKF(Eigen::VectorXd an_initial_state, double a_sampling_interval, Eigen::MatrixXd noise_data)
 {
+	T = a_sampling_interval;
 	x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
 	omega_initial = an_initial_state(OMEGA,0);
 	
+	initializeNoises(noise_data);
 
-		initializeEKFSystemMatrix();
-		updateJacobian();
-		updateEKFCovariance();
+	initializeEKFSystemMatrix();
+	updateJacobian();
+	updateEKFCovariance();
 	
 	x_hat_vec.push_back(x_hat);
 	x_hat_bar = F*x_hat;
