@@ -1,5 +1,5 @@
 #include "../../include/filter.h"
-
+/*
 Filter::Filter()
 {
 	ROS_INFO("Empty Filter");
@@ -19,24 +19,22 @@ Filter::Filter(double a_sampling_interval, Eigen::MatrixXd noise_data, int CT_mo
 	
 	last_time = 0.0;// need to fix for initialization
 	second_last_time = 0.0;
-}
-
-void Filter::initializeFilter(Eigen::MatrixXd an_initial_state)
+}*/
+/*
+void Filter::initializeFilter(Eigen::VectorXd an_initial_state)
 {
-	x_hat << an_initial_state(XI,0), an_initial_state(XI_DOT,0), an_initial_state(ETA,0), an_initial_state(ETA_DOT,0),an_initial_state(OMEGA,0);	
+	x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
 	omega_initial = an_initial_state(OMEGA,0);
 	
-	if(system_model)
-	{
-		initializeCoordinatedTurnSystemMatrix();
-		updateCoordinatedTurnJacobian();
-		updateCTStateCovariance();
-	}
+
+		initializeSystemMatrix();
+		updateJacobian();
+		updateCovariance();
 	
 	x_hat_vec.push_back(x_hat);
 	x_hat_bar = F*x_hat;
 	z_hat = H*x_hat_bar;
-}
+}*/
 
 void Filter::initializeNoises(Eigen::MatrixXd noise_data)
 {
@@ -90,7 +88,7 @@ void Filter::initializeMatrices()
 	0,0,0,0,var_w/T;
 }
 
-void Filter::updateCoordinatedTurnJacobian()
+void Filter::updateJacobian()
 {
 	double xi_hat = x_hat(XI);
 	double xi_dot_hat = x_hat(XI_DOT);
@@ -121,7 +119,7 @@ void Filter::updateCoordinatedTurnJacobian()
 	ROS_INFO("Updating CT Jacobian OMEGA_HAT = %f", fabs(omega_hat));
 }
 
-void Filter::initializeCoordinatedTurnSystemMatrix()
+void Filter::initializeSystemMatrix()
 {
 	double omega = x_hat(OMEGA);
 	double inverse_omega = 1/omega; 
@@ -132,7 +130,7 @@ void Filter::initializeCoordinatedTurnSystemMatrix()
 	0, sin(omega*T), 0, cos(omega*T), 0,
 	0, 0, 0, 0, 1;
 }
-
+/* MUY IMPORTANTE
 void Filter::initializeUniformMotionSystemMatrix()
 {
 	F <<
@@ -141,8 +139,8 @@ void Filter::initializeUniformMotionSystemMatrix()
 	0, 0, 1, T, 0,
 	0, 0, 0, 1, 0,
 	0, 0, 0, 0, 0;
-}
-
+}*/
+/*
 void Filter::update(Eigen::Vector2d z, double an_update_time, int CT_model)
 {
 	updateDerivatives(z, an_update_time);
@@ -152,15 +150,7 @@ void Filter::update(Eigen::Vector2d z, double an_update_time, int CT_model)
 	
 	
 	
-	if(CT_model)
-	{
-		updateCoordinatedTurnJacobian();
-		updateCTStateCovariance();
-	}
-	else
-	{
-		updateUMStateCovariance();
-	}
+	updateCovariance();
 	ROS_INFO("\nPosition gain [%d] = %f \nVelocity gain[%d] = %f\n",CT_model, getPositionGainX(),CT_model, getVelocityGainX());
 	
 	x_hat_bar = F*x_hat;
@@ -168,7 +158,7 @@ void Filter::update(Eigen::Vector2d z, double an_update_time, int CT_model)
 	//ROS_INFO("Updating Filter");
 }
 
-
+*/
 void Filter::updateDerivatives(Eigen::Vector2d z, double time_of_measurement)
 {
 	//double speed_temp_sum = 0.0;
@@ -379,7 +369,7 @@ void Filter::resizeMatrices()
 		V.resize(NUM_PROCESS_NOISES, NUM_PROCESS_NOISES);//3x3
 		f_x.resize(NUM_STATES,NUM_STATES);
 }
- 
+ /* I'm commenting out the UM equations because they are easier to remember
 void Filter::updateUMStateCovariance()
 {
 	
@@ -388,9 +378,9 @@ void Filter::updateUMStateCovariance()
 	S = H*P_bar*H.transpose() + R;
 	W = P_bar*H.transpose()*S.inverse();
 	P = P_bar - W*S*W.transpose();
-}
+}*/
 
-void Filter::updateCTStateCovariance()
+void Filter::updateCovariance()
 {
 	P_bar = f_x*P*f_x.transpose() + Q;
 	S = H*P_bar*H.transpose() + R;

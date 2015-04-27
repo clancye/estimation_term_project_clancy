@@ -108,9 +108,9 @@ add_executable(simulate_node src/nodes/simulate_node.cpp src/drivers/simulate_dr
 target_link_libraries(simulate_node ${catkin_LIBRARIES})
 add_dependencies(simulate_node laser_package_generate_messages_cpp)
 
-#add_executable(filter_node src/nodes/filter_node.cpp src/drivers/filter_driver.cpp)
-#target_link_libraries(filter_node ${catkin_LIBRARIES})
-#add_dependencies(filter_node laser_package_generate_messages_cpp)
+add_executable(filter_node src/nodes/filter_node.cpp src/drivers/filter_driver.cpp)
+target_link_libraries(filter_node ${catkin_LIBRARIES})
+add_dependencies(filter_node laser_package_generate_messages_cpp)
 
 #add_executable(detect_node src/nodes/detect_node.cpp src/drivers/detect_driver.cpp)
 #target_link_libraries(detect_node ${catkin_LIBRARIES})
