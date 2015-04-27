@@ -46,13 +46,26 @@ int main(int argc, char **argv)
 	while(ros::ok())
 	{
 		w = meas_noise(measurement_generator);//noises
-		if(counter<3000)
+		if(counter<300)
 		{
+			//next_x = simulator.simulateCoordinatedTurn(OMEGA_RADS);	
+			next_x = simulator.simulateUniformMotion();
+		}
+		else if (counter>300&counter<500)
+		{
+			//next_x = simulator.simulateUniformMotion();
 			next_x = simulator.simulateCoordinatedTurn(OMEGA_RADS);	
 		}
-		else if (counter>3000&counter<5000){next_x = simulator.simulateUniformMotion();}
-		else if (counter>5000&&counter<11000){next_x = simulator.simulateCoordinatedTurn(OMEGA_RADS);}
-		else{next_x = simulator.simulateUniformMotion();}
+		else if (counter>500&&counter<1100)
+		{
+			next_x = simulator.simulateUniformMotion();
+			//next_x = simulator.simulateCoordinatedTurn(OMEGA_RADS);	
+		}
+		else
+		{
+			next_x = simulator.simulateUniformMotion();
+			//next_x = simulator.simulateCoordinatedTurn(OMEGA_RADS);	
+		}
 		//update values
 		state_msg.Real_X = next_x(XI);
 		state_msg.Measured_X = next_x(XI) + w;

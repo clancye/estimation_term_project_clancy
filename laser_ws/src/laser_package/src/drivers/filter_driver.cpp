@@ -4,31 +4,17 @@ Filter::Filter()
 {
 	ROS_INFO("Empty Filter");
 }
-/*
-Filter::Filter(double a_sampling_interval, Eigen::MatrixXd noise_data, int CT_model)
-{
-	T = a_sampling_interval;
-	system_model = CT_model;
-	
-	
-	initializeNoises(*noise_data);
-	initializeUniformMotionSystemMatrix();//assumes a UM motion model until it reaches initialization
-	
-	updateUMStateCovariance();//uniform KF covariance update can be done offline
-	
-	last_time = 0.0;// need to fix for initialization
-	second_last_time = 0.0;
-}*/
 
 void Filter::initializeKF(Eigen::VectorXd an_initial_state, double a_sampling_interval, Eigen::MatrixXd noise_data)
 {
 	T = a_sampling_interval;
 	resizeMatrices(); 
+	initializeNoises(noise_data);
 	initializeMatrices();
 	x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
-	omega_initial = an_initial_state(OMEGA,0);
+	omega_initial = an_initial_state(OMEGA);
 	
-	initializeNoises(noise_data);
+	
 	initializeKFSystemMatrix();
 	updateKFCovariance();
 	
@@ -42,13 +28,14 @@ void Filter::initializeEKF(Eigen::VectorXd an_initial_state, double a_sampling_i
 	T = a_sampling_interval;
 	
 	resizeMatrices(); 
+	initializeNoises(noise_data);
 	initializeMatrices();
 	x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
 	omega_initial = an_initial_state(OMEGA);
 	
-	ROS_INFO("Initializing EKF: \n xi_0 =%f\n x_dot_0 = %f\n eta = %f\n eta_dot_0 = %f \n omega_0 = %f", x_hat(XI), x_hat(XI_DOT), x_hat(ETA), x_hat(ETA_DOT), x_hat(OMEGA)); 
+	ROS_INFO("Initializing EKF: \n xi_0 =%f\n x_dot_0 = %f\n eta = %f\n eta_dot_0 = %f \n omega_0 = %f\n, SAMPLE_TIME = %f", x_hat(XI), x_hat(XI_DOT), x_hat(ETA), x_hat(ETA_DOT), x_hat(OMEGA), T); 
 	
-	initializeNoises(noise_data);
+	
 
 	initializeEKFSystemMatrix();
 	updateJacobian();
@@ -61,21 +48,21 @@ void Filter::initializeEKF(Eigen::VectorXd an_initial_state, double a_sampling_i
 
 void Filter::initializeNoises(Eigen::MatrixXd noise_data)
 {
-	mu_w = noise_data(MU_W,0);
-	sigma_w = noise_data(SIGMA_W,0);
-	var_w = noise_data(VAR_W,0);
+	mu_w = noise_data(MU_W);
+	sigma_w = noise_data(SIGMA_W);
+	var_w = noise_data(VAR_W);
 	
-	mu_v_xi = noise_data(MU_V_XI,0);
-	sigma_v_xi = noise_data(SIGMA_V_XI,0);
-	var_v_xi = noise_data(VAR_V_XI,0);
+	mu_v_xi = noise_data(MU_V_XI);
+	sigma_v_xi = noise_data(SIGMA_V_XI);
+	var_v_xi = noise_data(VAR_V_XI);
 	
-	mu_v_eta = noise_data(MU_V_ETA,0);
-	sigma_v_eta = noise_data(SIGMA_V_ETA,0);
-	var_v_eta = noise_data(VAR_V_ETA,0);
+	mu_v_eta = noise_data(MU_V_ETA);
+	sigma_v_eta = noise_data(SIGMA_V_ETA);
+	var_v_eta = noise_data(VAR_V_ETA);
 	
-	mu_v_omega = noise_data(MU_V_OMEGA,0);
-	sigma_v_omega = noise_data(SIGMA_V_OMEGA,0);
-	var_v_omega = noise_data(VAR_V_OMEGA,0);
+	mu_v_omega = noise_data(MU_V_OMEGA);
+	sigma_v_omega = noise_data(SIGMA_V_OMEGA);
+	var_v_omega = noise_data(VAR_V_OMEGA);
 }
 
 void Filter::initializeMatrices()

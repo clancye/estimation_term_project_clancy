@@ -24,7 +24,7 @@ class SubscribeAndPublish
 		
 		void targetCallBack(const laser_package::state::ConstPtr& msg)
 		{
-			if(msg_count>=10)
+			if(msg_count>1)
 			{
 				z(0) = msg->Measured_X;
 				z(1) = msg->Measured_Y;
@@ -40,19 +40,18 @@ class SubscribeAndPublish
 				first_time = msg->Time_Of_Measurement;
 				msg_count++;
 			}
-			else if(msg_count<10)
+			else if(msg_count==1)
 			{
 				second_time = msg->Time_Of_Measurement;
 				initial_state(XI) = msg->Measured_X;
 				initial_state(ETA) = msg->Measured_Y;
-				initial_state(XI_DOT) = (second_xi-first_xi)/(second_time-first_time);
-				initial_state(ETA_DOT) = (second_eta-first_eta)/(second_time-first_time);
-				initial_state(OMEGA) = 0.1;
+				initial_state(XI_DOT) = (initial_state(XI)-first_xi)/(second_time-first_time);
+				initial_state(ETA_DOT) = (initial_state(ETA)-first_eta)/(second_time-first_time);
+				initial_state(OMEGA) = 0.01;
 				T = second_time-first_time;
 				ekf.initializeEKF(initial_state,T , noise_data);
 				msg_count++;
 			}
-			ROS_INFO("xi = %f", msg->Measured_X);
 		}
 	private:
 	ros::NodeHandle n;
@@ -84,7 +83,7 @@ class SubscribeAndPublish
 		noise_data(VAR_V_ETA) = noise_data(SIGMA_V_ETA)*noise_data(SIGMA_V_ETA);
 		
 		noise_data(MU_V_OMEGA) = 0.0;
-		noise_data(SIGMA_V_OMEGA) = 0.01;
+		noise_data(SIGMA_V_OMEGA) = 0.1;
 		noise_data(VAR_V_OMEGA) = noise_data(SIGMA_V_OMEGA)*noise_data(SIGMA_V_OMEGA);
 	}
 	void updateStateMessage(Filter *filter, const laser_package::state::ConstPtr& msg)
