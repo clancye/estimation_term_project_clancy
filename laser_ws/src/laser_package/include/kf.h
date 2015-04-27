@@ -5,7 +5,7 @@
 #include "laser_package/add_filter.h"
 #include "laser_package/state.h"
 
-class KF
+class KF : public Filter
 {
 	public:
 		KF();
