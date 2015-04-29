@@ -44,10 +44,10 @@ class SubscribeAndPublish
 				target_msg.Time_Of_Measurement = target_detector.getScanTime();
 				//else{ROS_INFO("ERROR SENDING TARGET COORDINATES TO TRACK NODE \n \n x,y = [%f,%f]", srv.request.x, srv.request.y);}
 				//ROS_INFO("state = %d\n", state);
-				filter_target_pub.publish(target_msg);
+				//filter_target_pub.publish(target_msg);
 				
 			}
-			//rviz_target_pub.publish(targets_msg);//publish so we can see on RViz
+			rviz_target_pub.publish(targets_msg);//publish so we can see on RViz
 		}
 	private:
 	   

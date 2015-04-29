@@ -1,0 +1,11 @@
+float64 xi_j
+float64 eta_j
+float64 P_00_j
+float64 P_01_j
+float64 P_10_j
+float64 P_11_j
+float64 Lambda_j
+int32 filterID
+---
+bool success
+

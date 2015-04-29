@@ -6,7 +6,7 @@ class SubscribeAndPublish
 	public:
 		SubscribeAndPublish()
 		{	
-			ROS_INFO("Constructing SAP for tracking node...");
+			ROS_INFO("Constructing SAP for KF");
 			kf = Filter();
 			target_sub = n.subscribe<laser_package::state>("/filter_topic",1000,&SubscribeAndPublish::targetCallBack,this);
 			target_pub = n.advertise<laser_package::state>("/kf_topic",1000); //publish targets to new topic
@@ -14,11 +14,11 @@ class SubscribeAndPublish
 			initial_state.resize(5);
 			msg_count = 0;
 			setNoiseData();
-			srv.request.addMe = 1;
-			if(add_filter_to_IMM.call(srv))
+			add_to_imm_srv.request.addMe = 1;
+			if(add_filter_to_IMM.call(add_to_imm_srv))
 			{
-				filterID = srv.response.filterID;
-				ROS_INFO("Here is my number: %d", srv.response.filterID);
+				filterID = add_to_imm_srv.response.filterID;
+				ROS_INFO("Here is my number: %d", add_to_imm_srv.response.filterID);
 			}
 		}
 		
@@ -45,27 +45,29 @@ class SubscribeAndPublish
 				second_time = msg->Time_Of_Measurement;
 				initial_state(XI) = msg->Measured_X;
 				initial_state(ETA) = msg->Measured_Y;
-				initial_state(XI_DOT) = (second_xi-first_xi)/(second_time-first_time);
-				initial_state(ETA_DOT) = (second_eta-first_eta)/(second_time-first_time);
-				initial_state(OMEGA) = 0.1;
+				initial_state(XI_DOT) = (initial_state(XI)-first_xi)/(second_time-first_time);
+				initial_state(ETA_DOT) = (initial_state(ETA)-first_eta)/(second_time-first_time);
+				initial_state(OMEGA) = 0.01;
 				T = second_time-first_time;
 				kf.initializeKF(initial_state,T , noise_data);
+				updateIMMService(&kf);
 				msg_count++;
 			}
-			ROS_INFO("xi = %f", msg->Measured_X);
 		}
 	private:
 	ros::NodeHandle n;
 	ros::Subscriber target_sub;
 	ros::Publisher target_pub;
-	ros::ServiceClient add_filter_to_IMM;
+	ros::ServiceClient add_filter_to_IMM, update_imm_filter;
 	laser_package::state state_msg;
 	Filter kf;
 	int filterID, msg_count;
 	double first_xi, second_xi, first_eta, second_eta, first_time, second_time,T, update_time;
-	laser_package::add_filter srv;
-	Eigen::VectorXd initial_state, noise_data;
-	Eigen::Vector2d z;
+	laser_package::add_filter add_to_imm_srv;
+	laser_package::update_imm_filter update_imm;
+	state_vector initial_state;
+	initial_noise_vector noise_data;
+	measurement_vector z;
 
 	void setNoiseData()
 	{
@@ -84,7 +86,7 @@ class SubscribeAndPublish
 		noise_data(VAR_V_ETA) = noise_data(SIGMA_V_ETA)*noise_data(SIGMA_V_ETA);
 		
 		noise_data(MU_V_OMEGA) = 0.0;
-		noise_data(SIGMA_V_OMEGA) = 0.0;
+		noise_data(SIGMA_V_OMEGA) = 0.1;
 		noise_data(VAR_V_OMEGA) = noise_data(SIGMA_V_OMEGA)*noise_data(SIGMA_V_OMEGA);
 	}
 	void updateStateMessage(Filter *filter, const laser_package::state::ConstPtr& msg)
@@ -124,6 +126,11 @@ class SubscribeAndPublish
 		//innovations
 		state_msg.Innovation_X = filter->getInnovationX();
 		state_msg.Innovation_Y = filter->getInnovationY();
+	}
+
+	void updateIMMService(Filter *filter)
+	{
+		update_imm.request.xi_j = 0;
 	}
 };
 

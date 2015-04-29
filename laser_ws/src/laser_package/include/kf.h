@@ -3,6 +3,7 @@
 
 #include "gen_defs.h"
 #include "laser_package/add_filter.h"
+#include "laser_package/update_imm_filter.h"
 #include "laser_package/state.h"
 #include "filter.h"
 

@@ -48,8 +48,8 @@ int main(int argc, char **argv)
 		w = meas_noise(measurement_generator);//noises
 		if(counter<300)
 		{
-			//next_x = simulator.simulateCoordinatedTurn(OMEGA_RADS);	
-			next_x = simulator.simulateUniformMotion();
+			next_x = simulator.simulateCoordinatedTurn(OMEGA_RADS);	
+			//next_x = simulator.simulateUniformMotion();
 		}
 		else if (counter>300&counter<500)
 		{

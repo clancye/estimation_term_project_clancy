@@ -5,10 +5,10 @@ Filter::Filter()
 	ROS_INFO("Empty Filter");
 }
 
-void Filter::initializeKF(Eigen::VectorXd an_initial_state, double a_sampling_interval, Eigen::MatrixXd noise_data)
+void Filter::initializeKF(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data)
 {
+	ROS_INFO("Initializing a KF");
 	T = a_sampling_interval;
-	resizeMatrices(); 
 	initializeNoises(noise_data);
 	initializeMatrices();
 	x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
@@ -23,11 +23,11 @@ void Filter::initializeKF(Eigen::VectorXd an_initial_state, double a_sampling_in
 	z_hat = H*x_hat_bar;
 }
 
-void Filter::initializeEKF(Eigen::VectorXd an_initial_state, double a_sampling_interval, Eigen::MatrixXd noise_data)
+void Filter::initializeEKF(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data)
 {
+	ROS_INFO("Initializing an EKF");
 	T = a_sampling_interval;
 	
-	resizeMatrices(); 
 	initializeNoises(noise_data);
 	initializeMatrices();
 	x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
@@ -151,7 +151,7 @@ void Filter::initializeKFSystemMatrix()
 	0, 0, 0, 0, 0;
 }
 
-void Filter::updateKF(Eigen::Vector2d z, double an_update_time)
+void Filter::updateKF(measurement_vector z, double an_update_time)
 {
 	updateDerivatives(z, an_update_time);
 	
@@ -167,7 +167,7 @@ void Filter::updateKF(Eigen::Vector2d z, double an_update_time)
 	//ROS_INFO("Updating Filter");
 }
 
-void Filter::updateEKF(Eigen::Vector2d z, double an_update_time)
+void Filter::updateEKF(measurement_vector z, double an_update_time)
 {
 	updateDerivatives(z, an_update_time);
 	
@@ -185,7 +185,7 @@ void Filter::updateEKF(Eigen::Vector2d z, double an_update_time)
 }
 
 
-void Filter::updateDerivatives(Eigen::Vector2d z, double time_of_measurement)
+void Filter::updateDerivatives(measurement_vector z, double time_of_measurement)
 {
 	//double speed_temp_sum = 0.0;
 	double some_x = z(0);
@@ -285,27 +285,27 @@ void Filter::printValues()
 
 double Filter::getEstimatedX()
 {
-	return x_hat(XI,0);
+	return x_hat(XI);
 }
 
 double Filter::getEstimatedY()
 {
-	return x_hat(ETA,0);
+	return x_hat(ETA);
 }
 
 double Filter::getEstimatedXVel()
 {
-	return x_hat(XI_DOT,0);
+	return x_hat(XI_DOT);
 }
 
 double Filter::getEstimatedYVel()
 {
-	return x_hat(ETA_DOT,0);
+	return x_hat(ETA_DOT);
 }
 
 double Filter::getEstimatedOmega()
 {
-	return x_hat(OMEGA,0);
+	return x_hat(OMEGA);
 }
 
 double Filter::getPositionVarianceX()
@@ -338,8 +338,6 @@ double Filter::getPositionGainX()
 	return W(XI,XI);
 }
 
-
-
 double Filter::getPositionGainY()
 {
 	return W(2,1);
@@ -355,15 +353,14 @@ double Filter::getVelocityGainY()
 	return W(3,1);
 }
 
-
 double Filter::getInnovationX()
 {
-	return nu(0,0);
+	return nu(0);
 }
 
 double Filter::getInnovationY()
 {
-	return nu(1,0);
+	return nu(1);
 }
 
 double Filter::getEstimatedMeasurementX()
@@ -375,7 +372,7 @@ double Filter::getEstimatedMeasurementY()
 {
 	return z_hat(1);
 }
-
+/*
 void Filter::resizeMatrices()
 {
 	
@@ -394,7 +391,7 @@ void Filter::resizeMatrices()
 		F.resize(NUM_STATES,NUM_STATES);//5x5
 		V.resize(NUM_PROCESS_NOISES, NUM_PROCESS_NOISES);//3x3
 		f_x.resize(NUM_STATES,NUM_STATES);
-}
+}*/
 void Filter::updateKFCovariance()
 {
 	

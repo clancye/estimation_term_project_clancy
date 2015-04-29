@@ -74,10 +74,10 @@ std::vector<float> Detector::detectTargets(std::vector<float> ranges)
 								{	
 									tracked_targets[mean_index] = mean_range;
 									createZone(mean_range,mean_index,zoneBeingTracked);
-									//if(start_index>0)tracked_targets[start_index+1] = start_range;
-									//if(end_index<681)tracked_targets[end_index+1] = end_range;
-									//if(end_index<681)tracked_targets[end_index] = start_range;
-									//if(start_index>0)tracked_targets[start_index] = end_range;
+									if(start_index>0)tracked_targets[start_index+1] = start_range;
+									if(end_index<681)tracked_targets[end_index+1] = end_range;
+									if(end_index<681)tracked_targets[end_index] = start_range;
+									if(start_index>0)tracked_targets[start_index] = end_range;
 									
 									float x = getCartesianX(mean_range, mean_index);
 									float y = getCartesianY(mean_range, mean_index);

@@ -29,7 +29,6 @@ find_package(catkin REQUIRED COMPONENTS
  add_message_files(
    FILES
    state.msg
-   target.msg
 #   Message1.msg
 #   Message2.msg
  )
@@ -37,7 +36,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate services in the 'srv' folder
  add_service_files(
     FILES
-	update_filter.srv
+	update_imm_filter.srv
 	add_filter.srv
 #   Service1.srv
 #   Service2.srv
@@ -116,9 +115,9 @@ add_dependencies(filter_node laser_package_generate_messages_cpp)
 #target_link_libraries(detect_node ${catkin_LIBRARIES})
 #add_dependencies(detect_node laser_package_generate_messages_cpp)
 
-add_executable(client_detect_node src/nodes/client_detect_node.cpp src/drivers/detect_driver.cpp)
-target_link_libraries(client_detect_node ${catkin_LIBRARIES})
-add_dependencies(client_detect_node laser_package_generate_messages_cpp)
+#add_executable(client_detect_node src/nodes/client_detect_node.cpp src/drivers/detect_driver.cpp)
+#target_link_libraries(client_detect_node ${catkin_LIBRARIES})
+#add_dependencies(client_detect_node laser_package_generate_messages_cpp)
 
 
 
