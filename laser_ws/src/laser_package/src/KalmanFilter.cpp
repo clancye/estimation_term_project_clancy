@@ -37,12 +37,12 @@ void KalmanFilter::initializeSystemMatrix()
 
 void KalmanFilter::updateCovariance()
 {
-	
-	ROS_INFO("P = %f..%f\n%f..%f", P(0,0),P(0,1),P(1,0),P(1,1));
 	P_bar = F*P*F.transpose() + Q;
 	S = H*P_bar*H.transpose() + R;
 	W = P_bar*H.transpose()*S.inverse();
 	P = P_bar - W*S*W.transpose();
+	
+	ROS_INFO("\nPosition gain KF = %f \nVelocity gain KF = %f\n", getPositionGainX(),getVelocityGainX());
 }
 
 

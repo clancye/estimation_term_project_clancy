@@ -108,9 +108,9 @@ add_dependencies(Estimator_node laser_package_generate_messages_cpp)
 #target_link_libraries(IMM_node ${catkin_LIBRARIES})
 #add_dependencies(IMM_node laser_package_generate_messages_cpp)
 
-#add_executable(simulate_node src/nodes/simulate_node.cpp src/drivers/simulate_driver.cpp)
-#target_link_libraries(simulate_node ${catkin_LIBRARIES})
-#add_dependencies(simulate_node laser_package_generate_messages_cpp)
+add_executable(simulate_node src/nodes/simulate_node.cpp src/drivers/simulate_driver.cpp)
+target_link_libraries(simulate_node ${catkin_LIBRARIES})
+add_dependencies(simulate_node laser_package_generate_messages_cpp)
 
 #add_executable(filter_node src/nodes/filter_node.cpp src/drivers/filter_driver.cpp)
 #target_link_libraries(filter_node ${catkin_LIBRARIES})

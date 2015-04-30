@@ -65,7 +65,6 @@ void Filter::updateFilter(measurement_vector some_z, double an_update_time)
 	calculateLikelihood();
 	nu = z-z_hat;
 	x_hat = x_hat_bar + W*nu;
-	ROS_INFO("\nPosition gain KF = %f \nVelocity gain KF = %f\n", getPositionGainX(),getVelocityGainX());
 
 	x_hat_bar = F*x_hat;
 	z_hat = H*x_hat_bar;
@@ -131,7 +130,7 @@ void Filter::updateDerivatives(measurement_vector z, double time_of_measurement)
 	last_y = some_y;
 	second_last_time = last_time;
 	last_time = time_of_measurement;
-	//ROS_INFO("X_accel = %f\n Y_accel = %f\n time between = %f\n\n-----------------------------------------------------", current_x_accel, current_y_accel, time_between_measurements);
+	//ROS_INFO(" time between = %f\n\n-----------------------------------------------------",time_between_measurements);
 }
 
 
