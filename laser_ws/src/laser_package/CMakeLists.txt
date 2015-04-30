@@ -38,6 +38,7 @@ find_package(catkin REQUIRED COMPONENTS
     FILES
 	update_imm_filter.srv
 	add_filter.srv
+	update_filter_priors.srv
 #   Service1.srv
 #   Service2.srv
  )
@@ -91,25 +92,29 @@ include_directories(
 
 ## Declare a cpp executable
 # add_executable(laser_package_node src/laser_package_node.cpp)
-add_executable(kf_node src/nodes/kf_node.cpp src/drivers/kf_driver.cpp src/drivers/filter_driver.cpp)
-target_link_libraries(kf_node ${catkin_LIBRARIES})
-add_dependencies(kf_node laser_package_generate_messages_cpp)
+#add_executable(KalmanFilter_node src/nodes/KalmanFilter_node.cpp src/drivers/KalmanFilter.cpp src/drivers/Filter.cpp)
+#target_link_libraries(KalmanFilter_node ${catkin_LIBRARIES})
+#add_dependencies(KalmanFilter_node laser_package_generate_messages_cpp)
 
-add_executable(ekf_node src/nodes/ekf_node.cpp src/drivers/ekf_driver.cpp src/drivers/filter_driver.cpp)
-target_link_libraries(ekf_node ${catkin_LIBRARIES})
-add_dependencies(ekf_node laser_package_generate_messages_cpp)
+#add_executable(ExtendedKalmanFilter_node src/nodes/ExtendedKalmanFilter_node.cpp src/drivers/ExtendedKalmanFilter.cpp src/drivers/Filter.cpp)
+#target_link_libraries(ExtendedKalmanFilter_node ${catkin_LIBRARIES})
+#add_dependencies(ExtendedKalmanFilter_node laser_package_generate_messages_cpp)
 
-add_executable(imm_node src/nodes/imm_node.cpp src/drivers/imm_driver.cpp)
-target_link_libraries(imm_node ${catkin_LIBRARIES})
-add_dependencies(imm_node laser_package_generate_messages_cpp)
+add_executable(Estimator_node src/Estimator_node.cpp src/Estimator_node.cpp src/ExtendedKalmanFilter.cpp src/KalmanFilter.cpp src/Filter.cpp)
+target_link_libraries(Estimator_node ${catkin_LIBRARIES})
+add_dependencies(Estimator_node laser_package_generate_messages_cpp)
 
-add_executable(simulate_node src/nodes/simulate_node.cpp src/drivers/simulate_driver.cpp)
-target_link_libraries(simulate_node ${catkin_LIBRARIES})
-add_dependencies(simulate_node laser_package_generate_messages_cpp)
+#add_executable(imm_node src/nodes/imm_node.cpp src/drivers/imm_driver.cpp)
+#target_link_libraries(imm_node ${catkin_LIBRARIES})
+#add_dependencies(imm_node laser_package_generate_messages_cpp)
 
-add_executable(filter_node src/nodes/filter_node.cpp src/drivers/filter_driver.cpp)
-target_link_libraries(filter_node ${catkin_LIBRARIES})
-add_dependencies(filter_node laser_package_generate_messages_cpp)
+#add_executable(simulate_node src/nodes/simulate_node.cpp src/drivers/simulate_driver.cpp)
+#target_link_libraries(simulate_node ${catkin_LIBRARIES})
+#add_dependencies(simulate_node laser_package_generate_messages_cpp)
+
+#add_executable(filter_node src/nodes/filter_node.cpp src/drivers/filter_driver.cpp)
+#target_link_libraries(filter_node ${catkin_LIBRARIES})
+#add_dependencies(filter_node laser_package_generate_messages_cpp)
 
 #add_executable(detect_node src/nodes/detect_node.cpp src/drivers/detect_driver.cpp)
 #target_link_libraries(detect_node ${catkin_LIBRARIES})

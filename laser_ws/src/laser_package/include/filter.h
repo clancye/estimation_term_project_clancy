@@ -23,16 +23,13 @@
 
 
 
-class Filter //We'll treat this as only a KF for now
+class Filter 
 {
 	public:
-		Filter();
+		Filter(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data);
 
-		void updateKF(measurement_vector z, double an_update_time);
-		void updateEKF(measurement_vector z, double an_update_time);
-		void initializeKF(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data);
-		void initializeEKF(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data);
-		void reinitializeEKF(state_vector an_initial_state, covariance_matrix a_covariance);
+		void updateFilter(measurement_vector z, double an_update_time);
+		void reinitializeFilter(state_vector an_initial_state, covariance_matrix a_covariance);
 		
 		//estimates
 		double getEstimatedMeasurementX();
@@ -69,6 +66,9 @@ class Filter //We'll treat this as only a KF for now
 		//return the 
 		covariance_matrix getP();
 		state_vector getX();
+		
+		void setP(covariance_matrix);
+		void setX(state_vector);
 	
 	protected:
 		double mu_w, sigma_w, var_w, mu_v_xi, sigma_v_xi,var_v_xi, mu_v_eta, sigma_v_eta,var_v_eta, mu_v_omega, sigma_v_omega,var_v_omega; 
@@ -108,12 +108,9 @@ class Filter //We'll treat this as only a KF for now
 		
 		void printValues();
 		void resizeMatrices();
-		void updateKFCovariance();
-		void updateEKFCovariance();
-		void initializeKFSystemMatrix();
-		void initializeEKFSystemMatrix();		
-		void updateKFSystemMatrix();		
-		void updateEKFSystemMatrix();
+		void updateCovariance();
+		void initializeSystemMatrix();
+		void updateSystemMatrix();
 		void updateJacobian();
 		void initializeMatrices();
 		void updateOmegaPartials(double xi_hat, double xi_dot_hat, double eta_hat, double eta_dot_hat, double omega_hat);

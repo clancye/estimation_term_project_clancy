@@ -10,21 +10,28 @@ class SubscribeAndPublish
 			kf = Filter();
 			target_sub = n.subscribe<laser_package::state>("/filter_topic",1000,&SubscribeAndPublish::targetCallBack,this);
 			target_pub = n.advertise<laser_package::state>("/kf_topic",1000); //publish targets to new topic
-			add_filter_to_IMM = n.serviceClient<laser_package::add_filter>("addFilter");
-			initial_state.resize(5);
+			//imm services used
+			add_IMM_filter= n.serviceClient<laser_package::add_filter>("addFilter");
+			initialize_imm_filter = n.serviceClient<laser_package::update_imm_filter>("initializeIMMFilter");
+			update_imm_filter = n.serviceClient<laser_package::update_imm_filter>("updateIMMFilter");
+			//filter services offered
+			update_filter_priors = n.advertiseService("updateFilterPriors", &SubscribeAndPublish::updatePriorsCallBack,this);
+
+			//initialization stuff
 			msg_count = 0;
 			setNoiseData();
-			add_to_imm_srv.request.addMe = 1;
-			if(add_filter_to_IMM.call(add_to_imm_srv))
+			add_to_imm.request.addMe = 1;
+			//filter adds itself to the IMM
+			if(add_IMM_filter.call(add_to_imm))
 			{
-				filterID = add_to_imm_srv.response.filterID;
-				ROS_INFO("Here is my number: %d", add_to_imm_srv.response.filterID);
+				filterID = add_to_imm.response.filterID;
+				ROS_INFO("Here is my number: %d", add_to_imm.response.filterID);
 			}
 		}
 		
 		void targetCallBack(const laser_package::state::ConstPtr& msg)
 		{
-			if(msg_count>1)
+			if(msg_count>2)//CHANGE THIS TO 1 TO MAKE IT BETTER WHEN YOU START ACTUALLY USING DATA
 			{
 				z(0) = msg->Measured_X;
 				z(1) = msg->Measured_Y;
@@ -51,20 +58,29 @@ class SubscribeAndPublish
 				T = second_time-first_time;
 				kf.initializeKF(initial_state,T , noise_data);
 				updateIMMService(&kf);
+				initialize_imm.request.xi_j = 0.23232323;
+				initialize_imm_filter.call(initialize_imm);
 				msg_count++;
 			}
+		}
+		
+		bool updatePriorsCallBack(laser_package::update_filter_priors::Request &req, laser_package::update_filter_priors::Response &res)
+		{
+			ROS_INFO("Updating priors. NEW XI received. Should be 0.5555 :) = %f", req.xi_0j);
+			return true;
 		}
 	private:
 	ros::NodeHandle n;
 	ros::Subscriber target_sub;
 	ros::Publisher target_pub;
-	ros::ServiceClient add_filter_to_IMM, update_imm_filter;
+	ros::ServiceClient add_IMM_filter, update_imm_filter, initialize_imm_filter;
+	ros::ServiceServer update_filter_priors;
 	laser_package::state state_msg;
 	Filter kf;
 	int filterID, msg_count;
 	double first_xi, second_xi, first_eta, second_eta, first_time, second_time,T, update_time;
-	laser_package::add_filter add_to_imm_srv;
-	laser_package::update_imm_filter update_imm;
+	laser_package::add_filter add_to_imm;
+	laser_package::update_imm_filter update_imm, initialize_imm;
 	state_vector initial_state;
 	initial_noise_vector noise_data;
 	measurement_vector z;
@@ -140,8 +156,17 @@ int main(int argc, char **argv)
 	//ROS stuff
 	ros::init(argc, argv, "kf_node");
 	SubscribeAndPublish SAPkf;
+	ros::AsyncSpinner spinner(2);
+	ros::Rate r(100);
+	while(ros::ok())
+	{
+		//ros::spinOnce();
+		//r.sleep();
+		spinner.start();
+	}
 	
-	ros::spin();
+	
+	spinner.stop();
 	
 	return 0;
 }

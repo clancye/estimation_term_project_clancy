@@ -1,4 +1,9 @@
-#include "../../include/KalmanFilter.h"
+#include "../include/KalmanFilter.h"
+
+KalmanFilter::KalmanFilter()
+{
+	ROS_INFO("Empty Kalman Filter");
+}
 
 KalmanFilter::KalmanFilter(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data)
 {
@@ -28,21 +33,6 @@ void KalmanFilter::initializeSystemMatrix()
 	0, 0, 0, 0, 0;
 }
 
-void Filter::updateFilter(measurement_vector z, double an_update_time)
-{
-	updateDerivatives(z, an_update_time);
-	
-	nu = z-z_hat;
-	x_hat = x_hat_bar + W*nu;
-	
-	
-	updateKFCovariance();
-	ROS_INFO("\nPosition gain KF = %f \nVelocity gain KF = %f\n", getPositionGainX(),getVelocityGainX());
-	
-	x_hat_bar = F*x_hat;
-	z_hat = H*x_hat_bar;
-	//ROS_INFO("Updating Filter");
-}
 
 void KalmanFilter::updateCovariance()
 {

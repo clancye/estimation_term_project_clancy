@@ -1,9 +1,10 @@
 #ifndef IMM_H
 #define IMM_H
 
-#include "gen_defs.h"
+#include "Estimator.h"
 #include "laser_package/add_filter.h"
 #include "laser_package/update_imm_filter.h"
+#include "laser_package/update_filter_priors.h"
 class IMM //We'll treat this as only a KF for now
 {
 	public:
