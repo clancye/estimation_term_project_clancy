@@ -5,47 +5,6 @@ Filter::Filter()
 	ROS_INFO("Empty Filter. \n\n Only prediction: disappointment.");
 }
 
-//void Filter::initializeKF(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data)
-//{
-	//ROS_INFO("Initializing a KF");
-	//T = a_sampling_interval;
-	//initializeNoises(noise_data);
-	//initializeMatrices();
-	//x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
-	//omega_initial = an_initial_state(OMEGA);
-	
-	
-	//initializeKFSystemMatrix();
-	//updateKFCovariance();
-	
-	//x_hat_vec.push_back(x_hat);
-	//x_hat_bar = F*x_hat;
-	//z_hat = H*x_hat_bar;
-//}
-
-//void Filter::initializeEKF(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data)
-//{
-	//ROS_INFO("Initializing an EKF");
-	//T = a_sampling_interval;
-	
-	//initializeNoises(noise_data);
-	//initializeMatrices();
-	//x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
-	//omega_initial = an_initial_state(OMEGA);
-	
-	//ROS_INFO("Initializing EKF: \n xi_0 =%f\n x_dot_0 = %f\n eta = %f\n eta_dot_0 = %f \n omega_0 = %f\n, SAMPLE_TIME = %f", x_hat(XI), x_hat(XI_DOT), x_hat(ETA), x_hat(ETA_DOT), x_hat(OMEGA), T); 
-	
-	
-
-	//initializeEKFSystemMatrix();
-	//updateJacobian();
-	//updateEKFCovariance();
-	
-	//x_hat_vec.push_back(x_hat);
-	//x_hat_bar = F*x_hat;
-	//z_hat = H*x_hat_bar;
-//}
-
 void Filter::initializeNoises(Eigen::MatrixXd noise_data)
 {
 	mu_w = noise_data(MU_W);
@@ -98,83 +57,14 @@ void Filter::initializeMatrices()
 	0,0,0,0,var_w/T;
 }
 
-//void Filter::updateJacobian()
-//{
-	//double xi_hat = x_hat(XI);
-	//double xi_dot_hat = x_hat(XI_DOT);
-	//double eta_hat = x_hat(ETA);
-	//double eta_dot_hat = x_hat(ETA_DOT);
-	//double omega_hat = x_hat(OMEGA);
-	//if(fabs(omega_hat)>0.04)
-	//{
-		//updateOmegaPartials(xi_hat, xi_dot_hat, eta_hat, eta_dot_hat, omega_hat);
-		//f_x <<
-		//1, (sin(omega_hat*T)/omega_hat), 0, -((1-cos(omega_hat*T))/omega_hat), omega_partials(0),
-		//0, cos(omega_hat*T), 0, -sin(omega_hat*T), omega_partials(1),
-		//0, ((1-cos(omega_hat*T))/omega_hat), 1, (sin(omega_hat*T)/omega_hat), omega_partials(2),
-		//0, sin(omega_hat*T), 0, cos(omega_hat*T), omega_partials(3),
-		//0, 0, 0, 0, 1;
-		//ROS_INFO("VALUE ACHIEVED");
-	//}
-	//else
-	//{
-		//f_x <<
-		//1, T, 0, 0, -0.5*T*T*eta_dot_hat,
-		//0, 1, 0, 0, -T*eta_dot_hat,
-		//0, 0, 1, T, 0.5*T*T*xi_dot_hat,
-		//0, 0, 0, 1, T*xi_dot_hat,
-		//0, 0, 0, 0, 1;
-	//}
-		
-	//ROS_INFO("Updating CT Jacobian OMEGA_HAT = %f", fabs(omega_hat));
-//}
-
-//void Filter::initializeEKFSystemMatrix()
-//{
-	//double omega = x_hat(OMEGA);
-	//double inverse_omega = 1/omega; 
-	//F <<
-	//1, sin(omega*T)*inverse_omega, 0, (1-cos(omega*T))*inverse_omega, 0,
-	//0, cos(omega*T), 0, -sin(omega*T), 0,
-	//0, (1-cos(omega*T))*inverse_omega, 1, sin(omega*T)*inverse_omega, 0,
-	//0, sin(omega*T), 0, cos(omega*T), 0,
-	//0, 0, 0, 0, 1;
-//}
-
-//void Filter::initializeKFSystemMatrix()
-//{
-	//F <<
-	//1, T, 0, 0, 0,
-	//0, 1, 0, 0, 0,
-	//0, 0, 1, T, 0,
-	//0, 0, 0, 1, 0,
-	//0, 0, 0, 0, 0;
-//}
-
-//void Filter::updateKF(measurement_vector z, double an_update_time)
-//{
-	//updateDerivatives(z, an_update_time);
-	
-	//nu = z-z_hat;
-	//x_hat = x_hat_bar + W*nu;
-	
-	
-	//updateKFCovariance();
-	//ROS_INFO("\nPosition gain KF = %f \nVelocity gain KF = %f\n", getPositionGainX(),getVelocityGainX());
-	
-	//x_hat_bar = F*x_hat;
-	//z_hat = H*x_hat_bar;
-	////ROS_INFO("Updating Filter");
-//}
-
 void Filter::updateFilter(measurement_vector z, double an_update_time)
 {
 	updateDerivatives(z, an_update_time);
-	
+	calculateLikelihood();
 	nu = z-z_hat;
 	x_hat = x_hat_bar + W*nu;
 	ROS_INFO("\nPosition gain KF = %f \nVelocity gain KF = %f\n", getPositionGainX(),getVelocityGainX());
-	
+
 	x_hat_bar = F*x_hat;
 	z_hat = H*x_hat_bar;
 }
@@ -242,14 +132,7 @@ void Filter::updateDerivatives(measurement_vector z, double time_of_measurement)
 	ROS_INFO("X_accel = %f\n Y_accel = %f\n time between = %f\n\n-----------------------------------------------------", current_x_accel, current_y_accel, time_between_measurements);
 }
 
-//void Filter::updateOmegaPartials(double xi_hat, double xi_dot_hat, double eta_hat, double eta_dot_hat, double omega_hat)
-//{	
-	//omega_partials(0) = (cos(omega_hat*T)*T*xi_dot_hat/omega_hat)-(sin(omega_hat*T)*xi_dot_hat/(omega_hat*omega_hat))-(sin(omega_hat*T)*T*eta_dot_hat/omega_hat)-((-1+cos(omega_hat*T))*eta_dot_hat/(omega_hat*omega_hat));
-	//omega_partials(1) = -(sin(omega_hat*T)*T*xi_dot_hat)-(cos(omega_hat*T))*T*eta_dot_hat;
-	//omega_partials(2) = (sin(omega_hat*T)*T*xi_dot_hat/omega_hat)-((1-cos(omega_hat*T))*xi_dot_hat/(omega_hat*omega_hat))+(cos(omega_hat*T)*T*eta_dot_hat/omega_hat)-(sin(omega_hat*T)*eta_dot_hat/(omega_hat*omega_hat));
-	//omega_partials(3) = (cos(omega_hat*T)*T*xi_dot_hat)-(sin(omega_hat*T)*T*eta_dot_hat);
-	//ROS_INFO("updating omega partials");
-//}
+
 
 double Filter::getDistance(double x_1, double y_1, double x_2, double y_2)
 {
@@ -372,22 +255,27 @@ double Filter::getEstimatedMeasurementY()
 {
 	return z_hat(1);
 }
-//void Filter::updateKFCovariance()
-//{
-	
-	//ROS_INFO("P = %f..%f\n%f..%f", P(0,0),P(0,1),P(1,0),P(1,1));
-	//P_bar = F*P*F.transpose() + Q;
-	//S = H*P_bar*H.transpose() + R;
-	//W = P_bar*H.transpose()*S.inverse();
-	//P = P_bar - W*S*W.transpose();
-//}
 
-//void Filter::updateEKFCovariance()
-//{
-	//P_bar = f_x*P*f_x.transpose() + Q;
-	//S = H*P_bar*H.transpose() + R;
-	//W = P_bar*H.transpose()*S.inverse();
-	//P = P_bar - W*S*W.transpose();
-//}
+state_vector Filter::getStateEstimate()
+{
+	return x_hat;
+}
 
+covariance_matrix Filter::getCovariance()
+{
+	return P;
+}
+
+void Filter::calculateLikelihood()
+{
+	covariance_matrix temp_matrix;
+	temp_matrix = 2*PI*S
+	Lambda = (1/sqrt(temp_matrix.determinant))*exp(-0.5*(z.transpose()-z_hat.transpose())*S.inverse()*(z-z_hat));
+}
+
+double Filter::getLikelihood()
+{
+	ROS_INFO("Likelihood = %f", Lambda);
+	return Lambda;
+}
 

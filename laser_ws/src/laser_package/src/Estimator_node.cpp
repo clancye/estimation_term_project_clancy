@@ -8,8 +8,9 @@ class SubscribeAndPublish
 		{	
 			ROS_INFO("Constructing SAP for Estimator");
 			target_sub = n.subscribe<laser_package::state>("/filter_topic",1000,&SubscribeAndPublish::targetCallBack,this);
-			kalman_pub = n.advertise<laser_package::state>("/kalman_filter_topic",1000); //publish kf targets to new topic
-			extended_kalman_pub = n.advertise<laser_package::state>("/extended_kalman_filter_topic",1000); //publish ekf targets to new topic
+			kalman_pub = n.advertise<laser_package::state>("/kalman_filter_topic",1000); //publish kf estimates to new topic
+			extended_kalman_pub = n.advertise<laser_package::state>("/extended_kalman_filter_topic",1000); //publish ekf estimates to new topic
+			imm_pub = n.advertise<laser_package::state>("/imm_topic",1000); //publish imm estimates to new topic
 			msg_count = 0;
 			setKalmanNoiseData();
 			setExtendedKalmanNoiseData();
@@ -53,17 +54,24 @@ class SubscribeAndPublish
 				KF = KalmanFilter(initial_state,T , kalman_noise_data);
 				updateStateMessage(&KF,msg);
 				kalman_pub.publish(state_msg);
+				filters.push_back(&KF);
+				filters.push_back(&ExtendedKF);
+				KF.calculateLikelihood();
+				ExtendedKF.calculateLikelihood();
+				imm = IMM(filters);
+				imm.update();
 				msg_count++;
 			}
 		}
 	private:
 	ros::NodeHandle n;
 	ros::Subscriber target_sub;
-	ros::Publisher kalman_pub, extended_kalman_pub;
+	ros::Publisher kalman_pub, extended_kalman_pub, imm_pub;
 	laser_package::state state_msg;
 	ExtendedKalmanFilter ExtendedKF;
 	KalmanFilter KF;
-	//IMM imm;
+	std::vector<Filter*> filters;
+	IMM imm;
 	int filterID, msg_count;
 	double first_xi, second_xi, first_eta, second_eta, first_time, second_time,T, update_time;
 	state_vector initial_state;

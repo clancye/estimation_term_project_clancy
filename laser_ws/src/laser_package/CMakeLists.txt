@@ -100,13 +100,13 @@ include_directories(
 #target_link_libraries(ExtendedKalmanFilter_node ${catkin_LIBRARIES})
 #add_dependencies(ExtendedKalmanFilter_node laser_package_generate_messages_cpp)
 
-add_executable(Estimator_node src/Estimator_node.cpp src/Estimator_node.cpp src/ExtendedKalmanFilter.cpp src/KalmanFilter.cpp src/Filter.cpp)
+add_executable(Estimator_node src/Estimator_node.cpp src/Estimator_node.cpp src/ExtendedKalmanFilter.cpp src/KalmanFilter.cpp src/IMM.cpp src/Filter.cpp)
 target_link_libraries(Estimator_node ${catkin_LIBRARIES})
 add_dependencies(Estimator_node laser_package_generate_messages_cpp)
 
-#add_executable(imm_node src/nodes/imm_node.cpp src/drivers/imm_driver.cpp)
-#target_link_libraries(imm_node ${catkin_LIBRARIES})
-#add_dependencies(imm_node laser_package_generate_messages_cpp)
+#add_executable(IMM_node src/nodes/IMM_node.cpp )
+#target_link_libraries(IMM_node ${catkin_LIBRARIES})
+#add_dependencies(IMM_node laser_package_generate_messages_cpp)
 
 #add_executable(simulate_node src/nodes/simulate_node.cpp src/drivers/simulate_driver.cpp)
 #target_link_libraries(simulate_node ${catkin_LIBRARIES})

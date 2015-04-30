@@ -3,6 +3,7 @@
 
 #include </usr/include/eigen3/Eigen/Dense>
 
+#define NUM_FILTERS 2
 #define NUM_STATES 5
 #define NUM_MEASUREMENTS 2
 #define NUM_PROCESS_NOISES 3
@@ -23,5 +24,8 @@ typedef Eigen::Matrix<double, NUM_PROCESS_NOISES, NUM_PROCESS_NOISES> V_process_
 typedef Eigen::Matrix<double, NUM_STATES, NUM_STATES> jacobian_matrix;
 typedef Eigen::Matrix<double, NUM_STATES -1, 1> omega_partials_vector;
 typedef Eigen::Matrix<double, 12,1> initial_noise_vector;
+typedef Eigen::Matrix<double, NUM_FILTERS, NUM_FILTERS> transition_probability_matrix;
+typedef Eigen::Matrix<double, NUM_FILTERS, NUM_FILTERS> mixing_probability_matrix;
+typedef Eigen::Matrix<double, NUM_FILTERS, 1> mode_probability_vector;
 
 #endif
