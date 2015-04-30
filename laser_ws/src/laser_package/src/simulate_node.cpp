@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 	//other variables
 	Eigen::VectorXd next_x(5), past_x(5);
 	double w;
-	past_x << 0, 10, 0, 0, OMEGA_RADS; // initial vector: xi, xi_dot, eta, eta_dot, omega
+	past_x << 400, 30, 0, 0, OMEGA_RADS; // initial vector: xi, xi_dot, eta, eta_dot, omega
 	
 	
 	simulator.initializeSimulators(past_x);

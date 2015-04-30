@@ -29,7 +29,7 @@ void IMM::initializeProbabilities()
 		mu_mode(i) = (double)(1/(1.0*num_filters));
 		//ROS_INFO("mu_mode[%d] = %f", i,mu_mode(i));
 	}
-	calculateMixingProbabilities();
+	calculateMixingNormalizationConstant();
 	
 }
 
@@ -74,7 +74,7 @@ void IMM::calculateMixingProbabilities()
 		{
 			mu_mix(i,j) = (1/c_j_bar(j))*p(i,j)*mu_mode(i);
 			
-		ROS_INFO("mu_mix[%d] = %f", i,mu_mix(i,j));
+		ROS_INFO("mu_mix[%d,%d] = %f", i,j,mu_mix(i,j));
 		}
 	}
 }
@@ -125,6 +125,7 @@ void IMM::updateModeProbabilities()
 	for(int i = 0;i<num_filters;i++)
 	{
 		mu_mode(i) = (1/c)*Lambda(i)*c_j_bar(i);
+		ROS_INFO("mu_mode(%d) = %f, Lambda (%d) = %f, c_j_bar(%d) = %f", i, mu_mode(i),i,Lambda(i),i,c_j_bar(i));
 	}
 }
 
@@ -134,7 +135,7 @@ void IMM::calculateModeNormalizationConstant()
 	c=0;
 	for(int i = 0; i<num_filters; i++)
 	{
-		c += Lambda(i)*c_j_bar[i];
+		c += Lambda(i)*c_j_bar(i);
 	}
 }
 void IMM::combineEstimatesAndCovariances()
