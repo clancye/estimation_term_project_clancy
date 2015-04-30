@@ -11,7 +11,7 @@ class ExtendedKalmanFilter : public Filter
 	public:
 		
 		ExtendedKalmanFilter();
-		ExtendedKalmanFilter(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data);
+		ExtendedKalmanFilter(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data, double a_Lambda);
 		
 		void initializeSystemMatrix();
 		void updateCovariance();

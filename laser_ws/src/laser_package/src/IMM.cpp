@@ -7,19 +7,33 @@ IMM::IMM()
 
 IMM::IMM(std::vector<Filter*> some_filters)
 {
+	//ROS_INFO("instantiating IMM");
 	filters = some_filters;
-	num_filters = filters.size();
+	num_filters = some_filters.size();
+	//ROS_INFO("num_filters = %d", num_filters);
 	initializeProbabilities();
+	P_filter.resize(num_filters);
+	x_hat_filter.resize(num_filters);
+	x_0j.resize(num_filters);
+	P_0j.resize(num_filters);
+	x_zeros<<Eigen::MatrixXd::Zero(NUM_STATES,1);
+	P_zeros<<Eigen::MatrixXd::Zero(NUM_STATES,NUM_STATES);
 }
 
 void IMM::initializeProbabilities()
 {
+	//ROS_INFO("initializing probabilities");
 	p << 0.95, 0.05, 0.05, 0.95;
 	calculateMixingProbabilities();
+	for(int i = 0;i<num_filters;i++)
+	{
+		mu_mode(i) = 1/num_filters;
+	}
 }
 
 void IMM::update()
 {
+	//ROS_INFO("updating IMM");
 	getFilterValues();
 	updateModeProbabilities();
 	calculateMixingProbabilities();
@@ -28,51 +42,54 @@ void IMM::update()
 	combineEstimatesAndCovariances();
 }
 
-void getFilterValues()
+void IMM::getFilterValues()
 {
+	//ROS_INFO("getting filter values");
 	for(int i = 0; i<num_filters;i++)
 	{
 		Lambda(i) = filters[i]->getLikelihood();
-		P_filter_j[i] = filters[i]->getCovariance();
-		x_filter_x[i] = filters[i]->getStateEstimate();
+		P_filter[i] = filters[i]->getCovariance();
+		x_hat_filter[i] = filters[i]->getStateEstimate();
 	}
 }
 
 void IMM::updateFilterPriors()
 {
+	//ROS_INFO("updating filter priors");
 	for(int i = 0; i<num_filters;i++)
 	{
-		filters[i]->reinitialize(x_0j[i], P_0j[i]);
+		filters[i]->reinitializeFilter(x_0j[i], P_0j[i]);
 	}
 }
 
 void IMM::calculateMixingProbabilities()
 {
-	ROS_INFO("calculating mixing probabilities");
+	//ROS_INFO("calculating mixing probabilities");
 	calculateMixingNormalizationConstant();
 	for(int i = 0; i<num_filters;i++)
 	{
 		for(int j = 0; j<num_filters;j++)
 		{
-			mu_mix(i,j) = (1/c_j_bar[j])*p(i,j)*mu_mode(i);
+			mu_mix(i,j) = (1/c_j_bar(j))*p(i,j)*mu_mode(i);
 		}
 	}
 }
 
 void IMM::calculateMixingNormalizationConstant()
 {
+	//ROS_INFO("calculating mixing normalization constant");
 	for(int j = 0;j<num_filters;j++)
 	{
-		c_j_bar[j] = 0;
+		c_j_bar(j) = 0;
 		for(int i = 0;i<num_filters;i++)
 		{
-			c_j_bar[j] += p(i,j)*mu_mode(i);
+			c_j_bar(j) += p(i,j)*mu_mode(i);
 		}
 	}
 }
 void IMM::mix()
 {
-	ROS_INFO("mixing");
+	//ROS_INFO("mixing");
 	for(int j = 0;j<num_filters;j++)
 	{
 		x_0j[j] = x_zeros;
@@ -81,20 +98,30 @@ void IMM::mix()
 			x_0j[j] += x_hat_filter[i]*mu_mix(i,j);
 		}
 	}
+	
+	for(int j = 0;j<num_filters;j++)
+	{
+		P_0j[j] = P_zeros;
+		for(int i = 0; i<num_filters;i++)
+		{
+			P_0j[j] += mu_mix(i,j)*(P_filter[i]+(x_hat_filter[i]-x_0j[i])*(x_hat_filter[i].transpose()-x_0j[i].transpose()));
+		}
+	}
 }
 
 void IMM::updateModeProbabilities()
 {
-	ROS_INFO("updating mode probabilities");
+	//ROS_INFO("updating mode probabilities");
 	calculateModeNormalizationConstant();
 	for(int i = 0;i<num_filters;i++)
 	{
-		mu_mode(i) = (1/c)*Lambda(i)*c_j_bar[i];
+		mu_mode(i) = (1/c)*Lambda(i)*c_j_bar(i);
 	}
 }
 
 void IMM::calculateModeNormalizationConstant()
 {
+	//ROS_INFO("calculating mode normalization constant");
 	c=0;
 	for(int i = 0; i<num_filters; i++)
 	{
@@ -105,13 +132,14 @@ void IMM::combineEstimatesAndCovariances()
 {
 	x_hat = x_zeros;
 	P = P_zeros;
-	ROS_INFO("combining estimate and covariance \nZEROS x_hat = [%f, %f]\n ZEROS P = [%f,%f,%f,%f]", x_hat(0), x_hat(1), P(0,0), P(0,1), P(1,0), P(1,1));
+	//ROS_INFO("combining estimate and covariance \nZEROS x_hat = [%f, %f]\n ZEROS P = [%f,%f,%f,%f]", x_hat(0), x_hat(1), P(0,0), P(0,1), P(1,0), P(1,1));
 	for(int i = 0; i<num_filters;i++)
 	{
-		x_hat += x_filter_j[i]*mu_mode(i);
+		x_hat += x_hat_filter[i]*mu_mode(i);
 	}
 	for(int i = 0;i<num_filters;i++)
 	{
-		P += mu_mode*(P_filter_j[i]+(x_filter_j[i]-x_hat)*(x_filter_j[i].transpose()-x_hat.transpose()))
+		P += mu_mode(i)*(P_filter[i]+(x_hat_filter[i]-x_hat)*(x_hat_filter[i].transpose()-x_hat.transpose()));
 	}
 }
+

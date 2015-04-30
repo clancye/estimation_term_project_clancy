@@ -1,5 +1,5 @@
-#ifndef GEN_DEFS
-#define GEN_DEFS
+#ifndef ESTIMATOR_H
+#define ESTIMATOR_H
 
 #include <ros/ros.h>
 #include <rosbag/bag.h>
@@ -10,6 +10,8 @@
 #include "ExtendedKalmanFilter.h"
 #include "KalmanFilter.h"
 #include "IMM.h"
+
+
 
 
 

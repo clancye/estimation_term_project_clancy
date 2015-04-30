@@ -29,8 +29,13 @@ class SubscribeAndPublish
 				extended_kalman_pub.publish(state_msg);
 				KF.updateFilter(z, update_time);
 				KF.updateCovariance();
+				KF.calculateLikelihood();
+				ExtendedKF.calculateLikelihood();
 				updateStateMessage(&KF,msg);
 				kalman_pub.publish(state_msg);
+				imm.update();
+				updateStateMessage(&imm,msg);
+				imm_pub.publish(state_msg);
 			}
 			else if(msg_count == 0)
 			{
@@ -48,16 +53,14 @@ class SubscribeAndPublish
 				initial_state(ETA_DOT) = (initial_state(ETA)-first_eta)/(second_time-first_time);
 				initial_state(OMEGA) = 0.01;
 				T = second_time-first_time;
-				ExtendedKF = ExtendedKalmanFilter(initial_state,T , extended_kalman_noise_data);
+				ExtendedKF = ExtendedKalmanFilter(initial_state,T , extended_kalman_noise_data,0.5);
 				updateStateMessage(&ExtendedKF,msg);
 				extended_kalman_pub.publish(state_msg);
-				KF = KalmanFilter(initial_state,T , kalman_noise_data);
+				KF = KalmanFilter(initial_state,T , kalman_noise_data, 0.5);
 				updateStateMessage(&KF,msg);
 				kalman_pub.publish(state_msg);
 				filters.push_back(&KF);
 				filters.push_back(&ExtendedKF);
-				KF.calculateLikelihood();
-				ExtendedKF.calculateLikelihood();
 				imm = IMM(filters);
 				imm.update();
 				msg_count++;

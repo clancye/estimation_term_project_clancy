@@ -5,11 +5,11 @@ ExtendedKalmanFilter::ExtendedKalmanFilter()
 	ROS_INFO("Empty Extended Kalman Filter");
 }
 
-ExtendedKalmanFilter::ExtendedKalmanFilter(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data)
+ExtendedKalmanFilter::ExtendedKalmanFilter(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data, double a_Lambda)
 {
 	ROS_INFO("Initializing an EKF");
 	T = a_sampling_interval;
-	
+	Lambda = a_Lambda;
 	initializeNoises(noise_data);
 	initializeMatrices();
 	x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
@@ -78,7 +78,7 @@ void ExtendedKalmanFilter::updateJacobian()
 		0, 0, 0, 0, 1;
 	}
 		
-	ROS_INFO("Updating CT Jacobian OMEGA_HAT = %f", fabs(omega_hat));
+	//ROS_INFO("Updating CT Jacobian OMEGA_HAT = %f", fabs(omega_hat));
 }
 
 void ExtendedKalmanFilter::updateOmegaPartials(double xi_hat, double xi_dot_hat, double eta_hat, double eta_dot_hat, double omega_hat)
@@ -87,7 +87,7 @@ void ExtendedKalmanFilter::updateOmegaPartials(double xi_hat, double xi_dot_hat,
 	omega_partials(1) = -(sin(omega_hat*T)*T*xi_dot_hat)-(cos(omega_hat*T))*T*eta_dot_hat;
 	omega_partials(2) = (sin(omega_hat*T)*T*xi_dot_hat/omega_hat)-((1-cos(omega_hat*T))*xi_dot_hat/(omega_hat*omega_hat))+(cos(omega_hat*T)*T*eta_dot_hat/omega_hat)-(sin(omega_hat*T)*eta_dot_hat/(omega_hat*omega_hat));
 	omega_partials(3) = (cos(omega_hat*T)*T*xi_dot_hat)-(sin(omega_hat*T)*T*eta_dot_hat);
-	ROS_INFO("updating omega partials");
+	//ROS_INFO("updating omega partials");
 }
 
 

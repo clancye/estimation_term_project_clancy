@@ -2,7 +2,7 @@
 
 Filter::Filter()
 {
-	ROS_INFO("Empty Filter. \n\n Only prediction: disappointment.");
+	//ROS_INFO("Empty Filter. \n\n Only prediction: disappointment.");
 }
 
 void Filter::initializeNoises(Eigen::MatrixXd noise_data)
@@ -26,7 +26,8 @@ void Filter::initializeNoises(Eigen::MatrixXd noise_data)
 
 void Filter::initializeMatrices()
 {
-	
+	last_time = 0.0;
+	second_last_time = 0.0;
 	Gamma <<
 	0.5*T*T, 0, 0,
 	T, 0, 0,
@@ -57,8 +58,9 @@ void Filter::initializeMatrices()
 	0,0,0,0,var_w/T;
 }
 
-void Filter::updateFilter(measurement_vector z, double an_update_time)
+void Filter::updateFilter(measurement_vector some_z, double an_update_time)
 {
+	z = some_z;
 	updateDerivatives(z, an_update_time);
 	calculateLikelihood();
 	nu = z-z_hat;
@@ -129,7 +131,7 @@ void Filter::updateDerivatives(measurement_vector z, double time_of_measurement)
 	last_y = some_y;
 	second_last_time = last_time;
 	last_time = time_of_measurement;
-	ROS_INFO("X_accel = %f\n Y_accel = %f\n time between = %f\n\n-----------------------------------------------------", current_x_accel, current_y_accel, time_between_measurements);
+	//ROS_INFO("X_accel = %f\n Y_accel = %f\n time between = %f\n\n-----------------------------------------------------", current_x_accel, current_y_accel, time_between_measurements);
 }
 
 
@@ -268,9 +270,11 @@ covariance_matrix Filter::getCovariance()
 
 void Filter::calculateLikelihood()
 {
-	covariance_matrix temp_matrix;
-	temp_matrix = 2*PI*S
-	Lambda = (1/sqrt(temp_matrix.determinant))*exp(-0.5*(z.transpose()-z_hat.transpose())*S.inverse()*(z-z_hat));
+	innovation_covariance_matrix temp_matrix;
+	double exponent;
+	temp_matrix = 2*PI*S;
+	exponent = (z.transpose()-z_hat.transpose())*S.inverse()*(z-z_hat);
+	Lambda = (1/sqrt(temp_matrix.determinant()))*exp(-0.5*(exponent));
 }
 
 double Filter::getLikelihood()

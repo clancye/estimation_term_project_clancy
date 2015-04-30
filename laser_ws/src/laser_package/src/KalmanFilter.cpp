@@ -5,10 +5,11 @@ KalmanFilter::KalmanFilter()
 	ROS_INFO("Empty Kalman Filter");
 }
 
-KalmanFilter::KalmanFilter(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data)
+KalmanFilter::KalmanFilter(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data, double a_Lambda)
 {
 	ROS_INFO("Initializing a KF");
 	T = a_sampling_interval;
+	Lambda = a_Lambda;
 	initializeNoises(noise_data);
 	initializeMatrices();
 	x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
