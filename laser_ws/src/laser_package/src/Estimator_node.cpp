@@ -96,7 +96,7 @@ class SubscribeAndPublish
 		kalman_noise_data(VAR_V_ETA) = kalman_noise_data(SIGMA_V_ETA)*kalman_noise_data(SIGMA_V_ETA);
 		
 		kalman_noise_data(MU_V_OMEGA) = 0.0;
-		kalman_noise_data(SIGMA_V_OMEGA) = 0.1;
+		kalman_noise_data(SIGMA_V_OMEGA) = 0.0;
 		kalman_noise_data(VAR_V_OMEGA) = kalman_noise_data(SIGMA_V_OMEGA)*kalman_noise_data(SIGMA_V_OMEGA);
 	}
 	
@@ -115,7 +115,7 @@ class SubscribeAndPublish
 		extended_kalman_noise_data(VAR_V_ETA) = extended_kalman_noise_data(SIGMA_V_ETA)*extended_kalman_noise_data(SIGMA_V_ETA);
 		
 		extended_kalman_noise_data(MU_V_OMEGA) = 0.0;
-		extended_kalman_noise_data(SIGMA_V_OMEGA) = 0.1;
+		extended_kalman_noise_data(SIGMA_V_OMEGA) = 0.01;
 		extended_kalman_noise_data(VAR_V_OMEGA) = extended_kalman_noise_data(SIGMA_V_OMEGA)*extended_kalman_noise_data(SIGMA_V_OMEGA);
 	}
 	void updateStateMessage(Filter *filter, const laser_package::state::ConstPtr& msg)
