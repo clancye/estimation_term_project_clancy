@@ -12,10 +12,10 @@ ExtendedKalmanFilter::ExtendedKalmanFilter(state_vector an_initial_state, double
 	Lambda = a_Lambda;
 	initializeNoises(noise_data);
 	initializeMatrices();
-	x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
-	omega_initial = an_initial_state(OMEGA);
+	x_hat << an_initial_state(XI_INDEX), an_initial_state(XI_DOT_INDEX), an_initial_state(ETA_INDEX), an_initial_state(ETA_DOT_INDEX),an_initial_state(OMEGA_INDEX);	
+	omega_initial = an_initial_state(OMEGA_INDEX);
 	
-	ROS_INFO("Initializing EKF: \n xi_0 =%f\n x_dot_0 = %f\n eta = %f\n eta_dot_0 = %f \n omega_0 = %f\n, SAMPLE_TIME = %f", x_hat(XI), x_hat(XI_DOT), x_hat(ETA), x_hat(ETA_DOT), x_hat(OMEGA), T); 
+	ROS_INFO("Initializing EKF: \n xi_0 =%f\n x_dot_0 = %f\n eta = %f\n eta_dot_0 = %f \n omega_0 = %f\n, SAMPLE_TIME = %f", x_hat(XI_INDEX), x_hat(XI_DOT_INDEX), x_hat(ETA_INDEX), x_hat(ETA_DOT_INDEX), x_hat(OMEGA_INDEX), T); 
 	
 	
 
@@ -30,7 +30,7 @@ ExtendedKalmanFilter::ExtendedKalmanFilter(state_vector an_initial_state, double
 
 void ExtendedKalmanFilter::initializeSystemMatrix()
 {
-	double omega = x_hat(OMEGA);
+	double omega = x_hat(OMEGA_INDEX);
 	double inverse_omega = 1/omega; 
 	F <<
 	1, sin(omega*T)*inverse_omega, 0, (1-cos(omega*T))*inverse_omega, 0,
@@ -54,11 +54,11 @@ void ExtendedKalmanFilter::updateCovariance()
 
 void ExtendedKalmanFilter::updateJacobian()
 {
-	double xi_hat = x_hat(XI);
-	double xi_dot_hat = x_hat(XI_DOT);
-	double eta_hat = x_hat(ETA);
-	double eta_dot_hat = x_hat(ETA_DOT);
-	double omega_hat = x_hat(OMEGA);
+	double xi_hat = x_hat(XI_INDEX);
+	double xi_dot_hat = x_hat(XI_DOT_INDEX);
+	double eta_hat = x_hat(ETA_INDEX);
+	double eta_dot_hat = x_hat(ETA_DOT_INDEX);
+	double omega_hat = x_hat(OMEGA_INDEX);
 	if(fabs(omega_hat)>0.04)
 	{
 		updateOmegaPartials(xi_hat, xi_dot_hat, eta_hat, eta_dot_hat, omega_hat);

@@ -47,11 +47,11 @@ class SubscribeAndPublish
 			else if(msg_count==1)
 			{
 				second_time = msg->Time_Of_Measurement;
-				initial_state(XI) = msg->Measured_X;
-				initial_state(ETA) = msg->Measured_Y;
-				initial_state(XI_DOT) = (initial_state(XI)-first_xi)/(second_time-first_time);
-				initial_state(ETA_DOT) = (initial_state(ETA)-first_eta)/(second_time-first_time);
-				initial_state(OMEGA) = 0.01;
+				initial_state(XI_INDEX) = msg->Measured_X;
+				initial_state(ETA_INDEX) = msg->Measured_Y;
+				initial_state(XI_DOT_INDEX) = (initial_state(XI_INDEX)-first_xi)/(second_time-first_time);
+				initial_state(ETA_DOT_INDEX) = (initial_state(ETA_INDEX)-first_eta)/(second_time-first_time);
+				initial_state(OMEGA_INDEX) = 0.01;
 				T = second_time-first_time;
 				ExtendedKF = ExtendedKalmanFilter(initial_state,T , extended_kalman_noise_data,0.5);
 				updateStateMessage(&ExtendedKF,msg);
@@ -83,40 +83,40 @@ class SubscribeAndPublish
 
 	void setKalmanNoiseData()
 	{
-		kalman_noise_data(MU_W) = 0.0;
-		kalman_noise_data(SIGMA_W) = 1.0;
-		kalman_noise_data(VAR_W) = kalman_noise_data(SIGMA_W)*kalman_noise_data(SIGMA_W);
+		kalman_noise_data(MU_W_INDEX) = 0.0;
+		kalman_noise_data(SIGMA_W_INDEX) = 1.0;
+		kalman_noise_data(VAR_W_INDEX) = kalman_noise_data(SIGMA_W_INDEX)*kalman_noise_data(SIGMA_W_INDEX);
 		
-		kalman_noise_data(MU_V_XI) = 0.0;
-		kalman_noise_data(SIGMA_V_XI) = 1.0;
-		kalman_noise_data(VAR_V_XI) = kalman_noise_data(SIGMA_V_XI)*kalman_noise_data(SIGMA_V_XI);
+		kalman_noise_data(MU_V_XI_INDEX) = 0.0;
+		kalman_noise_data(SIGMA_V_XI_INDEX) = 1.0;
+		kalman_noise_data(VAR_V_XI_INDEX) = kalman_noise_data(SIGMA_V_XI_INDEX)*kalman_noise_data(SIGMA_V_XI_INDEX);
 	
-		kalman_noise_data(MU_V_ETA) = 0.0;
-		kalman_noise_data(SIGMA_V_ETA) = 1.0;
-		kalman_noise_data(VAR_V_ETA) = kalman_noise_data(SIGMA_V_ETA)*kalman_noise_data(SIGMA_V_ETA);
+		kalman_noise_data(MU_V_ETA_INDEX) = 0.0;
+		kalman_noise_data(SIGMA_V_ETA_INDEX) = 1.0;
+		kalman_noise_data(VAR_V_ETA_INDEX) = kalman_noise_data(SIGMA_V_ETA_INDEX)*kalman_noise_data(SIGMA_V_ETA_INDEX);
 		
-		kalman_noise_data(MU_V_OMEGA) = 0.0;
-		kalman_noise_data(SIGMA_V_OMEGA) = 0.0;
-		kalman_noise_data(VAR_V_OMEGA) = kalman_noise_data(SIGMA_V_OMEGA)*kalman_noise_data(SIGMA_V_OMEGA);
+		kalman_noise_data(MU_V_OMEGA_INDEX) = 0.0;
+		kalman_noise_data(SIGMA_V_OMEGA_INDEX) = 0.0;
+		kalman_noise_data(VAR_V_OMEGA_INDEX) = kalman_noise_data(SIGMA_V_OMEGA_INDEX)*kalman_noise_data(SIGMA_V_OMEGA_INDEX);
 	}
 	
 	void setExtendedKalmanNoiseData()
 	{
-		extended_kalman_noise_data(MU_W) = 0.0;
-		extended_kalman_noise_data(SIGMA_W) = 1.0;
-		extended_kalman_noise_data(VAR_W) = extended_kalman_noise_data(SIGMA_W)*extended_kalman_noise_data(SIGMA_W);
+		extended_kalman_noise_data(MU_W_INDEX) = 0.0;
+		extended_kalman_noise_data(SIGMA_W_INDEX) = 1.0;
+		extended_kalman_noise_data(VAR_W_INDEX) = extended_kalman_noise_data(SIGMA_W_INDEX)*extended_kalman_noise_data(SIGMA_W_INDEX);
 		
-		extended_kalman_noise_data(MU_V_XI) = 0.0;
-		extended_kalman_noise_data(SIGMA_V_XI) = 1.0;
-		extended_kalman_noise_data(VAR_V_XI) = extended_kalman_noise_data(SIGMA_V_XI)*extended_kalman_noise_data(SIGMA_V_XI);
+		extended_kalman_noise_data(MU_V_XI_INDEX) = 0.0;
+		extended_kalman_noise_data(SIGMA_V_XI_INDEX) = 1.0;
+		extended_kalman_noise_data(VAR_V_XI_INDEX) = extended_kalman_noise_data(SIGMA_V_XI_INDEX)*extended_kalman_noise_data(SIGMA_V_XI_INDEX);
 	
-		extended_kalman_noise_data(MU_V_ETA) = 0.0;
-		extended_kalman_noise_data(SIGMA_V_ETA) = 1.0;
-		extended_kalman_noise_data(VAR_V_ETA) = extended_kalman_noise_data(SIGMA_V_ETA)*extended_kalman_noise_data(SIGMA_V_ETA);
+		extended_kalman_noise_data(MU_V_ETA_INDEX) = 0.0;
+		extended_kalman_noise_data(SIGMA_V_ETA_INDEX) = 1.0;
+		extended_kalman_noise_data(VAR_V_ETA_INDEX) = extended_kalman_noise_data(SIGMA_V_ETA_INDEX)*extended_kalman_noise_data(SIGMA_V_ETA_INDEX);
 		
-		extended_kalman_noise_data(MU_V_OMEGA) = 0.0;
-		extended_kalman_noise_data(SIGMA_V_OMEGA) = 0.01;
-		extended_kalman_noise_data(VAR_V_OMEGA) = extended_kalman_noise_data(SIGMA_V_OMEGA)*extended_kalman_noise_data(SIGMA_V_OMEGA);
+		extended_kalman_noise_data(MU_V_OMEGA_INDEX) = 0.0;
+		extended_kalman_noise_data(SIGMA_V_OMEGA_INDEX) = 0.01;
+		extended_kalman_noise_data(VAR_V_OMEGA_INDEX) = extended_kalman_noise_data(SIGMA_V_OMEGA_INDEX)*extended_kalman_noise_data(SIGMA_V_OMEGA_INDEX);
 	}
 	void updateStateMessage(Filter *filter, const laser_package::state::ConstPtr& msg)
 	{
@@ -163,7 +163,7 @@ class SubscribeAndPublish
 int main(int argc, char **argv)
 {
 	//ROS stuff
-	ros::init(argc, argv, "ekf_node");
+	ros::init(argc, argv, "Estimator_node");
 	SubscribeAndPublish SAPekf;
 	
 	ros::spin();

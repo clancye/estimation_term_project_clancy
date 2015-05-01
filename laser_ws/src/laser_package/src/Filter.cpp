@@ -7,21 +7,21 @@ Filter::Filter()
 
 void Filter::initializeNoises(Eigen::MatrixXd noise_data)
 {
-	mu_w = noise_data(MU_W);
-	sigma_w = noise_data(SIGMA_W);
-	var_w = noise_data(VAR_W);
+	mu_w = noise_data(MU_W_INDEX);
+	sigma_w = noise_data(SIGMA_W_INDEX);
+	var_w = noise_data(VAR_W_INDEX);
 	
-	mu_v_xi = noise_data(MU_V_XI);
-	sigma_v_xi = noise_data(SIGMA_V_XI);
-	var_v_xi = noise_data(VAR_V_XI);
+	mu_v_xi = noise_data(MU_V_XI_INDEX);
+	sigma_v_xi = noise_data(SIGMA_V_XI_INDEX);
+	var_v_xi = noise_data(VAR_V_XI_INDEX);
 	
-	mu_v_eta = noise_data(MU_V_ETA);
-	sigma_v_eta = noise_data(SIGMA_V_ETA);
-	var_v_eta = noise_data(VAR_V_ETA);
+	mu_v_eta = noise_data(MU_V_ETA_INDEX);
+	sigma_v_eta = noise_data(SIGMA_V_ETA_INDEX);
+	var_v_eta = noise_data(VAR_V_ETA_INDEX);
 	
-	mu_v_omega = noise_data(MU_V_OMEGA);
-	sigma_v_omega = noise_data(SIGMA_V_OMEGA);
-	var_v_omega = noise_data(VAR_V_OMEGA);
+	mu_v_omega = noise_data(MU_V_OMEGA_INDEX);
+	sigma_v_omega = noise_data(SIGMA_V_OMEGA_INDEX);
+	var_v_omega = noise_data(VAR_V_OMEGA_INDEX);
 }
 
 void Filter::initializeMatrices()
@@ -171,57 +171,57 @@ void Filter::printValues()
 
 double Filter::getEstimatedX()
 {
-	return x_hat(XI);
+	return x_hat(XI_INDEX);
 }
 
 double Filter::getEstimatedY()
 {
-	return x_hat(ETA);
+	return x_hat(ETA_INDEX);
 }
 
 double Filter::getEstimatedXVel()
 {
-	return x_hat(XI_DOT);
+	return x_hat(XI_DOT_INDEX);
 }
 
 double Filter::getEstimatedYVel()
 {
-	return x_hat(ETA_DOT);
+	return x_hat(ETA_DOT_INDEX);
 }
 
 double Filter::getEstimatedOmega()
 {
-	return x_hat(OMEGA);
+	return x_hat(OMEGA_INDEX);
 }
 
 double Filter::getPositionVarianceX()
 {
-	return P(XI,XI);
+	return P(XI_INDEX,XI_INDEX);
 }
 
 double Filter::getPositionVarianceY()
 {
-	return P(ETA,ETA);
+	return P(ETA_INDEX,ETA_INDEX);
 }
 
 double Filter::getVelocityVarianceX()
 {
-	return P(XI_DOT,XI_DOT);
+	return P(XI_DOT_INDEX,XI_DOT_INDEX);
 }
 
 double Filter::getVelocityVarianceY()
 {
-	return P(ETA_DOT,ETA_DOT);
+	return P(ETA_DOT_INDEX,ETA_DOT_INDEX);
 }
 
 double Filter::getOmegaVariance()
 {
-	return P(OMEGA, OMEGA);
+	return P(OMEGA_INDEX, OMEGA_INDEX);
 }
 
 double Filter::getPositionGainX()
 {
-	return W(XI,XI);
+	return W(XI_INDEX,XI_INDEX);
 }
 
 double Filter::getPositionGainY()

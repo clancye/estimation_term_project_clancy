@@ -6,6 +6,10 @@ float64 Measured_X
 float64 Measured_Y
 float64 Real_X
 float64 Real_Y
+float64 Real_Rho
+float64 Real_Theta
+float64 Measured_Rho
+float64 Measured_Theta
 float64 Velocity_X
 float64 Velocity_Y
 float64 Acceleration_X

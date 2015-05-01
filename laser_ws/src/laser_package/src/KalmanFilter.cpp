@@ -12,7 +12,7 @@ KalmanFilter::KalmanFilter(state_vector an_initial_state, double a_sampling_inte
 	Lambda = a_Lambda;
 	initializeNoises(noise_data);
 	initializeMatrices();
-	x_hat << an_initial_state(XI), an_initial_state(XI_DOT), an_initial_state(ETA), an_initial_state(ETA_DOT),an_initial_state(OMEGA);	
+	x_hat << an_initial_state(XI_INDEX), an_initial_state(XI_DOT_INDEX), an_initial_state(ETA_INDEX), an_initial_state(ETA_DOT_INDEX),an_initial_state(OMEGA_INDEX);	
 	omega_initial = 0;
 	
 	
