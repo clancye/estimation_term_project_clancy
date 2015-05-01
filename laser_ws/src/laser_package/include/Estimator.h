@@ -10,6 +10,8 @@
 #include "ExtendedKalmanFilter.h"
 #include "KalmanFilter.h"
 #include "IMM.h"
+#include "Simulate.h"
+
 
 
 

@@ -42,7 +42,7 @@ void KalmanFilter::updateCovariance()
 	W = P_bar*H.transpose()*S.inverse();
 	P = P_bar - W*S*W.transpose();
 	
-	ROS_INFO("\nPosition gain KF = %f \nVelocity gain KF = %f\n", getPositionGainX(),getVelocityGainX());
+	//ROS_INFO("\nPosition gain KF = %f \nVelocity gain KF = %f\n", getPositionGainX(),getVelocityGainX());
 }
 
 

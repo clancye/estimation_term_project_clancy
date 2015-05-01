@@ -4,13 +4,15 @@
 class SubscribeAndPublish
 {
 	public:
-		SubscribeAndPublish()
+		SubscribeAndPublish(ros::NodeHandle *some_n)
 		{	
 			ROS_INFO("Constructing SAP for Estimator");
-			target_sub = n.subscribe<laser_package::state>("/filter_topic",1000,&SubscribeAndPublish::targetCallBack,this);
-			kalman_pub = n.advertise<laser_package::state>("/kalman_filter_topic",1000); //publish kf estimates to new topic
-			extended_kalman_pub = n.advertise<laser_package::state>("/extended_kalman_filter_topic",1000); //publish ekf estimates to new topic
-			imm_pub = n.advertise<laser_package::state>("/imm_topic",1000); //publish imm estimates to new topic
+			n_handle = some_n;
+			target_real_pub = n_handle->advertise<geometry_msgs::PointStamped>("/target_real_topic",1000); //publish targets to new topic
+			target_sub = n_handle->subscribe<laser_package::state>("/filter_topic",1000,&SubscribeAndPublish::targetCallBack,this);
+			kalman_pub = n_handle->advertise<laser_package::state>("/kalman_filter_topic",1000); //publish kf estimates to new topic
+			extended_kalman_pub = n_handle->advertise<laser_package::state>("/extended_kalman_filter_topic",1000); //publish ekf estimates to new topic
+			imm_pub = n_handle->advertise<laser_package::state>("/imm_topic",1000); //publish imm estimates to new topic
 			msg_count = 0;
 			setKalmanNoiseData();
 			setExtendedKalmanNoiseData();
@@ -65,11 +67,20 @@ class SubscribeAndPublish
 				imm.update();
 				msg_count++;
 			}
+			//These are for when we want to publish to Rviz
+			target_point_msg.x = msg->Real_X/10000;
+			target_point_msg.y = msg->Real_Y/10000;
+			target_point_stamped_msg.point = target_point_msg;
+			target_point_stamped_msg.header.frame_id = "/my_frame";
+			//The below allows us to publish values so that Rviz can plot. You decide which points to plot from the target class. 
+			target_real_pub.publish(target_point_stamped_msg);
 		}
 	private:
-	ros::NodeHandle n;
+	ros::NodeHandle *n_handle;
 	ros::Subscriber target_sub;
-	ros::Publisher kalman_pub, extended_kalman_pub, imm_pub;
+	ros::Publisher kalman_pub, extended_kalman_pub, imm_pub, target_real_pub;
+	geometry_msgs::Point target_point_msg;
+	geometry_msgs::PointStamped target_point_stamped_msg;
 	laser_package::state state_msg;
 	ExtendedKalmanFilter ExtendedKF;
 	KalmanFilter KF;
@@ -164,9 +175,15 @@ int main(int argc, char **argv)
 {
 	//ROS stuff
 	ros::init(argc, argv, "Estimator_node");
-	SubscribeAndPublish SAPekf;
+	ros::NodeHandle n;
+	ros::Rate r(floor(1/SIMULATE_RATE+0.5));
+	SubscribeAndPublish SAPekf(&n);
 	
-	ros::spin();
+	while(ros::ok())
+	{
+		ros::spinOnce();
+		r.sleep();
+	}
 	
 	return 0;
 }

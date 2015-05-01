@@ -8,18 +8,13 @@ class SubscribeAndPublish
 		{	
 			ROS_INFO("Constructing SAP for tracking node...");
 			initializeNoises();
-			target_pub_1 = n.advertise<geometry_msgs::PointStamped>("/target_topic_1",1000); //publish targets to new topic
 			target_pub_2 = n.advertise<geometry_msgs::PointStamped>("/target_topic_2",1000); //publish targets to new topic
 			state_pub_1 = n.advertise<laser_package::state>("/state_topic_1",1000); //publish targets to new topic
 			state_pub_2 = n.advertise<laser_package::state>("/state_topic_2",1000); //publish targets to new topic
 			update_service = n.advertiseService("updateTracker", &SubscribeAndPublish::updateFilterCallBack,this);
 			initialize_service = n.advertiseService("initializeTracker", &SubscribeAndPublish::initializeFilterCallBack,this);
 			
-			//These are for when we want to publish to Rviz
-			//real_msg_1.point = msg_1;
-			//real_msg_1.header.frame_id = "/my_frame";
-			//real_msg_2.point = msg_2;
-			//real_msg_2.header.frame_id = "/my_frame";
+		
 		}
 		
 		
@@ -41,11 +36,6 @@ class SubscribeAndPublish
 			//publish all this info to /state_topic
 			state_pub_1.publish(state_msg_1);
 			state_pub_2.publish(state_msg_2);
-			//The below allows us to publish values so that Rviz can plot. You decide which points to plot from the target class. 
-			//real_msg_1.point = msg_1;
-			//target_pub_1.publish(real_msg_1);
-			//real_msg_2.point = msg_2;
-			//target_pub_2.publish(real_msg_2);
 		}
 		
 		bool initializeFilterCallBack(laser_package::update_filter::Request &req, laser_package::update_filter::Response &res)
@@ -68,8 +58,6 @@ class SubscribeAndPublish
 		ros::NodeHandle n; 
 		ros::Publisher target_pub_1, target_pub_2, state_pub_1, state_pub_2;	
 		ros::ServiceServer initialize_service, update_service; 
-		geometry_msgs::Point msg_1, msg_2;
-		geometry_msgs::PointStamped real_msg_1, real_msg_2;
 		laser_package::state state_msg_1, state_msg_2;
 		Eigen::Vector2d z;
 		std::vector<Eigen::MatrixXd> noise_data;

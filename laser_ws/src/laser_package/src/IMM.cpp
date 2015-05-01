@@ -74,7 +74,7 @@ void IMM::calculateMixingProbabilities()
 		{
 			mu_mix(i,j) = (1/c_j_bar(j))*p(i,j)*mu_mode(i);
 			
-		ROS_INFO("mu_mix[%d,%d] = %f", i,j,mu_mix(i,j));
+		//ROS_INFO("mu_mix[%d,%d] = %f", i,j,mu_mix(i,j));
 		}
 	}
 }
@@ -112,7 +112,7 @@ void IMM::mix()
 		{
 			P_0j[j] += mu_mix(i,j)*(P_filter[i]+(x_hat_filter[i]-x_0j[i])*(x_hat_filter[i].transpose()-x_0j[i].transpose()));
 		}
-		ROS_INFO("P_0j[%d] = [%f,%f;%f,%f] \n x_0j[%d] = [%f,%f]", j,P_0j[j](0,0),P_0j[j](0,1),P_0j[j](1,0),P_0j[j](1,1),j,x_0j[j](0),x_0j[j](1));
+		//ROS_INFO("P_0j[%d] = [%f,%f;%f,%f] \n x_0j[%d] = [%f,%f]", j,P_0j[j](0,0),P_0j[j](0,1),P_0j[j](1,0),P_0j[j](1,1),j,x_0j[j](0),x_0j[j](1));
 	
 	}
 		
@@ -125,7 +125,7 @@ void IMM::updateModeProbabilities()
 	for(int i = 0;i<num_filters;i++)
 	{
 		mu_mode(i) = (1/c)*Lambda(i)*c_j_bar(i);
-		ROS_INFO("mu_mode(%d) = %f, Lambda (%d) = %f, c_j_bar(%d) = %f", i, mu_mode(i),i,Lambda(i),i,c_j_bar(i));
+		//ROS_INFO("mu_mode(%d) = %f, Lambda (%d) = %f, c_j_bar(%d) = %f", i, mu_mode(i),i,Lambda(i),i,c_j_bar(i));
 	}
 }
 

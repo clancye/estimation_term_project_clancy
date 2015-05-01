@@ -73,9 +73,9 @@ void Filter::updateFilter(measurement_vector some_z, double an_update_time)
 void Filter::reinitializeFilter(state_vector x_0j, covariance_matrix P_0j)
 {
 	x_hat = x_0j;
-	ROS_INFO("X_hat from x_0j = [%f,%f,%f,%f,%f]", x_hat(0), x_hat(1),x_hat(2), x_hat(3),x_hat(4));
+	//ROS_INFO("X_hat from x_0j = [%f,%f,%f,%f,%f]", x_hat(0), x_hat(1),x_hat(2), x_hat(3),x_hat(4));
 	P = P_0j;
-	ROS_INFO("P from P_0j = [%f,%f;%f,%f]", P(0,0), P(0,1), P(1,0), P(1,1));
+	//ROS_INFO("P from P_0j = [%f,%f;%f,%f]", P(0,0), P(0,1), P(1,0), P(1,1));
 }
 
 void Filter::updateDerivatives(measurement_vector z, double time_of_measurement)
@@ -275,13 +275,13 @@ void Filter::calculateLikelihood()
 	double exponent;
 	temp_matrix = 2*PI*S;
 	exponent = (nu.transpose())*S.inverse()*(nu);
-	ROS_INFO("exponent = %f\n S = [%f, %f; %f, %f]", exponent,S(0,0), S(0,1), S(1,0), S(1,1));
+	//ROS_INFO("exponent = %f\n S = [%f, %f; %f, %f]", exponent,S(0,0), S(0,1), S(1,0), S(1,1));
 	Lambda = (1/sqrt(temp_matrix.determinant()))*exp(-0.5*(exponent));
 }
 
 double Filter::getLikelihood()
 {
-	ROS_INFO("Likelihood = %f", Lambda);
+	//ROS_INFO("Likelihood = %f", Lambda);
 	return Lambda;
 }
 

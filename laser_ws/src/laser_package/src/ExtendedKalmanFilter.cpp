@@ -48,7 +48,7 @@ void ExtendedKalmanFilter::updateCovariance()
 	W = P_bar*H.transpose()*S.inverse();
 	P = P_bar - W*S*W.transpose();
 	
-	ROS_INFO("\nPosition gain EKF = %f \nVelocity gain EKF = %f\n", getPositionGainX(),getVelocityGainX());
+	//ROS_INFO("\nPosition gain EKF = %f \nVelocity gain EKF = %f\n", getPositionGainX(),getVelocityGainX());
 }
 
 
@@ -68,7 +68,7 @@ void ExtendedKalmanFilter::updateJacobian()
 		0, ((1-cos(omega_hat*T))/omega_hat), 1, (sin(omega_hat*T)/omega_hat), omega_partials(2),
 		0, sin(omega_hat*T), 0, cos(omega_hat*T), omega_partials(3),
 		0, 0, 0, 0, 1;
-		ROS_INFO("VALUE ACHIEVED");
+		//ROS_INFO("VALUE ACHIEVED");
 	}
 	else
 	{
