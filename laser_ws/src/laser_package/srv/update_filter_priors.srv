@@ -1,0 +1,9 @@
+int32 filterID
+float64 xi_0j
+float64 eta_0j
+float64 P_00_0j
+float64 P_01_0j
+float64 P_10_0j
+float64 P_11_0j
+---
+bool success
