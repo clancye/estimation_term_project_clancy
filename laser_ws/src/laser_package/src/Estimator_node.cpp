@@ -68,8 +68,8 @@ class SubscribeAndPublish
 				msg_count++;
 			}
 			//These are for when we want to publish to Rviz
-			target_point_msg.x = msg->Real_X/10000;
-			target_point_msg.y = msg->Real_Y/10000;
+			target_point_msg.x = msg->Real_X;
+			target_point_msg.y = msg->Real_Y;
 			target_point_stamped_msg.point = target_point_msg;
 			target_point_stamped_msg.header.frame_id = "/my_frame";
 			//The below allows us to publish values so that Rviz can plot. You decide which points to plot from the target class. 
