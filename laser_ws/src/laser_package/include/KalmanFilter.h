@@ -17,6 +17,9 @@ class KalmanFilter : public Filter
 		void initializeSystemMatrix();
 		void updateCovariance();
 		
+		double getMode1Probability();
+		double getMode2Probability();
+		
 };
 
 

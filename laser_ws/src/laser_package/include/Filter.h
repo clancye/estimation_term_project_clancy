@@ -30,20 +30,28 @@ class Filter
 	public:
 		Filter();
 
-		void updateFilter(measurement_vector some_z, double an_update_time);
+		void updateFilter(measurement_vector some_z, double an_update_time, state_vector some_real_state);
 		virtual void reinitializeFilter(state_vector some_x, covariance_matrix some_P)
 		{
 			ROS_INFO("Reinitializing empty filter!!! BAD-----------------\n-------------------\n-------------------");
 		}
 		
+		virtual double getMode1Probability()
+		{
+			ROS_INFO("Trying to get mode probability from a non-IMM object!!! BAD-----------------\n-------------------\n-------------------");
+		}
+		virtual double getMode2Probability()
+		{
+			ROS_INFO("Trying to get mode probability from a non-IMM object!!! BAD-----------------\n-------------------\n-------------------");
+		}
 		//estimates
 		double getEstimatedMeasurementX();
 		double getEstimatedMeasurementY();
 		double getEstimatedOmega();
 		double getEstimatedX();
 		double getEstimatedY();
-		double getEstimatedXVel();
-		double getEstimatedYVel();
+		double getEstimatedXSpeed();
+		double getEstimatedYSpeed();
 		
 		//variances
 		double getPositionVarianceX();
@@ -70,9 +78,12 @@ class Filter
 		
 		void calculateLikelihood();
 		double getLikelihood();
-		//return the 
+		//return the state and covariance estimates
 		covariance_matrix getCovariance();
 		state_vector getStateEstimate();
+		
+		//filter statistics
+		double getNEES();
 		
 	
 	protected:
@@ -99,7 +110,7 @@ class Filter
 		noise_gain_matrix Gamma;
 		innovation_covariance_matrix S;
 		gain_matrix W;
-		state_vector x_hat_bar, x_hat;
+		state_vector x_hat_bar, x_hat, estimation_error, real_state;
 		measurement_vector z_hat,z_polar,z_cartesian;
 		innovation_vector nu;
 		V_process_covariance_matrix V;

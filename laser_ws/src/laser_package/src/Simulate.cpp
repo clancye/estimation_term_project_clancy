@@ -81,3 +81,8 @@ void Simulator::setOmega(double a_turn_rate)
 	0, 0, 0, 0, 1;
 	
 }
+
+double Simulator::getOmega()
+{
+	return omega;
+}

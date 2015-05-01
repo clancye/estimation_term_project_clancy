@@ -19,6 +19,9 @@ class ExtendedKalmanFilter : public Filter
 		void updateJacobian();
 		void updateOmegaPartials( double xi_dot_hat, double eta_dot_hat, double omega_hat);
 		
+		double getMode1Probability();
+		double getMode2Probability();
+		
 };
 
 #endif

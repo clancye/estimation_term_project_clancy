@@ -55,6 +55,13 @@ void KalmanFilter::updateCovariance()
 	//ROS_INFO("\nPosition gain KF = %f \nVelocity gain KF = %f\n", getPositionGainX(),getVelocityGainX());
 }
 
+double KalmanFilter::getMode1Probability()
+{
+	return 0;
+}
 
-
+double KalmanFilter::getMode2Probability()
+{
+	return 0;
+}
 

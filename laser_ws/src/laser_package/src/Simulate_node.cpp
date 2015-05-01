@@ -95,11 +95,17 @@ int main(int argc, char **argv)
 		state_msg.Measured_X = next_x(XI_INDEX) + w_xi;
 		state_msg.Real_Y = next_x(ETA_INDEX);
 		state_msg.Measured_Y = next_x(ETA_INDEX) + w_eta;
+
 		//update polar values and measurements
 		state_msg.Real_Rho = rho;
 		state_msg.Real_Theta = theta;
 		state_msg.Measured_Rho = rho + w_rho;
 		state_msg.Measured_Theta = theta + w_theta;
+		
+		//update real velocities
+		state_msg.Real_X_Speed = next_x(XI_DOT_INDEX);
+		state_msg.Real_Y_Speed = next_x(ETA_DOT_INDEX);
+		state_msg.Real_Omega = simulator.getOmega();
 		
 		if(counter==0)state_msg.Time_Of_Measurement = ros::Time::now().toSec();
 		else{state_msg.Time_Of_Measurement += SAMPLING_INTERVAL*counter;}

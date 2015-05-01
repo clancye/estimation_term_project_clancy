@@ -44,6 +44,10 @@ class IMM : public Filter//We'll treat this as only a KF for now
 		//innovations
 		double getInnovationX();
 		double getInnovationY();
+		
+		//mode probabilities (only for IMM)
+		double getMode1Probability();
+		double getMode2Probability();
 	
 	private:
 	

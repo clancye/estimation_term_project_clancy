@@ -23,18 +23,23 @@ class SubscribeAndPublish
 			
 			rho = msg->Measured_Rho;
 			theta = msg->Measured_Theta;
+			real_state(XI_INDEX) = msg->Real_X;
+			real_state(XI_DOT_INDEX) = msg->Real_X_Speed;
+			real_state(ETA_INDEX) = msg->Real_Y;
+			real_state(ETA_DOT_INDEX) = msg->Real_Y_Speed;
+			real_state(OMEGA_INDEX) = msg->Real_Omega;
 			z(RHO_INDEX) = rho;
 			z(THETA_INDEX) = theta;
 			if(msg_count>1)
 			{
 				update_time = msg->Time_Of_Measurement;
 				//extended kalman filter
-				ExtendedKF.updateFilter(z, update_time);
+				ExtendedKF.updateFilter(z, update_time,real_state);
 				ExtendedKF.updateCovariance();
 				updateStateMessage(&ExtendedKF,msg);
 				extended_kalman_pub.publish(state_msg);
 				//regular kalman filter
-				KF.updateFilter(z, update_time);
+				KF.updateFilter(z, update_time, real_state);
 				KF.updateCovariance();
 				updateStateMessage(&KF,msg);
 				kalman_pub.publish(state_msg);
@@ -95,7 +100,7 @@ class SubscribeAndPublish
 	IMM imm;
 	int filterID, msg_count;
 	double first_xi, second_xi, first_eta, second_eta, first_time, second_time,T, update_time, rho, theta, converted_xi, converted_eta;
-	state_vector initial_state;
+	state_vector initial_state, real_state;
 	initial_noise_vector kalman_noise_data, extended_kalman_noise_data;
 	measurement_vector z;
 
@@ -161,12 +166,14 @@ class SubscribeAndPublish
 		state_msg.Real_Y = msg->Real_Y;
 		state_msg.Measured_X = msg->Measured_X;
 		state_msg.Measured_Y = msg->Measured_Y;
+		state_msg.Real_X_Speed = msg->Real_X_Speed;
+		state_msg.Real_Y_Speed = msg->Real_Y_Speed;
 		
 		//Estimated state values
 		state_msg.Estimated_X = filter->getEstimatedX();
-		state_msg.Estimated_X_Velocity = filter->getEstimatedXVel();
+		state_msg.Estimated_X_Speed = filter->getEstimatedXSpeed();
 		state_msg.Estimated_Y = filter->getEstimatedY();
-		state_msg.Estimated_Y_Velocity = filter->getEstimatedYVel();
+		state_msg.Estimated_Y_Speed = filter->getEstimatedYSpeed();
 		
 		
 		//calculated velocities and accelerations
@@ -190,6 +197,13 @@ class SubscribeAndPublish
 		//innovations
 		state_msg.Innovation_X = filter->getInnovationX();
 		state_msg.Innovation_Y = filter->getInnovationY();
+		
+		//general filter statistics
+		state_msg.RMS_POS = sqrt(pow((state_msg.Real_X-state_msg.Measured_X),2)+pow((state_msg.Real_Y-state_msg.Measured_Y),2));
+		state_msg.RMS_SPD = sqrt(pow((state_msg.Real_X_Speed-state_msg.Estimated_X_Speed),2)+pow((state_msg.Real_Y_Speed-state_msg.Estimated_Y_Speed),2));
+		state_msg.Mode_1_Probability = filter->getMode1Probability();
+		state_msg.Mode_2_Probability = filter->getMode2Probability();
+		
 	}
 
 };

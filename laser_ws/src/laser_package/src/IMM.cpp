@@ -153,3 +153,12 @@ void IMM::combineEstimatesAndCovariances()
 	}
 }
 
+double IMM::getMode1Probability()
+{
+	return mu_mode(0);
+}
+
+double IMM::getMode2Probability()
+{
+	return mu_mode(1);
+}

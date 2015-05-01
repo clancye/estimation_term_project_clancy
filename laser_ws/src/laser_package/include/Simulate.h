@@ -57,6 +57,7 @@ class Simulator //We'll treat this as only a KF for now
 		state_vector simulateUniformMotion();
 		state_vector simulateCoordinatedTurn();
 		void setOmega(double);
+		double getOmega();
 		
 	
 	private:

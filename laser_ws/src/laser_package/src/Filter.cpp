@@ -67,8 +67,9 @@ void Filter::initializeMatrices()
 }
 
 
-void Filter::updateFilter(measurement_vector some_z, double an_update_time)
+void Filter::updateFilter(measurement_vector some_z, double an_update_time, state_vector some_real_state)
 {//CHECKED FOR KALMAN---GOOD FOR KALMAN---NOT CHECKED FOR EXTENDED KALMAN---
+	estimation_error = real_state - x_hat;
 	z_polar = some_z;
 	updateBiasing();
 	updateDerivatives(z_cartesian, an_update_time);
@@ -208,12 +209,12 @@ double Filter::getEstimatedY()
 	return x_hat(ETA_INDEX);
 }
 
-double Filter::getEstimatedXVel()
+double Filter::getEstimatedXSpeed()
 {
 	return x_hat(XI_DOT_INDEX);
 }
 
-double Filter::getEstimatedYVel()
+double Filter::getEstimatedYSpeed()
 {
 	return x_hat(ETA_DOT_INDEX);
 }
@@ -314,3 +315,8 @@ double Filter::getLikelihood()
 	return Lambda;
 }
 
+double Filter::getNEES()
+{
+	double nees = estimation_error.transpose()*P.inverse()*estimation_error;
+	return nees;
+}

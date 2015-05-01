@@ -98,5 +98,13 @@ void ExtendedKalmanFilter::updateOmegaPartials( double xi_dot_hat,  double eta_d
 	//ROS_INFO("updating omega partials");
 }
 
+double ExtendedKalmanFilter::getMode1Probability()
+{
+	return 0;
+}
 
+double ExtendedKalmanFilter::getMode2Probability()
+{
+	return 0;
+}
 

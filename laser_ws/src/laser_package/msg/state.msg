@@ -1,11 +1,14 @@
-float64 Estimated_X_Velocity
-float64 Estimated_Y_Velocity
+float64 Estimated_X_Speed
+float64 Estimated_Y_Speed
 float64 Estimated_X
 float64 Estimated_Y
 float64 Measured_X
 float64 Measured_Y
 float64 Real_X
 float64 Real_Y
+float64 Real_X_Speed
+float64 Real_Y_Speed
+float64 Real_Omega
 float64 Real_Rho
 float64 Real_Theta
 float64 Measured_Rho
@@ -28,3 +31,8 @@ float64 Estimated_X_Measurement
 float64 Estimated_Y_Measurement
 float64 Omega_Variance
 float64 Time_Of_Measurement
+float64 RMS_POS
+float64 RMS_SPD
+float64 NEES
+float64 Mode_1_Probability
+float64 Mode_2_Probability
