@@ -37,4 +37,9 @@
 #define DEG_TO_RAD_DENOM 0.00555555555
 #define SAMPLING_INTERVAL 10
 
+//sensor attitude
+#define SENSOR_XI -10000
+#define SENSOR_ETA 0
+#define SENSOR_THETA 0
+
 #endif

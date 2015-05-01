@@ -9,11 +9,8 @@
 #include "Estimator.h"
 
 //simulation rate (NOT EQUIVALENT TO SAMPLING INTERVAL!)
-#define SIMULATE_RATE .5
-//sensor attitude
-#define SENSOR_XI -10000
-#define SENSOR_ETA 0
-#define SENSOR_THETA 0
+#define SIMULATE_RATE 1
+
 
 //xi measurement noise statistics
 #define MU_W_SIMULATE_XI 0.0
@@ -35,15 +32,15 @@
 
 //xi_process_noise statistics
 #define MU_XI_SIMULATE 0.0
-#define SIGMA_XI_SIMULATE 1.0
+#define SIGMA_XI_SIMULATE 0.0
 #define VAR_XI_SIMULATE SIGMA_XI_SIMULATE*SIGMA_XI_SIMULATE
 //eta process_noise statistics
 #define MU_ETA_SIMULATE 0.0
-#define SIGMA_ETA_SIMULATE 1.0
+#define SIGMA_ETA_SIMULATE 0.0
 #define VAR_ETA_SIMULATE SIGMA_ETA_SIMULATE*SIGMA_ETA_SIMULATE
 //omega process_noise statistics
 #define MU_OMEGA_SIMULATE 0.0
-#define SIGMA_OMEGA_SIMULATE 0.02
+#define SIGMA_OMEGA_SIMULATE 0.0
 #define VAR_OMEGA_SIMULATE SIGMA_OMEGA_SIMULATE*SIGMA_OMEGA_SIMULATE
 
 

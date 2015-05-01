@@ -84,16 +84,15 @@ void Filter::updateFilter(measurement_vector some_z, double an_update_time, stat
 void Filter::updateBiasing()
 {//CHECKED---GOOD
 	double final_validity_constant = z_polar(RHO_INDEX)*validity_constant;
-	ROS_INFO("final_validity_constant = %f", final_validity_constant);
 	if(final_validity_constant>0.4)//unbiasing conversion to cartesian noise matrix and state vector
 	{  //CHECKED---GOOD
 		R(0,0) = ((1/(bias*bias))-2)*(z_polar(RHO_INDEX)*z_polar(RHO_INDEX)*cos(z_polar(THETA_INDEX))*cos(z_polar(THETA_INDEX))) + ((z_polar(RHO_INDEX)*z_polar(RHO_INDEX)+sigma_w_rho*sigma_w_rho)*0.5*(1+bias*bias*bias*bias*cos(2*z_polar(THETA_INDEX))));
-		R(1,1) = ((1/(bias*bias))-2)*(z_polar(RHO_INDEX)*z_polar(RHO_INDEX)*sin(z_polar(THETA_INDEX))*sin(z_polar(THETA_INDEX))) + ((z_polar(RHO_INDEX)*z_polar(RHO_INDEX)+sigma_w_rho*sigma_w_rho)*0.5*(1+bias*bias*bias*bias*cos(2*z_polar(THETA_INDEX))));
+		R(1,1) = ((1/(bias*bias))-2)*(z_polar(RHO_INDEX)*z_polar(RHO_INDEX)*sin(z_polar(THETA_INDEX))*sin(z_polar(THETA_INDEX))) + ((z_polar(RHO_INDEX)*z_polar(RHO_INDEX)+sigma_w_rho*sigma_w_rho)*0.5*(1-bias*bias*bias*bias*cos(2*z_polar(THETA_INDEX))));
 		R(0,1) = (((1/(bias*bias))*z_polar(RHO_INDEX)*z_polar(RHO_INDEX)*0.5)+(z_polar(RHO_INDEX)*z_polar(RHO_INDEX)+sigma_w_rho*sigma_w_rho)*bias*bias*bias*bias*0.5 - z_polar(RHO_INDEX)*z_polar(RHO_INDEX))*sin(2*z_polar(THETA_INDEX));
 		R(1,0) = R(0,1);
 		//convert to cartesian
-		z_cartesian(0) = z_polar(RHO_INDEX)*cos(z_polar(THETA_INDEX))/bias;
-		z_cartesian(1) = z_polar(RHO_INDEX)*sin(z_polar(THETA_INDEX))/bias;
+		z_cartesian(0) = (z_polar(RHO_INDEX)*cos(z_polar(THETA_INDEX))/bias)+SENSOR_XI;
+		z_cartesian(1) = (z_polar(RHO_INDEX)*sin(z_polar(THETA_INDEX))/bias)+SENSOR_ETA;
 	}
 	else//regular conversion to cartesian noise matrix and state vector
 	{   //CHECKED---GOOD
@@ -102,9 +101,11 @@ void Filter::updateBiasing()
 		R(1,0) = (sigma_w_rho*sigma_w_rho-z_polar(RHO_INDEX)*z_polar(RHO_INDEX)*sigma_w_theta*sigma_w_theta)*sin(z_polar(THETA_INDEX))*cos(z_polar(THETA_INDEX));
 		R(0,1) = R(1,0);
 		//convert to cartestian
-		z_cartesian(0) = z_polar(RHO_INDEX)*cos(z_polar(THETA_INDEX));
-		z_cartesian(1) = z_polar(RHO_INDEX)*sin(z_polar(THETA_INDEX));
+		z_cartesian(0) = (z_polar(RHO_INDEX)*cos(z_polar(THETA_INDEX)))+SENSOR_XI;
+		z_cartesian(1) = (z_polar(RHO_INDEX)*sin(z_polar(THETA_INDEX)))+SENSOR_ETA;
 	}	
+	
+	ROS_INFO("final_validity_constant = %f, bias = %f\n R(0,0) = %f\n R(0,1) = %f, R(1,0) = %f, R(1,1) = %f", final_validity_constant, bias,R(0,0), R(0,1), R(1,0), R(1,1));
 }
 
 

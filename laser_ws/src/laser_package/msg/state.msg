@@ -36,3 +36,4 @@ float64 RMS_SPD
 float64 NEES
 float64 Mode_1_Probability
 float64 Mode_2_Probability
+float64 RMS_POS_Measurements

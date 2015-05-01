@@ -50,20 +50,20 @@ class SubscribeAndPublish
 			}
 			else if(msg_count == 0)
 			{
-				first_xi = rho*cos(theta);
-				first_eta = rho*sin(theta);
+				first_xi = rho*cos(theta)+SENSOR_XI;
+				first_eta = rho*sin(theta)+SENSOR_ETA;
 				first_time = msg->Time_Of_Measurement;
 				msg_count++;
 			}
 			else if(msg_count==1)
 			{
 				second_time = msg->Time_Of_Measurement;
-				initial_state(XI_INDEX) = rho*cos(theta);
-				initial_state(ETA_INDEX) = rho*sin(theta);
-				initial_state(XI_DOT_INDEX) = (initial_state(XI_INDEX)-first_xi)/(second_time-first_time);
-				initial_state(ETA_DOT_INDEX) = (initial_state(ETA_INDEX)-first_eta)/(second_time-first_time);
-				initial_state(OMEGA_INDEX) = 0.01;
 				T = SAMPLING_INTERVAL;
+				initial_state(XI_INDEX) = rho*cos(theta)+SENSOR_XI;
+				initial_state(ETA_INDEX) = rho*sin(theta)+SENSOR_ETA;
+				initial_state(XI_DOT_INDEX) = (initial_state(XI_INDEX)-first_xi)/(T);
+				initial_state(ETA_DOT_INDEX) = (initial_state(ETA_INDEX)-first_eta)/(T);
+				initial_state(OMEGA_INDEX) = 0.0001;
 				//extended kalman filter
 				ExtendedKF = ExtendedKalmanFilter(initial_state,T , extended_kalman_noise_data,0.5,z);//instantiate Extended kalman filter
 				updateStateMessage(&ExtendedKF,msg);
@@ -115,11 +115,11 @@ class SubscribeAndPublish
 		kalman_noise_data(VAR_W_ETA_INDEX) = kalman_noise_data(SIGMA_W_ETA_INDEX)*kalman_noise_data(SIGMA_W_ETA_INDEX);
 			
 		kalman_noise_data(MU_V_XI_INDEX) = 0.0;
-		kalman_noise_data(SIGMA_V_XI_INDEX) = 0.01;
+		kalman_noise_data(SIGMA_V_XI_INDEX) = 0.1;
 		kalman_noise_data(VAR_V_XI_INDEX) = kalman_noise_data(SIGMA_V_XI_INDEX)*kalman_noise_data(SIGMA_V_XI_INDEX);
 	
 		kalman_noise_data(MU_V_ETA_INDEX) = 0.0;
-		kalman_noise_data(SIGMA_V_ETA_INDEX) = 0.01;
+		kalman_noise_data(SIGMA_V_ETA_INDEX) = 0.1;
 		kalman_noise_data(VAR_V_ETA_INDEX) = kalman_noise_data(SIGMA_V_ETA_INDEX)*kalman_noise_data(SIGMA_V_ETA_INDEX);
 		
 		kalman_noise_data(MU_V_OMEGA_INDEX) = 0.0;
@@ -199,10 +199,11 @@ class SubscribeAndPublish
 		state_msg.Innovation_Y = filter->getInnovationY();
 		
 		//general filter statistics
-		state_msg.RMS_POS = sqrt(pow((state_msg.Real_X-state_msg.Measured_X),2)+pow((state_msg.Real_Y-state_msg.Measured_Y),2));
+		state_msg.RMS_POS = sqrt(pow((state_msg.Real_X-state_msg.Estimated_X),2)+pow((state_msg.Real_Y-state_msg.Estimated_Y),2));
 		state_msg.RMS_SPD = sqrt(pow((state_msg.Real_X_Speed-state_msg.Estimated_X_Speed),2)+pow((state_msg.Real_Y_Speed-state_msg.Estimated_Y_Speed),2));
 		state_msg.Mode_1_Probability = filter->getMode1Probability();
 		state_msg.Mode_2_Probability = filter->getMode2Probability();
+		state_msg.RMS_POS_Measurements = sqrt(pow((state_msg.Real_X-rho*cos(theta)),2)+pow((state_msg.Real_Y-rho*sin(theta)),2));
 		
 	}
 
