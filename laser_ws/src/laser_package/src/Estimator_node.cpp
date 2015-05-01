@@ -110,11 +110,11 @@ class SubscribeAndPublish
 		kalman_noise_data(VAR_W_ETA_INDEX) = kalman_noise_data(SIGMA_W_ETA_INDEX)*kalman_noise_data(SIGMA_W_ETA_INDEX);
 			
 		kalman_noise_data(MU_V_XI_INDEX) = 0.0;
-		kalman_noise_data(SIGMA_V_XI_INDEX) = 1.0;
+		kalman_noise_data(SIGMA_V_XI_INDEX) = 0.01;
 		kalman_noise_data(VAR_V_XI_INDEX) = kalman_noise_data(SIGMA_V_XI_INDEX)*kalman_noise_data(SIGMA_V_XI_INDEX);
 	
 		kalman_noise_data(MU_V_ETA_INDEX) = 0.0;
-		kalman_noise_data(SIGMA_V_ETA_INDEX) = 1.0;
+		kalman_noise_data(SIGMA_V_ETA_INDEX) = 0.01;
 		kalman_noise_data(VAR_V_ETA_INDEX) = kalman_noise_data(SIGMA_V_ETA_INDEX)*kalman_noise_data(SIGMA_V_ETA_INDEX);
 		
 		kalman_noise_data(MU_V_OMEGA_INDEX) = 0.0;
@@ -127,24 +127,24 @@ class SubscribeAndPublish
 	
 	void setExtendedKalmanNoiseData()
 	{
-		extended_kalman_noise_data(MU_W_XI_INDEX) = 0.0;
-		extended_kalman_noise_data(SIGMA_W_XI_INDEX) = 1.0;
+		extended_kalman_noise_data(MU_W_XI_INDEX) = MU_W_SIMULATE_XI;;
+		extended_kalman_noise_data(SIGMA_W_XI_INDEX) = SIGMA_W_SIMULATE_XI;
 		extended_kalman_noise_data(VAR_W_XI_INDEX) = extended_kalman_noise_data(SIGMA_W_XI_INDEX)*extended_kalman_noise_data(SIGMA_W_XI_INDEX);
 		
-		extended_kalman_noise_data(MU_W_ETA_INDEX) = 0.0;
-		extended_kalman_noise_data(SIGMA_W_ETA_INDEX) = 1.0;
+		extended_kalman_noise_data(MU_W_ETA_INDEX) = MU_W_SIMULATE_ETA;
+		extended_kalman_noise_data(SIGMA_W_ETA_INDEX) = SIGMA_W_SIMULATE_ETA;
 		extended_kalman_noise_data(VAR_W_ETA_INDEX) = extended_kalman_noise_data(SIGMA_W_ETA_INDEX)*extended_kalman_noise_data(SIGMA_W_ETA_INDEX);
 			
 		extended_kalman_noise_data(MU_V_XI_INDEX) = 0.0;
-		extended_kalman_noise_data(SIGMA_V_XI_INDEX) = 1.0;
+		extended_kalman_noise_data(SIGMA_V_XI_INDEX) = 0.5;
 		extended_kalman_noise_data(VAR_V_XI_INDEX) = extended_kalman_noise_data(SIGMA_V_XI_INDEX)*extended_kalman_noise_data(SIGMA_V_XI_INDEX);
 	
 		extended_kalman_noise_data(MU_V_ETA_INDEX) = 0.0;
-		extended_kalman_noise_data(SIGMA_V_ETA_INDEX) = 1.0;
+		extended_kalman_noise_data(SIGMA_V_ETA_INDEX) = 0.5;
 		extended_kalman_noise_data(VAR_V_ETA_INDEX) = extended_kalman_noise_data(SIGMA_V_ETA_INDEX)*extended_kalman_noise_data(SIGMA_V_ETA_INDEX);
 		
 		extended_kalman_noise_data(MU_V_OMEGA_INDEX) = 0.0;
-		extended_kalman_noise_data(SIGMA_V_OMEGA_INDEX) = 0.01;
+		extended_kalman_noise_data(SIGMA_V_OMEGA_INDEX) = 1*PI*DEG_TO_RAD_DENOM;//1 degree/seconds^2
 		extended_kalman_noise_data(VAR_V_OMEGA_INDEX) = extended_kalman_noise_data(SIGMA_V_OMEGA_INDEX)*extended_kalman_noise_data(SIGMA_V_OMEGA_INDEX);
 		
 		extended_kalman_noise_data(SIGMA_W_RHO_INDEX) = SIGMA_W_SIMULATE_RHO;
