@@ -20,10 +20,15 @@ class SubscribeAndPublish
 		
 		void targetCallBack(const laser_package::state::ConstPtr& msg)
 		{
+			
+			rho = msg->Measured_Rho;
+			theta = msg->Measured_Theta;
+			converted_xi = rho*cos(theta);
+			converted_eta = rho*sin(theta);
 			if(msg_count>1)
 			{
-				z(0) = msg->Measured_X;
-				z(1) = msg->Measured_Y;
+				z(0) = converted_xi;
+				z(1) = converted_eta;
 				update_time = msg->Time_Of_Measurement;
 				ExtendedKF.updateFilter(z, update_time);
 				ExtendedKF.updateCovariance();
@@ -49,8 +54,8 @@ class SubscribeAndPublish
 			else if(msg_count==1)
 			{
 				second_time = msg->Time_Of_Measurement;
-				initial_state(XI_INDEX) = msg->Measured_X;
-				initial_state(ETA_INDEX) = msg->Measured_Y;
+				initial_state(XI_INDEX) = converted_xi;
+				initial_state(ETA_INDEX) = converted_eta;
 				initial_state(XI_DOT_INDEX) = (initial_state(XI_INDEX)-first_xi)/(second_time-first_time);
 				initial_state(ETA_DOT_INDEX) = (initial_state(ETA_INDEX)-first_eta)/(second_time-first_time);
 				initial_state(OMEGA_INDEX) = 0.01;
@@ -87,17 +92,21 @@ class SubscribeAndPublish
 	std::vector<Filter*> filters;
 	IMM imm;
 	int filterID, msg_count;
-	double first_xi, second_xi, first_eta, second_eta, first_time, second_time,T, update_time;
+	double first_xi, second_xi, first_eta, second_eta, first_time, second_time,T, update_time, rho, theta, converted_xi, converted_eta;
 	state_vector initial_state;
 	initial_noise_vector kalman_noise_data, extended_kalman_noise_data;
 	measurement_vector z;
 
 	void setKalmanNoiseData()
 	{
-		kalman_noise_data(MU_W_INDEX) = 0.0;
-		kalman_noise_data(SIGMA_W_INDEX) = 1.0;
-		kalman_noise_data(VAR_W_INDEX) = kalman_noise_data(SIGMA_W_INDEX)*kalman_noise_data(SIGMA_W_INDEX);
+		kalman_noise_data(MU_W_XI_INDEX) = 0.0;
+		kalman_noise_data(SIGMA_W_XI_INDEX) = 1.0;
+		kalman_noise_data(VAR_W_XI_INDEX) = kalman_noise_data(SIGMA_W_XI_INDEX)*kalman_noise_data(SIGMA_W_XI_INDEX);
 		
+		kalman_noise_data(MU_W_ETA_INDEX) = 0.0;
+		kalman_noise_data(SIGMA_W_ETA_INDEX) = 1.0;
+		kalman_noise_data(VAR_W_ETA_INDEX) = kalman_noise_data(SIGMA_W_ETA_INDEX)*kalman_noise_data(SIGMA_W_ETA_INDEX);
+			
 		kalman_noise_data(MU_V_XI_INDEX) = 0.0;
 		kalman_noise_data(SIGMA_V_XI_INDEX) = 1.0;
 		kalman_noise_data(VAR_V_XI_INDEX) = kalman_noise_data(SIGMA_V_XI_INDEX)*kalman_noise_data(SIGMA_V_XI_INDEX);
@@ -113,10 +122,14 @@ class SubscribeAndPublish
 	
 	void setExtendedKalmanNoiseData()
 	{
-		extended_kalman_noise_data(MU_W_INDEX) = 0.0;
-		extended_kalman_noise_data(SIGMA_W_INDEX) = 1.0;
-		extended_kalman_noise_data(VAR_W_INDEX) = extended_kalman_noise_data(SIGMA_W_INDEX)*extended_kalman_noise_data(SIGMA_W_INDEX);
+		extended_kalman_noise_data(MU_W_XI_INDEX) = 0.0;
+		extended_kalman_noise_data(SIGMA_W_XI_INDEX) = 1.0;
+		extended_kalman_noise_data(VAR_W_XI_INDEX) = extended_kalman_noise_data(SIGMA_W_XI_INDEX)*extended_kalman_noise_data(SIGMA_W_XI_INDEX);
 		
+		extended_kalman_noise_data(MU_W_ETA_INDEX) = 0.0;
+		extended_kalman_noise_data(SIGMA_W_ETA_INDEX) = 1.0;
+		extended_kalman_noise_data(VAR_W_ETA_INDEX) = extended_kalman_noise_data(SIGMA_W_ETA_INDEX)*extended_kalman_noise_data(SIGMA_W_ETA_INDEX);
+			
 		extended_kalman_noise_data(MU_V_XI_INDEX) = 0.0;
 		extended_kalman_noise_data(SIGMA_V_XI_INDEX) = 1.0;
 		extended_kalman_noise_data(VAR_V_XI_INDEX) = extended_kalman_noise_data(SIGMA_V_XI_INDEX)*extended_kalman_noise_data(SIGMA_V_XI_INDEX);

@@ -7,9 +7,13 @@ Filter::Filter()
 
 void Filter::initializeNoises(Eigen::MatrixXd noise_data)
 {
-	mu_w = noise_data(MU_W_INDEX);
-	sigma_w = noise_data(SIGMA_W_INDEX);
-	var_w = noise_data(VAR_W_INDEX);
+	mu_w_xi = noise_data(MU_W_XI_INDEX);
+	sigma_w_xi = noise_data(SIGMA_W_XI_INDEX);
+	var_w_xi = noise_data(VAR_W_XI_INDEX);
+	
+	mu_w_eta = noise_data(MU_W_ETA_INDEX);
+	sigma_w_eta = noise_data(SIGMA_W_ETA_INDEX);
+	var_w_eta = noise_data(VAR_W_ETA_INDEX);
 	
 	mu_v_xi = noise_data(MU_V_XI_INDEX);
 	sigma_v_xi = noise_data(SIGMA_V_XI_INDEX);
@@ -47,15 +51,15 @@ void Filter::initializeMatrices()
 	0, 0, 1, 0, 0;
 	
 	R << 
-	var_w, 0,
-	0, var_w;
+	var_w_xi, 0,
+	0, var_w_eta;
 	
 	P <<//using the two-point differencing convention from page 
-	var_w,var_w/T,0,0,0,
-	var_w/T, 2*var_w/(T*T),0,0,0,
-	0,0,var_w,var_w/T,0,
-	0,0,var_w/T,2*var_w/(T*T),0,
-	0,0,0,0,var_w/T;
+	var_w_xi,var_w_xi/T,0,0,0,
+	var_w_xi/T, 2*var_w_xi/(T*T),0,0,0,
+	0,0,var_w_eta,var_w_eta/T,0,
+	0,0,var_w_eta/T,2*var_w_eta/(T*T),0,
+	0,0,0,0,var_w_xi/T;//this last element is (hopefully) arbitrary since we aren't measuring omega
 }
 
 void Filter::updateFilter(measurement_vector some_z, double an_update_time)
