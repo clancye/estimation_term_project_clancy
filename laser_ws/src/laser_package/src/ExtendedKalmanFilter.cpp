@@ -6,7 +6,7 @@ ExtendedKalmanFilter::ExtendedKalmanFilter()
 }
 
 ExtendedKalmanFilter::ExtendedKalmanFilter(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data, double a_Lambda, measurement_vector some_z)
-{//CHECKED---POSSIBLE FOR ERROR
+{//CHECKED---GOOD
 	ROS_INFO("Initializing an EKF");
 	z_polar = some_z;
 	T = a_sampling_interval;

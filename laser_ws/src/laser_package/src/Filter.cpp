@@ -28,7 +28,7 @@ void Filter::initializeNoises(initial_noise_vector noise_data)
 	var_v_omega = noise_data(VAR_V_OMEGA_INDEX);
 	
 	sigma_w_rho = noise_data(SIGMA_W_RHO_INDEX);
-	sigma_w_theta = noise_data(SIGMA_W_THETA_INDEX);
+	sigma_w_theta = noise_data(SIGMA_W_THETA_INDEX_INDEX);
 	
 	validity_constant = sigma_w_theta*sigma_w_theta/sigma_w_rho;
 	
@@ -81,27 +81,27 @@ void Filter::updateFilter(measurement_vector some_z, double an_update_time)
 
 void Filter::updateBiasing()
 {//CHECKED---GOOD
-	double final_validity_constant = z_polar(RHO)*validity_constant;
+	double final_validity_constant = z_polar(RHO_INDEX)*validity_constant;
 	ROS_INFO("final_validity_constant = %f", final_validity_constant);
 	if(final_validity_constant>0.4)//unbiasing conversion to cartesian noise matrix and state vector
 	{  //CHECKED---GOOD
-		R(0,0) = ((1/(bias*bias))-2)*(z_polar(RHO)*z_polar(RHO)*cos(z_polar(THETA))*cos(z_polar(THETA))) + ((z_polar(RHO)*z_polar(RHO)+simga_w_rho*sigma_w_rho)*0.5*(1+bias*bias*bias*bias*cos(2*z_polar(THETA))));
-		R(1,1) = ((1/(bias*bias))-2)*(z_polar(RHO)*z_polar(RHO)*sin(z_polar(THETA))*sin(z_polar(THETA))) + ((z_polar(RHO)*z_polar(RHO)+simga_w_rho*sigma_w_rho)*0.5*(1+bias*bias*bias*bias*cos(2*z_polar(THETA))));
-		R(0,1) = (((1/(bias*bias))*z_polar(RHO)*z_polar(RHO)*0.5)+(z_polar(RHO)*z_polar(RHO)+simga_w_rho*sigma_w_rho)*bias*bias*bias*bias*0.5 - z_polar(RHO)*z_polar(RHO))*sin(2*z_polar(THETA));
+		R(0,0) = ((1/(bias*bias))-2)*(z_polar(RHO_INDEX)*z_polar(RHO_INDEX)*cos(z_polar(THETA_INDEX))*cos(z_polar(THETA_INDEX))) + ((z_polar(RHO_INDEX)*z_polar(RHO_INDEX)+sigma_w_rho*sigma_w_rho)*0.5*(1+bias*bias*bias*bias*cos(2*z_polar(THETA_INDEX))));
+		R(1,1) = ((1/(bias*bias))-2)*(z_polar(RHO_INDEX)*z_polar(RHO_INDEX)*sin(z_polar(THETA_INDEX))*sin(z_polar(THETA_INDEX))) + ((z_polar(RHO_INDEX)*z_polar(RHO_INDEX)+sigma_w_rho*sigma_w_rho)*0.5*(1+bias*bias*bias*bias*cos(2*z_polar(THETA_INDEX))));
+		R(0,1) = (((1/(bias*bias))*z_polar(RHO_INDEX)*z_polar(RHO_INDEX)*0.5)+(z_polar(RHO_INDEX)*z_polar(RHO_INDEX)+sigma_w_rho*sigma_w_rho)*bias*bias*bias*bias*0.5 - z_polar(RHO_INDEX)*z_polar(RHO_INDEX))*sin(2*z_polar(THETA_INDEX));
 		R(1,0) = R(0,1);
 		//convert to cartesian
-		z_cartesian(0) = z_polar(RHO)*cos(z_polar(THETA))/bias;
-		z_cartesian(1) = z_polar(RHO)*sin(z_polar(THETA))/bias;
+		z_cartesian(0) = z_polar(RHO_INDEX)*cos(z_polar(THETA_INDEX))/bias;
+		z_cartesian(1) = z_polar(RHO_INDEX)*sin(z_polar(THETA_INDEX))/bias;
 	}
 	else//regular conversion to cartesian noise matrix and state vector
 	{   //CHECKED---GOOD
-		R(0,0) = z_polar(RHO)*z_polar(RHO)*sigma_w_theta*sigma_w_theta*sin(z_polar(THETA))*sin(z_polar(THETA))+sigma_w_rho*sigma_w_rho*cos(z_polar(THETA))*cos(z_polar(THETA));
-		R(1,1) = z_polar(RHO)*z_polar(RHO)*sigma_w_theta*sigma_w_theta*cos(z_polar(THETA))*cos(z_polar(THETA))+sigma_w_rho*sigma_w_rho*sin(z_polar(THETA))*sin(z_polar(THETA));
-		R(1,0) = (sigma_w_rho*sigma_w_rho-z_polar(RHO)*z_polar(RHO)*sigma_w_theta*sigma_w_theta)*sin(z_polar(THETA))*cos(z_polar(THETA));
+		R(0,0) = z_polar(RHO_INDEX)*z_polar(RHO_INDEX)*sigma_w_theta*sigma_w_theta*sin(z_polar(THETA_INDEX))*sin(z_polar(THETA_INDEX))+sigma_w_rho*sigma_w_rho*cos(z_polar(THETA_INDEX))*cos(z_polar(THETA_INDEX));
+		R(1,1) = z_polar(RHO_INDEX)*z_polar(RHO_INDEX)*sigma_w_theta*sigma_w_theta*cos(z_polar(THETA_INDEX))*cos(z_polar(THETA_INDEX))+sigma_w_rho*sigma_w_rho*sin(z_polar(THETA_INDEX))*sin(z_polar(THETA_INDEX));
+		R(1,0) = (sigma_w_rho*sigma_w_rho-z_polar(RHO_INDEX)*z_polar(RHO_INDEX)*sigma_w_theta*sigma_w_theta)*sin(z_polar(THETA_INDEX))*cos(z_polar(THETA_INDEX));
 		R(0,1) = R(1,0);
 		//convert to cartestian
-		z_cartesian(0) = z_polar(RHO)*cos(z_polar(THETA));
-		z_cartesian(1) = z_polar(RHO)*sin(z_polar(THETA));
+		z_cartesian(0) = z_polar(RHO_INDEX)*cos(z_polar(THETA_INDEX));
+		z_cartesian(1) = z_polar(RHO_INDEX)*sin(z_polar(THETA_INDEX));
 	}	
 }
 

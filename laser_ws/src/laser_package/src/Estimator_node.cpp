@@ -23,8 +23,8 @@ class SubscribeAndPublish
 			
 			rho = msg->Measured_Rho;
 			theta = msg->Measured_Theta;
-			z(0) = rho;
-			z(1) = theta;
+			z(RHO_INDEX) = rho;
+			z(THETA_INDEX) = theta;
 			if(msg_count>1)
 			{
 				update_time = msg->Time_Of_Measurement;
@@ -59,12 +59,15 @@ class SubscribeAndPublish
 				initial_state(ETA_DOT_INDEX) = (initial_state(ETA_INDEX)-first_eta)/(second_time-first_time);
 				initial_state(OMEGA_INDEX) = 0.01;
 				T = SAMPLING_INTERVAL;
+				//extended kalman filter
 				ExtendedKF = ExtendedKalmanFilter(initial_state,T , extended_kalman_noise_data,0.5,z);//instantiate Extended kalman filter
 				updateStateMessage(&ExtendedKF,msg);
 				extended_kalman_pub.publish(state_msg);
+				//regular kalman filter
 				KF = KalmanFilter(initial_state,T , kalman_noise_data, 0.5,z);//instantiate kalman filter
 				updateStateMessage(&KF,msg);
 				kalman_pub.publish(state_msg);
+				//imm
 				filters.push_back(&KF);
 				filters.push_back(&ExtendedKF);
 				imm = IMM(filters);//instantiate IMM with vector of filters
