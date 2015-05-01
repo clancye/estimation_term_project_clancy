@@ -136,6 +136,7 @@ class SubscribeAndPublish
 		extended_kalman_noise_data(VAR_W_ETA_INDEX) = extended_kalman_noise_data(SIGMA_W_ETA_INDEX)*extended_kalman_noise_data(SIGMA_W_ETA_INDEX);
 			
 		extended_kalman_noise_data(MU_V_XI_INDEX) = 0.0;
+		//rationale: its moving pretty quickly and a change in the angular acceleration of 1 degree per second won't change the velocities too much.
 		extended_kalman_noise_data(SIGMA_V_XI_INDEX) = 0.5;
 		extended_kalman_noise_data(VAR_V_XI_INDEX) = extended_kalman_noise_data(SIGMA_V_XI_INDEX)*extended_kalman_noise_data(SIGMA_V_XI_INDEX);
 	
@@ -144,6 +145,7 @@ class SubscribeAndPublish
 		extended_kalman_noise_data(VAR_V_ETA_INDEX) = extended_kalman_noise_data(SIGMA_V_ETA_INDEX)*extended_kalman_noise_data(SIGMA_V_ETA_INDEX);
 		
 		extended_kalman_noise_data(MU_V_OMEGA_INDEX) = 0.0;
+		//rationale: I figure it would be reasonable for a plane to start turning 1 degree in 1 second
 		extended_kalman_noise_data(SIGMA_V_OMEGA_INDEX) = 1*PI*DEG_TO_RAD_DENOM;//1 degree/seconds^2
 		extended_kalman_noise_data(VAR_V_OMEGA_INDEX) = extended_kalman_noise_data(SIGMA_V_OMEGA_INDEX)*extended_kalman_noise_data(SIGMA_V_OMEGA_INDEX);
 		
