@@ -28,7 +28,7 @@ void Filter::initializeNoises(initial_noise_vector noise_data)
 	var_v_omega = noise_data(VAR_V_OMEGA_INDEX);
 	
 	sigma_w_rho = noise_data(SIGMA_W_RHO_INDEX);
-	sigma_w_theta = noise_data(SIGMA_W_THETA_INDEX_INDEX);
+	sigma_w_theta = noise_data(SIGMA_W_THETA_INDEX);
 	
 	validity_constant = sigma_w_theta*sigma_w_theta/sigma_w_rho;
 	
@@ -65,6 +65,7 @@ void Filter::initializeMatrices()
 	0,0,R(1,1)/T,2*R(1,1)/(T*T),0,
 	0,0,0,0,R(0,0)/T;//this last element is (hopefully) arbitrary since we aren't measuring omega
 }
+
 
 void Filter::updateFilter(measurement_vector some_z, double an_update_time)
 {//CHECKED FOR KALMAN---GOOD FOR KALMAN---NOT CHECKED FOR EXTENDED KALMAN---

@@ -13,6 +13,7 @@ class KalmanFilter : public Filter
 		KalmanFilter();
 		KalmanFilter(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data, double a_Lambda, measurement_vector some_z);
 		
+		void reinitializeFilter(state_vector some_x, covariance_matrix some_P);
 		void initializeSystemMatrix();
 		void updateCovariance();
 		
