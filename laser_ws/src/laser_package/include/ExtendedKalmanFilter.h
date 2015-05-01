@@ -11,12 +11,12 @@ class ExtendedKalmanFilter : public Filter
 	public:
 		
 		ExtendedKalmanFilter();
-		ExtendedKalmanFilter(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data, double a_Lambda);
+		ExtendedKalmanFilter(state_vector an_initial_state, double a_sampling_interval, initial_noise_vector noise_data, double a_Lambda, measurement_vector some_z);
 		
 		void initializeSystemMatrix();
 		void updateCovariance();
 		void updateJacobian();
-		void updateOmegaPartials(double xi_hat, double xi_dot_hat, double eta_hat, double eta_dot_hat, double omega_hat);
+		void updateOmegaPartials( double xi_dot_hat, double eta_dot_hat, double omega_hat);
 		
 };
 

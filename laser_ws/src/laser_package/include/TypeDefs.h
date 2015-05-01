@@ -23,7 +23,7 @@ typedef Eigen::Matrix<double, NUM_STATES, NUM_STATES> system_matrix;
 typedef Eigen::Matrix<double, NUM_PROCESS_NOISES, NUM_PROCESS_NOISES> V_process_covariance_matrix;
 typedef Eigen::Matrix<double, NUM_STATES, NUM_STATES> jacobian_matrix;
 typedef Eigen::Matrix<double, NUM_STATES -1, 1> omega_partials_vector;
-typedef Eigen::Matrix<double, 15,1> initial_noise_vector;
+typedef Eigen::Matrix<double, 17,1> initial_noise_vector;
 typedef Eigen::Matrix<double, NUM_FILTERS, NUM_FILTERS> transition_probability_matrix;
 typedef Eigen::Matrix<double, NUM_FILTERS, NUM_FILTERS> mixing_probability_matrix;
 typedef Eigen::Matrix<double, NUM_FILTERS, 1> mode_probability_vector;

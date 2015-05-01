@@ -23,52 +23,51 @@ class SubscribeAndPublish
 			
 			rho = msg->Measured_Rho;
 			theta = msg->Measured_Theta;
-			converted_xi = rho*cos(theta);
-			converted_eta = rho*sin(theta);
+			z(0) = rho;
+			z(1) = theta;
 			if(msg_count>1)
 			{
-				z(0) = converted_xi;
-				z(1) = converted_eta;
 				update_time = msg->Time_Of_Measurement;
+				//extended kalman filter
 				ExtendedKF.updateFilter(z, update_time);
 				ExtendedKF.updateCovariance();
 				updateStateMessage(&ExtendedKF,msg);
 				extended_kalman_pub.publish(state_msg);
+				//regular kalman filter
 				KF.updateFilter(z, update_time);
 				KF.updateCovariance();
-				KF.calculateLikelihood();
-				ExtendedKF.calculateLikelihood();
 				updateStateMessage(&KF,msg);
 				kalman_pub.publish(state_msg);
+				//imm
 				imm.update();
 				updateStateMessage(&imm,msg);
 				imm_pub.publish(state_msg);
 			}
 			else if(msg_count == 0)
 			{
-				first_xi = msg->Measured_X;
-				first_eta = msg->Measured_Y;
+				first_xi = rho*cos(theta);
+				first_eta = rho*sin(theta);
 				first_time = msg->Time_Of_Measurement;
 				msg_count++;
 			}
 			else if(msg_count==1)
 			{
 				second_time = msg->Time_Of_Measurement;
-				initial_state(XI_INDEX) = converted_xi;
-				initial_state(ETA_INDEX) = converted_eta;
+				initial_state(XI_INDEX) = rho*cos(theta);
+				initial_state(ETA_INDEX) = rho*sin(theta);
 				initial_state(XI_DOT_INDEX) = (initial_state(XI_INDEX)-first_xi)/(second_time-first_time);
 				initial_state(ETA_DOT_INDEX) = (initial_state(ETA_INDEX)-first_eta)/(second_time-first_time);
 				initial_state(OMEGA_INDEX) = 0.01;
-				T = second_time-first_time;
-				ExtendedKF = ExtendedKalmanFilter(initial_state,T , extended_kalman_noise_data,0.5);
+				T = SAMPLING_INTERVAL;
+				ExtendedKF = ExtendedKalmanFilter(initial_state,T , extended_kalman_noise_data,0.5,z);//instantiate Extended kalman filter
 				updateStateMessage(&ExtendedKF,msg);
 				extended_kalman_pub.publish(state_msg);
-				KF = KalmanFilter(initial_state,T , kalman_noise_data, 0.5);
+				KF = KalmanFilter(initial_state,T , kalman_noise_data, 0.5,z);//instantiate kalman filter
 				updateStateMessage(&KF,msg);
 				kalman_pub.publish(state_msg);
 				filters.push_back(&KF);
 				filters.push_back(&ExtendedKF);
-				imm = IMM(filters);
+				imm = IMM(filters);//instantiate IMM with vector of filters
 				imm.update();
 				msg_count++;
 			}
@@ -99,12 +98,12 @@ class SubscribeAndPublish
 
 	void setKalmanNoiseData()
 	{
-		kalman_noise_data(MU_W_XI_INDEX) = 0.0;
-		kalman_noise_data(SIGMA_W_XI_INDEX) = 1.0;
+		kalman_noise_data(MU_W_XI_INDEX) = MU_W_SIMULATE_XI;
+		kalman_noise_data(SIGMA_W_XI_INDEX) = SIGMA_W_SIMULATE_XI;
 		kalman_noise_data(VAR_W_XI_INDEX) = kalman_noise_data(SIGMA_W_XI_INDEX)*kalman_noise_data(SIGMA_W_XI_INDEX);
 		
-		kalman_noise_data(MU_W_ETA_INDEX) = 0.0;
-		kalman_noise_data(SIGMA_W_ETA_INDEX) = 1.0;
+		kalman_noise_data(MU_W_ETA_INDEX) = MU_W_SIMULATE_ETA;
+		kalman_noise_data(SIGMA_W_ETA_INDEX) = SIGMA_W_SIMULATE_ETA;
 		kalman_noise_data(VAR_W_ETA_INDEX) = kalman_noise_data(SIGMA_W_ETA_INDEX)*kalman_noise_data(SIGMA_W_ETA_INDEX);
 			
 		kalman_noise_data(MU_V_XI_INDEX) = 0.0;
@@ -118,6 +117,9 @@ class SubscribeAndPublish
 		kalman_noise_data(MU_V_OMEGA_INDEX) = 0.0;
 		kalman_noise_data(SIGMA_V_OMEGA_INDEX) = 0.0;
 		kalman_noise_data(VAR_V_OMEGA_INDEX) = kalman_noise_data(SIGMA_V_OMEGA_INDEX)*kalman_noise_data(SIGMA_V_OMEGA_INDEX);
+		
+		kalman_noise_data(SIGMA_W_RHO_INDEX) = SIGMA_W_SIMULATE_RHO;
+		kalman_noise_data(SIGMA_W_THETA_INDEX) = SIGMA_W_SIMULATE_THETA;
 	}
 	
 	void setExtendedKalmanNoiseData()
@@ -141,6 +143,10 @@ class SubscribeAndPublish
 		extended_kalman_noise_data(MU_V_OMEGA_INDEX) = 0.0;
 		extended_kalman_noise_data(SIGMA_V_OMEGA_INDEX) = 0.01;
 		extended_kalman_noise_data(VAR_V_OMEGA_INDEX) = extended_kalman_noise_data(SIGMA_V_OMEGA_INDEX)*extended_kalman_noise_data(SIGMA_V_OMEGA_INDEX);
+		
+		extended_kalman_noise_data(SIGMA_W_RHO_INDEX) = SIGMA_W_SIMULATE_RHO;
+		extended_kalman_noise_data(SIGMA_W_THETA_INDEX) = SIGMA_W_SIMULATE_THETA;
+	
 	}
 	void updateStateMessage(Filter *filter, const laser_package::state::ConstPtr& msg)
 	{

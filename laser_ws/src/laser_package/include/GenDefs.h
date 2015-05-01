@@ -7,6 +7,8 @@
 #define ETA_INDEX 2
 #define ETA_DOT_INDEX 3
 #define OMEGA_INDEX 4
+#define RHO_INDEX 0
+#define THETA_INDEX 1
 
 #define MU_W_XI_INDEX 0
 #define SIGMA_W_XI_INDEX 1
@@ -27,6 +29,9 @@
 #define MU_W_ETA_INDEX 12
 #define SIGMA_W_ETA_INDEX 13
 #define VAR_W_ETA_INDEX 14
+
+#define SIGMA_W_RHO_INDEX 15
+#define SIGMA_W_THETA_INDEX 16
 
 #define PI 3.14159265358979
 #define DEG_TO_RAD_DENOM 0.00555555555
